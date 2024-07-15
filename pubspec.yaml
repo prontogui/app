@@ -1,5 +1,5 @@
 name: app
-description: "A new Flutter project."
+description: "ProntoGUI - The FAST way to develop a GUI!"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -44,7 +44,7 @@ dependencies:
   google_fonts: ^6.2.1
 
   window_manager: ^0.3.9
-  
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
