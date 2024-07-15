@@ -43,6 +43,8 @@ dependencies:
 
   google_fonts: ^6.2.1
 
+  window_manager: ^0.3.9
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter

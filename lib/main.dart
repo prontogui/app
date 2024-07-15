@@ -11,8 +11,26 @@ import 'package:app/primitive/model.dart';
 import 'package:app/embodiment/embodifier.dart';
 import 'waiting_for_server_view.dart';
 import 'top_level_coordinator.dart';
+import 'package:window_manager/window_manager.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // Must add this line.
+  await windowManager.ensureInitialized();
+
+  WindowOptions windowOptions = const WindowOptions(
+    //size: Size(1200, 800),
+    center: true,
+    backgroundColor: Colors.transparent,
+    skipTaskbar: false,
+    //titleBarStyle: TitleBarStyle.normal,
+    //title: 'App Title',
+  );
+  windowManager.waitUntilReadyToShow(windowOptions, () async {
+    await windowManager.show();
+    await windowManager.focus();
+  });
+
   late PGComm comm;
   late PrimitiveModel model;
 
