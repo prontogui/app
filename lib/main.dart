@@ -44,24 +44,24 @@ void main() async {
       final update =
           CborList([const CborBool(false), pkey.toCbor(), fieldUpdates]);
 
-      comm.sendUpdate(update);
+      comm.streamUpdateToServer(update);
     });
 
     void onUpdate(CborValue cborUpdate) {
       model.updateFromCbor(cborUpdate);
     }
 
-    try {
-      comm = PGComm.start(onUpdate);
-    } on Exception catch (e) {
-      print('Unknown exception: $e');
-    }
+    comm = PGComm(onUpdate);
+    comm.open('127.0.0.1', 50053);
   }
 
   runApp(Embodifier(
-      child: InheritedPrimitiveModel(
-    notifier: model,
-    child: const MyApp(),
+      child: InheritedPGComm(
+    notifier: comm,
+    child: InheritedPrimitiveModel(
+      notifier: model,
+      child: const MyApp(),
+    ),
   )));
 }
 
