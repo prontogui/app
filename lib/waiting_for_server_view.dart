@@ -53,7 +53,7 @@ class WaitingForServerView extends StatelessWidget {
             child: SizedBox(),
           ),
           Text(
-              'Waiting for connection to server.  Retrying in ${pgcomm.reconnectCountdown} seconds...'),
+              'Waiting for connection to server at ${pgcomm.serverAddress}:${pgcomm.serverPort}.  Retrying in ${pgcomm.reconnectCountdown} seconds...'),
           OutlinedButton(
             onPressed: () {
               pgcomm.tryConnectionAgain();
