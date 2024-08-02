@@ -9,6 +9,32 @@ import 'package:grpc/grpc.dart';
 import 'package:app/proto/pg.pbgrpc.dart';
 import 'package:cbor/cbor.dart';
 
+/// States of communication
+enum PGCommState {
+  /// Communication is inactive because either open() hasn't been called yet or
+  /// the close() method was called.
+  inactive,
+
+  /// A connection attempt has been made by trying to make an RPC.  This brief state is designed
+  /// to allow time for the connection to be established without having to tell the user
+  /// we are waiting for the connection to be made.  It's mainly for messaging purposes.  After
+  /// the connectingPeriod elapses, it switches to the connectingWait state, where we
+  /// can notify the user that we're waiting.
+  connecting,
+
+  /// A connection attempt has been made by trying to make an RPC.  It remains in this state
+  /// until successful or the connection times out or an error is returned.  This state is
+  /// designed so we can update the user that we are waiting on the connection to occur.
+  connectingWait,
+
+  /// State where streaming of updates is happening without any problems.
+  active,
+
+  /// This state is entered upon error or disconnection during active streaming.  It
+  /// is where we peroidically try to reestablish streaming through a successful RPC.
+  reestablishmentDelay,
+}
+
 /// ProntoGUI Communication with a single server.
 ///
 /// An instance of this class handles communication with a single server.  To use this,
@@ -23,6 +49,8 @@ import 'package:cbor/cbor.dart';
 class PGComm extends ChangeNotifier {
   /// The user-supplied callback for handling the updates coming from the server.
   late Function _onUpdate;
+
+  final int _connectingPeriod = 3;
 
   /// The amount of time (in seconds) between server check-ins.
   late int _serverCheckinPeriod;
@@ -53,29 +81,20 @@ class PGComm extends ChangeNotifier {
   /// The ongoing, active call for streaming updates to/from the server.
   ResponseStream<PGUpdate>? _call;
 
-  /// A periodic timer that calls a routine for checking in with the server.
-  Timer? _serverCheckinTimer;
+  /// A periodic timer used in different communication states.
+  Timer? _timer;
 
-  /// True means PGComm is active in working with a server.  False means the
-  /// open() method call failed in some way to initialize communication with
-  /// the server.
-  bool _active = false;
+  /// The current state of communication.
+  PGCommState _state = PGCommState.inactive;
 
   /// True means the server is invalid or unreachable, given the provided server
   /// address and port in the open() method call.
   bool _invalidServer = false;
 
-  /// The number of seconds remaining until PGComm attempts to reestablish streaming
-  /// with the server.
-  int _reestablishmentCountdown = 0;
-
-  /// A periodic timer (every second) for checking when to try reestablishing streaming wtih the server.
-  Timer? _reestablishmentTimer;
-
   /// True means PGComm is paused in working with a server, which may be down or
   /// unavailable at the moment.  If this is False and _active is True, then it can
   /// be assumed that streaming is working.
-  bool _paused = false;
+  // bool _paused = false;
 
   /// Construct an object for streaming updates back/forth with a server.
   ///
@@ -96,35 +115,41 @@ class PGComm extends ChangeNotifier {
 
   /// Opens a session for streaming updates back/forth with a server.
   ///
-  /// [serverAddress] is the address of the server.  Likewise, [serverPort]
-  /// is the server port to connect through.
-  void open(String serverAddress, int serverPort) {
+  /// The optional [serverAddress] is the address of the server.  Likewise, the optional
+  /// [serverPort] is the server port to connect through.  If either of these are not
+  /// provided then it uses the previous values of the serverAddress and/or
+  /// serverPort properties.
+  void open({String? serverAddress, int? serverPort}) {
     // Active session already?
-    if (_active) {
-      _cleanupResources();
+    if (_state != PGCommState.inactive) {
+      _cleanupResources(false);
     }
 
-    _serverAddress = serverAddress;
-    _serverPort = serverPort;
+    if (serverAddress != null) {
+      _serverAddress = serverAddress;
+    }
+    if (serverPort != null) {
+      _serverPort = serverPort;
+    }
     _invalidServer = false;
 
     try {
       // Open an HTTP/2 channel
       _channel = ClientChannel(
-        InternetAddress(serverAddress),
-        port: serverPort,
+        InternetAddress(_serverAddress),
+        port: _serverPort,
         options: ChannelOptions(
           credentials: const ChannelCredentials.insecure(),
           codecRegistry:
               CodecRegistry(codecs: const [GzipCodec(), IdentityCodec()]),
+          //connectTimeout: const Duration(minutes: 5),
         ),
       );
 
       // Create a client object for talking with PGService
       _stub = PGServiceClient(_channel!);
     } catch (err) {
-      _invalidServer = true;
-      _cleanupResources();
+      _cleanupResources(true);
       return;
     }
 
@@ -134,45 +159,19 @@ class PGComm extends ChangeNotifier {
     // Initialize with an empty update
     _response = PGUpdate();
 
-    // Set a timer to perform a periodic check for connectivity to server
-    _serverCheckinTimer = Timer.periodic(
-        Duration(seconds: _serverCheckinPeriod), _periodicServerCheck);
-
-    _active = true;
+    _state = PGCommState.connecting;
     _startStreamingIncomingUpdates();
   }
 
-  /// Cleans up outstanding resources for the active session.
-  void _cleanupResources() {
-    _active = false;
-
-    // Clean up resources in reverse-order of creation
-    _call?.cancel();
-    _call = null;
-
-    _serverCheckinTimer?.cancel();
-    _serverCheckinTimer = null;
-
-    _response = PGUpdate();
-
-    _stub = null;
-
-    _channel?.terminate();
-    _channel = null;
+  /// Closes an open communication session (if any) and enters the inactive state.
+  void close() {
+    _cleanupResources(false);
+    notifyListeners();
   }
 
-  /// True means PGComm is active in working with a server.  False means the
-  /// open() method call failed in some way to initialize communication with
-  /// the server.
-  bool get active {
-    return _active;
-  }
-
-  /// True means PGComm is paused in working with a server, which may be down or
-  /// unavailable at the moment.  If this is False and _active is True, then it can
-  /// be assumed that streaming is working.
-  bool get paused {
-    return _paused;
+  /// Returns the current state of communication.
+  PGCommState get state {
+    return _state;
   }
 
   /// True means the server is invalid or unreachable, given the provided server
@@ -181,9 +180,25 @@ class PGComm extends ChangeNotifier {
     return _invalidServer;
   }
 
+  double get reestablishmentWaitProgress {
+    if (_timer == null) {
+      return 0.0;
+    }
+    return _timer!.tick / _reestablishmentPeriod;
+  }
+
   /// Address of server we are streaming updates with.
   String get serverAddress {
     return _serverAddress;
+  }
+
+  /// Set the server address for next communication session.  If there is a session
+  /// already open and the server address is different then it will be forcefully closed.
+  set serverAddress(String addr) {
+    if (_state != PGCommState.inactive && addr != _serverAddress) {
+      _cleanupResources(false);
+    }
+    _serverAddress = addr;
   }
 
   /// Port of server we are streamig update with.
@@ -191,38 +206,89 @@ class PGComm extends ChangeNotifier {
     return _serverPort;
   }
 
-  /// The remaining seconds until the next attempt to re-establish streaming.
-  int get reconnectCountdown {
-    return _reestablishmentCountdown;
+  /// Set the server port for next communication session.  If there is a session
+  /// already open and the server port is different then it will be forcefully closed.
+  set serverPort(int port) {
+    if (_state != PGCommState.inactive && port != _serverPort) {
+      _cleanupResources(false);
+    }
+    _serverPort = port;
+  }
+
+  /// The remaining timer ticks (approximately 1 second each) elapsed while waiting for
+  /// a connection or the ticks left until the next attempt to re-establish streaming.
+  int get ticks {
+    return _timer != null ? _timer!.tick : 0;
   }
 
   /// Forcefully try to re-establish streaming without waiting for a reconnection
   /// countdown to expire.
   void tryConnectionAgain() {
-    if (_reestablishmentTimer != null) {
-      _reestablishmentTimer!.cancel();
+    if (_state == PGCommState.connectingWait) {
+      open();
+    } else if (_state == PGCommState.reestablishmentDelay) {
       _startStreamingIncomingUpdates();
     }
   }
 
   /// Stream an update back to the server.
   void streamUpdateToServer(CborValue cborUpdate) {
-    if (_paused) return;
+    if (_state != PGCommState.active) return;
     _response = PGUpdate(cbor: cbor.encode(cborUpdate));
     _completer.complete(true);
   }
 
-  /// The routine called by a periodic timer to perform a "check-in" with the server
-  /// to determine whether we are still streaming back/forth.
-  void _periodicServerCheck(Timer timer) {
-    if (_paused) {
-      //print('Communication with server is paused.');
-      return;
-    }
+  /// Cleans up outstanding resources for the active session.
+  /// [invalidServer] should be true if calling this after a failed attempt to
+  /// to establish a client channel due to an invalid server address.
+  void _cleanupResources(bool invalidServer) {
+    _state = PGCommState.inactive;
 
-    // Send over an empty partial update
-    var emptyPartialUpdate = CborList([const CborBool(false)]);
-    streamUpdateToServer(emptyPartialUpdate);
+    // Clean up resources in reverse-order of creation
+    _call?.cancel();
+    _call = null;
+
+    _timer?.cancel();
+    _timer = null;
+
+    _response = PGUpdate();
+
+    _stub = null;
+
+    _channel?.terminate();
+    _channel = null;
+
+    _invalidServer = invalidServer;
+  }
+
+  /// The routine called by a periodic timer to perform a work during certain
+  /// states of communication.
+  void _timerRoutine(Timer timer) {
+    print('State is $_state (${timer.tick} ticks\n');
+
+    switch (_state) {
+      case PGCommState.inactive:
+        // This should never happen
+        assert(false);
+      case PGCommState.active:
+        // Send over an empty partial update
+        var emptyPartialUpdate = CborList([const CborBool(false)]);
+        streamUpdateToServer(emptyPartialUpdate);
+      case PGCommState.connecting:
+        // Switch to next state
+        _state = PGCommState.connectingWait;
+        _startTimer(1);
+
+      case PGCommState.connectingWait:
+        notifyListeners();
+
+      case PGCommState.reestablishmentDelay:
+        notifyListeners();
+
+        if (timer.tick >= _reestablishmentPeriod) {
+          _startStreamingIncomingUpdates();
+        }
+    }
   }
 
   // An indefinite asynchonous function that yields updates to send back to server
@@ -235,24 +301,43 @@ class PGComm extends ChangeNotifier {
     }
   }
 
-  /// The routine called by a periodic timer to perform a second-based countdwon
-  /// until an attempt is made to re-establish streaming with the server.
-  void _reconnectCountdownRoutine(Timer timer) {
-    _reestablishmentCountdown--;
-    assert(_reestablishmentCountdown >= 0);
+  void _startTimer(int period) {
+    if (_timer != null) {
+      _timer!.cancel();
+    }
+    _timer = Timer.periodic(Duration(seconds: period), _timerRoutine);
+  }
 
-    notifyListeners();
+  /// An asynchronous method that pulls updates streamed from the server one at a time,
+  /// decodes the update into CBOR, and calls the user-provided callback function with
+  /// the update contents.
+  Future<void> _incomingUpdates() async {
+    await for (var pgUpdate in _call!) {
+      print('Received update of length = ${pgUpdate.cbor.length} bytes');
 
-    if (_reestablishmentCountdown == 0) {
-      timer.cancel();
-      _reestablishmentTimer = null;
-      _startStreamingIncomingUpdates();
+      if (_state != PGCommState.active) {
+        notifyListeners();
+      }
+      _state = PGCommState.active;
+      _startTimer(_serverCheckinPeriod);
+
+      if (pgUpdate.cbor.isNotEmpty) {
+        final cborUpdate = cbor.decode(pgUpdate.cbor);
+        _onUpdate(cborUpdate);
+      }
     }
   }
 
   /// An asyncrhonous method that attempts to start streaming uppdates with the server.
   Future<void> _startStreamingIncomingUpdates() async {
-    //print('Streaming of updates is starting.');
+    print('Streaming of updates is starting.');
+
+    final timerPeriod = (_state == PGCommState.connecting)
+        ? _connectingPeriod
+        : _reestablishmentPeriod;
+
+    // Set a timer to perform a countdown until attempt is made to reconnect
+    _startTimer(timerPeriod);
 
     try {
       // Start streaming inbound (toward the app) and provide an async function
@@ -261,35 +346,17 @@ class PGComm extends ChangeNotifier {
 
       await _incomingUpdates();
     } catch (err) {
-      //print('Error occurred waiting for incoming updates:  $err');
-      _paused = true;
-      notifyListeners();
+      print('Error occurred waiting for incoming updates:  $err');
+
+      if (_state == PGCommState.active ||
+          _state == PGCommState.reestablishmentDelay) {
+        _state = PGCommState.reestablishmentDelay;
+        _startTimer(1);
+        notifyListeners();
+      }
 
       var emptyFullUpdate = CborList([const CborBool(true)]);
       _onUpdate(emptyFullUpdate);
-
-      _reestablishmentCountdown = _reestablishmentPeriod;
-      _reestablishmentTimer = Timer.periodic(
-          const Duration(seconds: 1), _reconnectCountdownRoutine);
-    }
-  }
-
-  /// An asynchronous method that pulls updates streamed from the server one at a time,
-  /// decodes the update into CBOR, and calls the user-provided callback function with
-  /// the update contents.
-  Future<void> _incomingUpdates() async {
-    await for (var pgUpdate in _call!) {
-      //print('Received update of length = ${pgUpdate.cbor.length} bytes');
-
-      if (_paused) {
-        notifyListeners();
-      }
-      _paused = false;
-
-      if (pgUpdate.cbor.isNotEmpty) {
-        final cborUpdate = cbor.decode(pgUpdate.cbor);
-        _onUpdate(cborUpdate);
-      }
     }
   }
 }
