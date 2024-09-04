@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:ui';
+
 import 'package:flutter/widgets.dart';
 
 import 'embodiment_property_help.dart';
@@ -13,6 +15,7 @@ class TextEmbodimentProperties {
   Color? backgroundColor;
   String? fontFamily;
   double? fontSize;
+  FontWeight? fontWeight;
   double paddingRight;
   double paddingLeft;
 
@@ -42,10 +45,12 @@ class TextEmbodimentProperties {
 
   TextStyle buildTextStyle() {
     return TextStyle(
-        backgroundColor: backgroundColor,
-        color: color,
-        fontSize: fontSize,
-        fontFamily: fontFamily);
+      backgroundColor: backgroundColor,
+      color: color,
+      fontSize: fontSize,
+      fontFamily: fontFamily,
+      fontWeight: fontWeight,
+    );
   }
 
   Widget incorporatedPadding(Widget child) {
@@ -75,5 +80,6 @@ class TextEmbodimentProperties {
         paddingLeft = getNumericPropOrDefault(embodimentMap, "paddingLeft",
             -double.infinity, double.infinity, 20.0),
         paddingRight = getNumericPropOrDefault(embodimentMap, "paddingRight",
-            -double.infinity, double.infinity, 20.0);
+            -double.infinity, double.infinity, 20.0),
+        fontWeight = getFontWeight(embodimentMap);
 }

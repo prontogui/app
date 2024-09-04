@@ -17,8 +17,7 @@ import 'package:window_manager/window_manager.dart';
 (String serverAddr, int serverPortNo) parseCommandLineOptions(
     List<String> args) {
   // Default values for options
-  //const defaultAddr = '127.0.0.1';
-  const defaultAddr = '192.168.1.43';
+  const defaultAddr = '127.0.0.1';
   const defaultPort = '50053';
   var defaultPortInt = int.parse(defaultPort);
   var defaultServer = '$defaultAddr:$defaultPort';
@@ -95,6 +94,7 @@ void main(List<String> args) async {
     //titleBarStyle: TitleBarStyle.normal,
     //title: 'App Title',
   );
+
   windowManager.waitUntilReadyToShow(windowOptions, () async {
     await windowManager.show();
     await windowManager.focus();

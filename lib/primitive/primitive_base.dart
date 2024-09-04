@@ -62,6 +62,9 @@ abstract class PrimitiveBase implements Primitive {
       switch (fkey) {
         case FKey.embodiment:
           embodiment = cborToString(kv.value);
+
+          // Invalidate the cached embodiment properties
+          _embodimentProperties = null;
         default:
           updateFieldFromCbor(fkey, kv.value);
       }
