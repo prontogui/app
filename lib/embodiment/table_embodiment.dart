@@ -13,6 +13,11 @@ class TableEmbodiment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Is status for this primitive set to Hidden?
+    if (table.status == 2) {
+      return const SizedBox();
+    }
+
     // Get the total number of columns to display
     var totalNumColumns = table.templateRow.length;
 

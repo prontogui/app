@@ -18,6 +18,9 @@ class _TestCommand implements Command {
   var notifyCount = 0;
 
   @override
+  String tag = "";
+
+  @override
   void issueCommand() {
     notifyCount++;
   }

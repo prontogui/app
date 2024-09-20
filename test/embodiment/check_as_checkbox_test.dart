@@ -22,6 +22,9 @@ class _TestCheck implements Check {
   var notifyCount = 0;
 
   @override
+  String tag = "";
+
+  @override
   void updateChecked(bool checked) {
     notifyCount++;
   }

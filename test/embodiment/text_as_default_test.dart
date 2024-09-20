@@ -11,6 +11,9 @@ import 'testtree.dart';
 class _TestText implements pri.Text {
   @override
   String content = "Hello, World!";
+
+  @override
+  String tag = "";
 }
 
 void main() {

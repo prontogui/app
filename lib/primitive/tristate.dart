@@ -30,6 +30,12 @@ abstract class Tristate {
   /// sets the state field appropriately.
   set stateAsBool(bool? state);
 
+  /// Accessor for the Tag field.
+  ///
+  /// Tag is an optional arbitrary string that is assigned by the developer of the server
+  /// for identification purposes.  It is not used by this application.
+  late String tag;
+
   /// Notify that the state has been changed.
   ///
   /// Embodiments call this method whenever the state is changed.
@@ -59,6 +65,10 @@ class TristateImpl extends PrimitiveBase implements Tristate {
   /// Storage for the state field.
   @override
   int state = 0;
+
+  /// Storage for the Tag field.
+  @override
+  String tag = "";
 
   /// Alternative getter of state represented as nullable boolean.
   @override
@@ -118,6 +128,8 @@ class TristateImpl extends PrimitiveBase implements Tristate {
         label = cborToString(v);
       case FKey.state:
         state = cborToInt(v);
+      case FKey.tag:
+        tag = cborToString(v);
       default:
         assert(false);
     }

@@ -17,6 +17,12 @@ abstract class TextField {
   /// The text content that was entered.
   String get textEntry;
 
+  /// Storage for the Tag field.
+  ///
+  /// Tag is an optional arbitrary string that is assigned by the developer of the server
+  /// for identification purposes.  It is not used by this application.
+  late String tag;
+
   /// Notify that a new text entry was entered.
   ///
   /// Embodiments call this method whenever new text is entered.
@@ -32,6 +38,10 @@ class TextFieldImpl extends PrimitiveBase implements TextField {
   /// A text field primitive for entering text on the screen.
   TextFieldImpl(super.ctorArgs);
 
+  /// Storage for the Tag field.
+  @override
+  String tag = "";
+
   /// Storage for the TextEntry field.
   ///
   /// The text content that is entered.
@@ -44,6 +54,8 @@ class TextFieldImpl extends PrimitiveBase implements TextField {
     switch (fkey) {
       case FKey.textEntry:
         textEntry = cborToString(v);
+      case FKey.tag:
+        tag = cborToString(v);
       default:
         assert(false);
     }

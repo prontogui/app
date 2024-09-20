@@ -14,6 +14,9 @@ class _TestGroup implements Group {
   List<Primitive> get groupItems {
     return [];
   }
+
+  @override
+  String tag = "";
 }
 
 void main() {

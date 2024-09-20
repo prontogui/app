@@ -19,6 +19,12 @@ abstract class Check {
   /// The label is optional and is shown along with the check box.
   late String label;
 
+  /// Storage for the Tag field.
+  ///
+  /// Tag is an optional arbitrary string that is assigned by the developer of the server
+  /// for identification purposes.  It is not used by this application.
+  late String tag;
+
   /// Update the checked field and notify listeners with an update.
   ///
   /// Embodiments call this method whenever the check is changed.
@@ -50,6 +56,10 @@ class CheckImpl extends PrimitiveBase implements Check {
   @override
   String label = "";
 
+  /// Storage for the Tag field.
+  @override
+  String tag = "";
+
   @override
   void updateChecked(bool newChecked) {
     checked = newChecked;
@@ -71,6 +81,8 @@ class CheckImpl extends PrimitiveBase implements Check {
         checked = cborToBool(v);
       case FKey.label:
         label = cborToString(v);
+      case FKey.tag:
+        tag = cborToString(v);
       default:
         assert(false);
     }

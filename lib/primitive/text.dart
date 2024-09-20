@@ -15,6 +15,12 @@ abstract class Text {
   ///
   /// The text content to be shown.
   String get content;
+
+  /// Storage for the Tag field.
+  ///
+  /// Tag is an optional arbitrary string that is assigned by the developer of the server
+  /// for identification purposes.  It is not used by this application.
+  late String tag;
 }
 
 /// The Text primitive.
@@ -32,12 +38,18 @@ class TextImpl extends PrimitiveBase implements Text {
   @override
   String content = "";
 
+  /// Storage for the Tag field.
+  @override
+  String tag = "";
+
   /// Implements the unmarshalling and storage of fields.
   @override
   void updateFieldFromCbor(FKey fkey, CborValue v) {
     switch (fkey) {
       case FKey.content:
         content = cborToString(v);
+      case FKey.tag:
+        tag = cborToString(v);
       default:
         assert(false);
     }

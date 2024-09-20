@@ -23,6 +23,18 @@ abstract class TableP {
   /// The dynamically populated 2D (rows, cols) collection of primitives that appear in the table.
   List<List<Primitive>> get rows;
 
+  /// Storage for the Status field.
+  ///
+  /// Status represents whether the table is enabled (status = 0), disabled (status = 1),
+  /// or hidden (status = 2).
+  int get status;
+
+  /// Storage for the Tag field.
+  ///
+  /// Tag is an optional arbitrary string that is assigned by the developer of the server
+  /// for identification purposes.  It is not used by this application.
+  late String tag;
+
   /// Accessor for the TemplateRow field.
   ///
   /// The template for how each row should look, feel, and behave.
@@ -43,6 +55,15 @@ class TableImpl extends PrimitiveBase implements TableP {
   @override
   List<List<Primitive>> rows = [];
 
+  /// Storage for the Status field.
+  @override
+  int status = 0;
+
+  /// Storage for the Tag field.
+  @override
+  String tag = "";
+
+  /// Storage for the TemplateRow field.
   @override
   List<Primitive> templateRow = [];
 
@@ -62,6 +83,10 @@ class TableImpl extends PrimitiveBase implements TableP {
         headings = cborToStringList(v);
       case FKey.rows:
         rows = createPrimitivesFromCborList2D(v, 0);
+      case FKey.status:
+        status = cborToInt(v);
+      case FKey.tag:
+        tag = cborToString(v);
       case FKey.templateRow:
         templateRow = createPrimitivesFromCborList1D(v, 1);
       default:

@@ -15,6 +15,12 @@ abstract class TimerP {
   /// The time period in milliseconds after which the timer fires an event.  If the period is -1 (or any negative number) then the timer is disabled.
   /// A period of 0 will cause the timer to fire immediately after the primitive is updated.
   late int periodMs;
+
+  /// Storage for the Tag field.
+  ///
+  /// Tag is an optional arbitrary string that is assigned by the developer of the server
+  /// for identification purposes.  It is not used by this application.
+  late String tag;
 }
 
 /// The Timer primitive.
@@ -33,6 +39,10 @@ class TimerImpl extends PrimitiveBase implements TimerP {
   /// Storage for the PeriodMs field.
   @override
   int periodMs = 0;
+
+  /// Storage for the Tag field.
+  @override
+  String tag = "";
 
   /// Notify that the timer was fired.
   ///
@@ -68,6 +78,8 @@ class TimerImpl extends PrimitiveBase implements TimerP {
             timerFired();
           });
         }
+      case FKey.tag:
+        tag = cborToString(v);
       default:
         assert(false);
     }

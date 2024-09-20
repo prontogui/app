@@ -19,6 +19,12 @@ abstract class Choice {
   /// The available choices to choose from.
   late List<String> choices;
 
+  /// Storage for the Tag field.
+  ///
+  /// Tag is an optional arbitrary string that is assigned by the developer of the server
+  /// for identification purposes.  It is not used by this application.
+  late String tag;
+
   /// Notify that the choice has been changed.
   ///
   /// Embodiments call this method whenever the choice is changed.
@@ -49,6 +55,10 @@ class ChoiceImpl extends PrimitiveBase implements Choice {
   @override
   List<String> choices = [];
 
+  /// Storage for the Tag field.
+  @override
+  String tag = "";
+
   @override
   void updateChoice(String newChoice) {
     choice = newChoice;
@@ -67,6 +77,8 @@ class ChoiceImpl extends PrimitiveBase implements Choice {
         choice = cborToString(v);
       case FKey.choices:
         choices = cborToStringList(v);
+      case FKey.tag:
+        tag = cborToString(v);
       default:
         assert(false);
     }

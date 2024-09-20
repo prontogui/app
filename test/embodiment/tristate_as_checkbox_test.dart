@@ -20,6 +20,9 @@ class _TestTristate implements Tristate {
   int state = 0;
 
   @override
+  String tag = "";
+
+  @override
   bool? get stateAsBool {
     switch (state) {
       case 0:

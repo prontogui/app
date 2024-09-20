@@ -29,6 +29,12 @@ abstract class ListP {
   /// to #items - 1 (last item).  It is -1 if nothing is selected.
   int get selected;
 
+  /// Storage for the Tag field.
+  ///
+  /// Tag is an optional arbitrary string that is assigned by the developer of the server
+  /// for identification purposes.  It is not used by this application.
+  late String tag;
+
   /// Accessor for the TemplateItem field.
   ///
   /// The template item desribes how each repeated item in the list is shown.  This
@@ -56,6 +62,10 @@ class ListImpl extends PrimitiveBase implements ListP {
 
   @override
   int selected = -1;
+
+  /// Storage for the Tag field.
+  @override
+  String tag = "";
 
   @override
   Primitive? templateItem;
@@ -91,6 +101,8 @@ class ListImpl extends PrimitiveBase implements ListP {
         listItems = createPrimitivesFromCborList1D(v, 0);
       case FKey.selected:
         selected = cborToInt(v);
+      case FKey.tag:
+        tag = cborToString(v);
       case FKey.templateItem:
         templateItem = createPrimitiveFromCborMap(v, 1);
       default:

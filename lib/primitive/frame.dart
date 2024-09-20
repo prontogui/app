@@ -28,6 +28,12 @@ abstract class Frame {
   /// Returns whether or not this frame is a view.
   bool get isView;
 
+  /// Storage for the Tag field.
+  ///
+  /// Tag is an optional arbitrary string that is assigned by the developer of the server
+  /// for identification purposes.  It is not used by this application.
+  late String tag;
+
   /// Returns the embodiment properties.
   FrameEmbodimentProperties get embodimentProperties;
 
@@ -53,6 +59,10 @@ class FrameImpl extends PrimitiveBase implements Frame {
   /// Storage for the showing field.
   @override
   bool showing = false;
+
+  /// Storage for the Tag field.
+  @override
+  String tag = "";
 
   /// Returns whether or not this frame is a view.
   @override
@@ -80,6 +90,8 @@ class FrameImpl extends PrimitiveBase implements Frame {
     switch (fkey) {
       case FKey.frameItems:
         frameItems = createPrimitivesFromCborList1D(v, 0);
+      case FKey.tag:
+        tag = cborToString(v);
       case FKey.showing:
         showing = cborToBool(v);
       default:

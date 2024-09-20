@@ -18,6 +18,9 @@ class _TestChoice implements Choice {
   var notifyCount = 0;
 
   @override
+  String tag = "";
+
+  @override
   void updateChoice(String newChoice) {
     notifyCount++;
   }

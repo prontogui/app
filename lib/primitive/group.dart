@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:app/primitive/cbor_conversion.dart';
 import 'package:cbor/cbor.dart';
 import 'primitive.dart';
 import 'primitive_base.dart';
@@ -19,6 +20,12 @@ abstract class Group {
   ///
   /// The group items are individual primitives that are displayed accordiing to the embodiment.
   List<Primitive> get groupItems;
+
+  /// Storage for the Tag field.
+  ///
+  /// Tag is an optional arbitrary string that is assigned by the developer of the server
+  /// for identification purposes.  It is not used by this application.
+  late String tag;
 }
 
 class GroupImpl extends PrimitiveBase implements Group {
@@ -34,6 +41,10 @@ class GroupImpl extends PrimitiveBase implements Group {
   @override
   List<Primitive> groupItems = [];
 
+  /// Storage for the Tag field.
+  @override
+  String tag = "";
+
   // Overrides for PrimitiveBase class.
   @override
   bool get isNotificationPoint {
@@ -48,6 +59,8 @@ class GroupImpl extends PrimitiveBase implements Group {
     switch (fkey) {
       case FKey.groupItems:
         groupItems = createPrimitivesFromCborList1D(v, 0);
+      case FKey.tag:
+        tag = cborToString(v);
       default:
         assert(false);
     }
