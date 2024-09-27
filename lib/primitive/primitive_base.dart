@@ -45,6 +45,12 @@ abstract class PrimitiveBase implements Primitive {
   /// Storage for the embodiment field.
   String embodiment = "";
 
+  /// Storage for the Tag field.
+  ///
+  /// Tag is an optional arbitrary string that is assigned by the developer of the server
+  /// for identification purposes.  It is not used by this application.
+  String tag = "";
+
   /// Cached embodimenet properties.  These are computed on demand and cleared when
   /// embodiment is reassigned.  If embodiment is empty then this value remains null.
   Map<String, dynamic>? _embodimentProperties;
@@ -65,6 +71,8 @@ abstract class PrimitiveBase implements Primitive {
 
           // Invalidate the cached embodiment properties
           _embodimentProperties = null;
+        case FKey.tag:
+          tag = cborToString(kv.value);
         default:
           updateFieldFromCbor(fkey, kv.value);
       }

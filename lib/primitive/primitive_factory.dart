@@ -23,7 +23,7 @@ import 'tristate.dart';
 //  final CborString _dpfFrame = CborString("FrameItems");
 final CborString _dpfCheck = CborString("Checked");
 final CborString _dpfChoice = CborString("Choice");
-final CborString _dpfCommand = CborString("Status");
+final CborString _dpfCommand = CborString("CommandIssued");
 final CborString _dpfExportFile = CborString("Exported");
 final CborString _dpfFrameField = CborString("FrameItems");
 final CborString _dpfGroup = CborString("GroupItems");

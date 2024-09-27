@@ -29,12 +29,6 @@ abstract class TableP {
   /// or hidden (status = 2).
   int get status;
 
-  /// Storage for the Tag field.
-  ///
-  /// Tag is an optional arbitrary string that is assigned by the developer of the server
-  /// for identification purposes.  It is not used by this application.
-  late String tag;
-
   /// Accessor for the TemplateRow field.
   ///
   /// The template for how each row should look, feel, and behave.
@@ -59,10 +53,6 @@ class TableImpl extends PrimitiveBase implements TableP {
   @override
   int status = 0;
 
-  /// Storage for the Tag field.
-  @override
-  String tag = "";
-
   /// Storage for the TemplateRow field.
   @override
   List<Primitive> templateRow = [];
@@ -85,8 +75,6 @@ class TableImpl extends PrimitiveBase implements TableP {
         rows = createPrimitivesFromCborList2D(v, 0);
       case FKey.status:
         status = cborToInt(v);
-      case FKey.tag:
-        tag = cborToString(v);
       case FKey.templateRow:
         templateRow = createPrimitivesFromCborList1D(v, 1);
       default:

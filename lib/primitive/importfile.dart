@@ -25,12 +25,6 @@ abstract class ImportFile {
   /// The suggested file name (including its extension separated by a period) to save the file as.
   late String name;
 
-  /// Storage for the Tag field.
-  ///
-  /// Tag is an optional arbitrary string that is assigned by the developer of the server
-  /// for identification purposes.  It is not used by this application.
-  late String tag;
-
   /// Storage for the ValidExtensions field.
   ///
   /// The valid extensions for importing (non-case sensitive and period separator is omitted).
@@ -65,10 +59,6 @@ class ImportFileImpl extends PrimitiveBase implements ImportFile {
   @override
   String name = "";
 
-  /// Storage for the Tag field.
-  @override
-  String tag = "";
-
   /// Storage for the validExtensions field.
   @override
   List<String> validExtensions = [];
@@ -99,8 +89,6 @@ class ImportFileImpl extends PrimitiveBase implements ImportFile {
         imported = cborToBool(v);
       case FKey.name:
         name = cborToString(v);
-      case FKey.tag:
-        tag = cborToString(v);
       case FKey.validExtensions:
         validExtensions = cborToStringList(v);
       default:

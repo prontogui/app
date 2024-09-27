@@ -20,12 +20,6 @@ abstract class Command {
   /// or hidden (status = 2).
   late int status;
 
-  /// Storage for the Tag field.
-  ///
-  /// Tag is an optional arbitrary string that is assigned by the developer of the server
-  /// for identification purposes.  It is not used by this application.
-  late String tag;
-
   /// Notify that the command has been issued.
   ///
   /// Embodiments call this method whenever the command is issued.
@@ -53,17 +47,13 @@ class CommandImpl extends PrimitiveBase implements Command {
   @override
   int status = 0;
 
-  /// Storage for the Tag field.
-  @override
-  String tag = "";
-
   /// Issue the command to all listeners along with an update.
   ///
   /// Embodiments call this method whenever the command is issued.
   @override
   void issueCommand() {
     var fieldUpdates = CborMap({
-      // An empty update will suffice
+      CborString(fieldnameFor(FKey.commandIssued)): const CborBool(false),
     });
 
     eventHandler.call(EventType.commandIssued, pkey, fieldUpdates);
@@ -73,12 +63,12 @@ class CommandImpl extends PrimitiveBase implements Command {
   @override
   void updateFieldFromCbor(FKey fkey, CborValue v) {
     switch (fkey) {
+      case FKey.commandIssued:
+      // do nothing - it's an event field
       case FKey.label:
         label = cborToString(v);
       case FKey.status:
         status = cborToInt(v);
-      case FKey.tag:
-        tag = cborToString(v);
       default:
         assert(false);
     }

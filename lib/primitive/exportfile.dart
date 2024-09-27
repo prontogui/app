@@ -25,12 +25,6 @@ abstract class ExportFile {
   /// The suggested file name (including its extension separated by a period) to save the file as.
   late String name;
 
-  /// Storage for the Tag field.
-  ///
-  /// Tag is an optional arbitrary string that is assigned by the developer of the server
-  /// for identification purposes.  It is not used by this application.
-  late String tag;
-
   /// Notify that the export is completed.
   ///
   /// Embodiments call this method whenever the export is completed.
@@ -60,10 +54,6 @@ class ExportFileImpl extends PrimitiveBase implements ExportFile {
   @override
   String name = "";
 
-  /// Storage for the Tag field.
-  @override
-  String tag = "";
-
   /// Notify that the export is completed.
   ///
   /// Embodiments call this method whenever the export is completed.
@@ -88,8 +78,6 @@ class ExportFileImpl extends PrimitiveBase implements ExportFile {
         exported = cborToBool(v);
       case FKey.name:
         name = cborToString(v);
-      case FKey.tag:
-        tag = cborToString(v);
       default:
         assert(false);
     }
