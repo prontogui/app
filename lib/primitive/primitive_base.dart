@@ -84,6 +84,7 @@ abstract class PrimitiveBase implements Primitive {
   /// The new primitives are initialized as proper children.
   List<Primitive> createPrimitivesFromCborList1D(
       CborValue v, int fieldPKeyIndex) {
+    assert(v is CborList);
     var cborList = v as CborList;
 
     var primitives = <Primitive>[];
@@ -113,6 +114,11 @@ abstract class PrimitiveBase implements Primitive {
   /// The new primitives are initialized as proper children.
   List<List<Primitive>> createPrimitivesFromCborList2D(
       CborValue v, int fieldPKeyIndex) {
+    if (v is! CborList) {
+      print("Oops, v is not a CborList!");
+      assert(false);
+    }
+
     var cborRows = v as CborList;
 
     var primitives = <List<Primitive>>[];
@@ -121,6 +127,7 @@ abstract class PrimitiveBase implements Primitive {
     var containerPkey = PKey.addIndex(pkey, fieldPKeyIndex);
 
     for (int i = 0; i < cborRows.length; i++) {
+      assert(cborRows[i] is CborList);
       var cborCells = cborRows[i] as CborList;
 
       var primitiveRow = <Primitive>[];

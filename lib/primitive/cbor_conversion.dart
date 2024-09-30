@@ -24,6 +24,11 @@ List<int> cborToBlob(CborValue v) {
 }
 
 List<String> cborToStringList(CborValue v) {
+  if (v is CborNull) {
+    return List<String>.empty();
+  }
+
+  assert(v is CborList);
   var cborList = v as CborList;
   var list = List<String>.generate(cborList.length, (index) {
     var cborItem = cborList[index] as CborString;

@@ -13,6 +13,12 @@ class GroupEmbodiment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (group.groupItems.isEmpty) {
+      //return const Text("Err");
+      // const SizedBox.shrink();
+      return const SizedBox();
+    }
+
     return Row(
       children:
           // This is very elegant but we'll see how it performs.  Documentation says

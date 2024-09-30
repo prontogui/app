@@ -240,9 +240,8 @@ class _TopLevelCoordinatorState extends State<TopLevelCoordinator> {
             }
           case "dialog-view":
             if (frame.showing) {
-              // Note:  dialogs are stacked in the order of their indices.  Peter Richards,
-              // the developer-user of this app, knows that deeper-level dialogs should be
-              //placed further along in the top-leve primitives list.
+              // Note:  dialogs are stacked in the order of their indices.  Deeper-level dialogs should be
+              // placed further along in the top-leve primitives list.
               dlglist.add(i);
             }
         }

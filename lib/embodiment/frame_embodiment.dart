@@ -4,6 +4,8 @@
 
 import 'package:app/embodiment/embodifier.dart';
 import 'package:app/primitive/frame.dart';
+import 'package:app/primitive/primitive.dart';
+import 'package:app/primitive/model.dart';
 import 'package:flutter/material.dart';
 import '../embodiment_properties/frame_embodiment_properties.dart';
 
@@ -37,6 +39,7 @@ class FrameEmbodiment extends StatelessWidget {
         );
       case 'top-to-bottom':
         childContent = Column(
+          //mainAxisSize: MainAxisSize.min,
           children: Embodifier.of(context)
               .buildPrimitiveList(context, frame.frameItems),
         );
@@ -45,12 +48,16 @@ class FrameEmbodiment extends StatelessWidget {
         childContent = const SizedBox();
     }
 
-    if (embodimentProps.embodiment == "other") {
-      return childContent;
-    } else {
+    assert(frame is Primitive);
+    var framePrimitive = frame as Primitive;
+
+    // Is it a top-level primitive (i.e., a view)?
+    if (framePrimitive.getParent() is PrimitiveModel) {
       return Scaffold(
         body: Center(child: childContent),
       );
+    } else {
+      return childContent;
     }
   }
 }

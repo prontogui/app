@@ -41,7 +41,7 @@ class _TextFieldEmbodimentState extends State<TextFieldEmbodiment> {
   Widget build(BuildContext context) {
     // Add the following Expanded widget to avoid getting an exception during rendering.
     // See item #2 in the Problem Solving section in README.md file.
-    return Expanded(
+    return Flexible(
       child: _buildTextField(context),
     );
   }

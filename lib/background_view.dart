@@ -28,15 +28,23 @@ class BackgroundView extends StatelessWidget {
     }
 
     return Scaffold(
-//      body: Center(
       body: ListenableBuilder(
           listenable:
               InheritedPrimitiveModel.of(context).topLevelUpdateNotifier,
           builder: (BuildContext context, Widget? child) {
-            return Column(
-              children: Embodifier.of(context)
-                  .buildPrimitiveList(context, backgroundItems),
-            );
+            if (backgroundItems.isEmpty) {
+              return const SizedBox();
+            } else if (backgroundItems.length == 1) {
+              return Center(
+                child: Embodifier.of(context)
+                    .buildPrimitive(context, backgroundItems[0]),
+              );
+            } else {
+              return Column(
+                children: Embodifier.of(context)
+                    .buildPrimitiveList(context, backgroundItems),
+              );
+            }
           }),
 //      ),
     );
