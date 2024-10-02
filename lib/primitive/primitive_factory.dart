@@ -66,6 +66,8 @@ abstract class PrimitiveFactory {
       return TimerImpl(ctorArgs);
     } else if (ctorArgs.cbor.containsKey(_dpfTristate)) {
       return TristateImpl(ctorArgs);
+    } else {
+      assert(false, "primitive_factory:  primitive not recognized.");
     }
 
     return null;

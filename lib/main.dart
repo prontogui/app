@@ -6,6 +6,7 @@ import 'package:args/args.dart';
 import 'package:app/background_view.dart';
 import 'package:app/main_testing.dart';
 import 'package:cbor/cbor.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:app/pgcomm/pgcomm.dart';
 import 'package:app/primitive/model.dart';
@@ -117,7 +118,15 @@ void main(List<String> args) async {
     });
 
     void onUpdate(CborValue cborUpdate) {
+      if (kDebugMode) {
+        print("main:  onUpdate entered.");
+      }
+
       model.updateFromCbor(cborUpdate);
+
+      if (kDebugMode) {
+        print("main:  onUpdate exited.");
+      }
     }
 
     comm = PGComm(onUpdate);

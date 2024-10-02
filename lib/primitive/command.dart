@@ -64,7 +64,8 @@ class CommandImpl extends PrimitiveBase implements Command {
   void updateFieldFromCbor(FKey fkey, CborValue v) {
     switch (fkey) {
       case FKey.commandIssued:
-      // do nothing - it's an event field
+        // do nothing - it's an event field
+        break;
       case FKey.label:
         label = cborToString(v);
       case FKey.status:
