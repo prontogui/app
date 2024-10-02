@@ -118,15 +118,7 @@ void main(List<String> args) async {
     });
 
     void onUpdate(CborValue cborUpdate) {
-      if (kDebugMode) {
-        print("main:  onUpdate entered.");
-      }
-
       model.updateFromCbor(cborUpdate);
-
-      if (kDebugMode) {
-        print("main:  onUpdate exited.");
-      }
     }
 
     comm = PGComm(onUpdate);
