@@ -235,6 +235,9 @@ class PGComm extends ChangeNotifier {
   void streamUpdateToServer(CborValue cborUpdate) {
     if (_state != PGCommState.active) return;
     _response = PGUpdate(cbor: cbor.encode(cborUpdate));
+    // NOTE:  this routine doesn't support multiple back-to-back updates without
+    // a microtask intermission.
+    // You will get an exception:  StateError (Bad state: Future already completed)
     _completer.complete(true);
   }
 

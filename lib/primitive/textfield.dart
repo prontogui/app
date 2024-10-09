@@ -56,6 +56,8 @@ class TextFieldImpl extends PrimitiveBase implements TextField {
       // An empty update will suffice
     });
 
+    textEntry = newTextEntry;
+
     eventHandler.call(EventType.textEntered, pkey, fieldUpdates);
   }
 }

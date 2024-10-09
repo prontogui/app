@@ -95,7 +95,7 @@ class Embodifier extends InheritedWidget {
       return ListEmbodiment(list: listp);
     } else if (primitive is pri.TextField) {
       var tf = primitive as pri.TextField;
-      return TextFieldEmbodiment(textfield: tf);
+      return TextFieldEmbodiment(textfield: tf, key: UniqueKey());
     } else if (primitive is pri.Frame) {
       var frame = primitive as pri.Frame;
       return FrameEmbodiment(frame: frame, embodimentMap: embodimentMap);

@@ -108,6 +108,13 @@ void main(List<String> args) async {
 
   if (isTesting) {
     model = initializeTestingModel();
+
+    runApp(Embodifier(
+      child: InheritedPrimitiveModel(
+        notifier: model,
+        child: const MyTestApp(),
+      ),
+    ));
   } else {
     model = PrimitiveModel((eventType, pkey, fieldUpdates) {
       // Send update back to pgcomm
@@ -123,16 +130,16 @@ void main(List<String> args) async {
 
     comm = PGComm(onUpdate);
     comm.open(serverAddress: serverAddr, serverPort: serverPort);
-  }
 
-  runApp(Embodifier(
-      child: InheritedPGComm(
-    notifier: comm,
-    child: InheritedPrimitiveModel(
-      notifier: model,
-      child: const MyApp(),
-    ),
-  )));
+    runApp(Embodifier(
+        child: InheritedPGComm(
+      notifier: comm,
+      child: InheritedPrimitiveModel(
+        notifier: model,
+        child: const MyApp(),
+      ),
+    )));
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -153,6 +160,26 @@ class MyApp extends StatelessWidget {
             backgroundView: BackgroundView(),
           ),
         ));
+  }
+}
+
+class MyTestApp extends StatelessWidget {
+  const MyTestApp({super.key});
+
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: true,
+      title: 'Test App',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+      ),
+      home: const TopLevelCoordinator(
+        backgroundView: BackgroundView(),
+      ),
+    );
   }
 }
 

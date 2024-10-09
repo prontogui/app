@@ -17,7 +17,7 @@ class TextFieldEmbodiment extends StatefulWidget {
 class _TextFieldEmbodimentState extends State<TextFieldEmbodiment> {
   late TextEditingController _controller;
   late FocusNode _focusNode;
-  bool _hasFocus = false;
+  var _editing = false;
 
   @override
   void initState() {
@@ -25,7 +25,9 @@ class _TextFieldEmbodimentState extends State<TextFieldEmbodiment> {
     _controller = TextEditingController(text: widget.textfield.textEntry);
     _focusNode = FocusNode();
     _focusNode.addListener(() {
-      setState(() => _hasFocus = _focusNode.hasFocus);
+      if (!_focusNode.hasFocus) {
+        saveText(_controller.text);
+      }
     });
   }
 
@@ -42,27 +44,49 @@ class _TextFieldEmbodimentState extends State<TextFieldEmbodiment> {
     });
   }
 
+  void endEditing() {
+    setState(() {
+      _editing = false;
+    });
+  }
+
   Widget _buildForEditing(BuildContext context) {
-    InputDecoration? decor;
-
-    if (_hasFocus) {
-      decor = const InputDecoration(border: OutlineInputBorder());
-    }
-
     return TextField(
       controller: _controller,
-      decoration: decor,
+      decoration: const InputDecoration(border: OutlineInputBorder()),
       onSubmitted: (value) => saveText(value),
+      onEditingComplete: () => endEditing(),
       focusNode: _focusNode,
+    );
+  }
+
+  Widget _buildForNotEditing(BuildContext context) {
+    return Row(
+      children: [
+        Text(widget.textfield.textEntry),
+        IconButton(
+          onPressed: () {
+            setState(() {
+              _editing = true;
+            });
+          },
+          icon: const Icon(Icons.edit),
+          iconSize: 16,
+        )
+      ],
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    // Add the following Expanded widget to avoid getting an exception during rendering.
-    // See item #2 in the Problem Solving section in README.md file.
-    return Flexible(
-      child: _buildForEditing(context),
-    );
+    if (_editing) {
+      // Add the following Expanded widget to avoid getting an exception during rendering.
+      // See item #2 in the Problem Solving section in README.md file.
+      return Flexible(
+        child: _buildForEditing(context),
+      );
+    } else {
+      return _buildForNotEditing(context);
+    }
   }
 }

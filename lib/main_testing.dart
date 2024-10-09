@@ -13,11 +13,13 @@ CborValue buildSampleFullUpdate1() {
   });
 
   var cmd1 = CborMap({
+    CborString("CommandIssued"): const CborBool(false),
     CborString("Label"): CborString("Press Me!"),
     CborString("Status"): const CborSmallInt(0),
   });
 
   var cmd2 = CborMap({
+    CborString("CommandIssued"): const CborBool(false),
     CborString("Label"): CborString("Click Here! (disable)"),
     CborString("Status"): const CborSmallInt(1),
   });
@@ -51,18 +53,21 @@ CborValue buildSampleFullUpdate1() {
 
 CborValue buildSampleFullUpdate2() {
   var cmd1 = CborMap({
+    CborString("CommandIssued"): const CborBool(false),
     CborString("Label"): CborString("(Enabled)"),
     CborString("Status"): const CborSmallInt(0),
     CborString("B.Embodiment"): CborString("outlined-button")
   });
 
   var cmd2 = CborMap({
+    CborString("CommandIssued"): const CborBool(false),
     CborString("Label"): CborString("(Disable))"),
     CborString("Status"): const CborSmallInt(1),
     CborString("B.Embodiment"): CborString("outlined-button")
   });
 
   var cmd3 = CborMap({
+    CborString("CommandIssued"): const CborBool(false),
     CborString("Label"): CborString("(Hidden)"),
     CborString("Status"): const CborSmallInt(2),
     CborString("B.Embodiment"): CborString("outlined-button")
@@ -73,6 +78,73 @@ CborValue buildSampleFullUpdate2() {
   });
 
   return CborList([const CborBool(true), group1]);
+}
+
+CborValue text(String text) {
+  return CborMap({
+    CborString('Content'): CborString(text),
+  });
+}
+
+CborValue textField(String textEntry) {
+  return CborMap({
+    CborString('TextEntry'): CborString(textEntry),
+  });
+}
+
+CborValue row(
+    [CborValue col0 = const CborNull(),
+    CborValue col1 = const CborNull(),
+    CborValue col2 = const CborNull()]) {
+  var args = [col0];
+  if (col1 is! CborNull) {
+    args.add(col1);
+  }
+  if (col2 is! CborNull) {
+    args.add(col2);
+  }
+
+  return CborList(args);
+}
+
+CborValue buildTableExample() {
+  var rows = CborList([
+    row(text('0'), textField('A')),
+    row(text('1'), textField('B')),
+    row(text('2'), textField('C')),
+    row(text('3'), textField('D')),
+    row(text('4'), textField('E')),
+    row(text('5'), textField('F')),
+    row(text('6'), textField('G')),
+    row(text('7'), textField('H')),
+    row(text('8'), textField('I')),
+    row(text('10'), textField('J')),
+  ]);
+
+  var templateRow = row(text(''), textField(''));
+
+  var table = CborMap({
+    CborString('Rows'): CborList(rows),
+    CborString('TemplateRow'): templateRow,
+  });
+
+  return CborList([const CborBool(true), table]);
+}
+
+CborValue buildTextFieldExample() {
+  var textField1 = CborMap({
+    CborString('TextEntry'): CborString(''),
+  });
+
+  var textField2 = CborMap({
+    CborString('TextEntry'): CborString(''),
+  });
+
+  var chk = CborMap({
+    CborString('Checked'): const CborBool(false),
+  });
+
+  return CborList([const CborBool(true), textField1, textField2, chk]);
 }
 
 CborValue buildToggleUpdate(bool defaultButton) {
@@ -109,6 +181,6 @@ void eventHandler(EventType eventType, PKey pkey, CborMap fieldUpdates) {
 final _model = PrimitiveModel(eventHandler);
 
 PrimitiveModel initializeTestingModel() {
-  _model.updateFromCbor(buildSampleFullUpdate1());
+  _model.updateFromCbor(buildTextFieldExample());
   return _model;
 }
