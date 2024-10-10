@@ -33,18 +33,29 @@ class TableEmbodiment extends StatelessWidget {
     for (var heading in table.headings) {
       headerFingerprint = "$headerFingerprint|$heading";
 
+/*
       columnsD.add(DataColumn(
           label: Expanded(
         child: Text(heading),
       )));
+    */
+
+      columnsD.add(DataColumn(
+        label: Text(heading),
+      ));
     }
 
     // Add additional headings to if needed to reach total num. columns
     for (int i = columnsD.length; i < totalNumColumns; i++) {
+      /*
       columnsD.add(const DataColumn(
           label: Expanded(
         child: Text(''),
       )));
+*/
+      columnsD.add(const DataColumn(
+        label: Text(''),
+      ));
     }
 
     // Build the data rows from primitive rows

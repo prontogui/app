@@ -26,6 +26,10 @@ class _TextFieldEmbodimentState extends State<TextFieldEmbodiment> {
     _focusNode = FocusNode();
     _focusNode.addListener(() {
       setState(() => _hasFocus = _focusNode.hasFocus);
+      // Save text changes upon losing focus
+      if (!_hasFocus) {
+        saveText(_controller.text);
+      }
     });
   }
 
@@ -37,9 +41,15 @@ class _TextFieldEmbodimentState extends State<TextFieldEmbodiment> {
   }
 
   void saveText(String value) {
-    setState(() {
-      widget.textfield.enterText(value);
-    });
+    // Do nothing if text hasn't changed
+    if (value == widget.textfield.textEntry) {
+      return;
+    }
+
+    //setState(() {
+    widget.textfield.enterText(value);
+    print("Text saved:  $value");
+    //});
   }
 
   Widget _buildForEditing(BuildContext context) {

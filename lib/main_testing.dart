@@ -181,6 +181,6 @@ void eventHandler(EventType eventType, PKey pkey, CborMap fieldUpdates) {
 final _model = PrimitiveModel(eventHandler);
 
 PrimitiveModel initializeTestingModel() {
-  _model.updateFromCbor(buildTextFieldExample());
+  _model.updateFromCbor(buildTableExample());
   return _model;
 }
