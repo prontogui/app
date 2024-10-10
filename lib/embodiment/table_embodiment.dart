@@ -38,7 +38,7 @@ class TableEmbodiment extends StatelessWidget {
           label: Expanded(
         child: Text(heading),
       )));
-    */
+*/
 
       columnsD.add(DataColumn(
         label: Text(heading),
@@ -47,7 +47,7 @@ class TableEmbodiment extends StatelessWidget {
 
     // Add additional headings to if needed to reach total num. columns
     for (int i = columnsD.length; i < totalNumColumns; i++) {
-      /*
+/*
       columnsD.add(const DataColumn(
           label: Expanded(
         child: Text(''),

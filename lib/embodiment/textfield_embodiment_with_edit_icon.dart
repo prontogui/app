@@ -80,11 +80,10 @@ class _TextFieldEmbodimentState extends State<TextFieldEmbodiment> {
   @override
   Widget build(BuildContext context) {
     if (_editing) {
-      // Add the following Expanded widget to avoid getting an exception during rendering.
+      // Originally I added an Expanded widget here to avoid getting an exception during rendering.
       // See item #2 in the Problem Solving section in README.md file.
-      return Flexible(
-        child: _buildForEditing(context),
-      );
+      // I have since changed to a Flexible widget [aj]
+      return _buildForEditing(context);
     } else {
       return _buildForNotEditing(context);
     }

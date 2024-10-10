@@ -70,8 +70,10 @@ class CommandImpl extends PrimitiveBase implements Command {
         label = cborToString(v);
       case FKey.status:
         status = cborToInt(v);
+      case FKey.invalidFieldName:
+        assert(false, 'invalid field name');
       default:
-        assert(false);
+        assert(false, 'primitive does not support field $fkey');
     }
   }
 }

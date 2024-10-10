@@ -104,7 +104,7 @@ void main(List<String> args) async {
   late PGComm comm;
   late PrimitiveModel model;
 
-  const isTesting = false;
+  const isTesting = true;
 
   if (isTesting) {
     model = initializeTestingModel();

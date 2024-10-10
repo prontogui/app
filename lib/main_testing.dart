@@ -56,21 +56,21 @@ CborValue buildSampleFullUpdate2() {
     CborString("CommandIssued"): const CborBool(false),
     CborString("Label"): CborString("(Enabled)"),
     CborString("Status"): const CborSmallInt(0),
-    CborString("B.Embodiment"): CborString("outlined-button")
+    CborString("Embodiment"): CborString("outlined-button")
   });
 
   var cmd2 = CborMap({
     CborString("CommandIssued"): const CborBool(false),
     CborString("Label"): CborString("(Disable))"),
     CborString("Status"): const CborSmallInt(1),
-    CborString("B.Embodiment"): CborString("outlined-button")
+    CborString("Embodiment"): CborString("outlined-button")
   });
 
   var cmd3 = CborMap({
     CborString("CommandIssued"): const CborBool(false),
     CborString("Label"): CborString("(Hidden)"),
     CborString("Status"): const CborSmallInt(2),
-    CborString("B.Embodiment"): CborString("outlined-button")
+    CborString("Embodiment"): CborString("outlined-button"),
   });
 
   var group1 = CborMap({
@@ -181,6 +181,6 @@ void eventHandler(EventType eventType, PKey pkey, CborMap fieldUpdates) {
 final _model = PrimitiveModel(eventHandler);
 
 PrimitiveModel initializeTestingModel() {
-  _model.updateFromCbor(buildTableExample());
+  _model.updateFromCbor(buildSampleFullUpdate2());
   return _model;
 }

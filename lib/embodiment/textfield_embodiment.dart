@@ -46,10 +46,7 @@ class _TextFieldEmbodimentState extends State<TextFieldEmbodiment> {
       return;
     }
 
-    //setState(() {
     widget.textfield.enterText(value);
-    print("Text saved:  $value");
-    //});
   }
 
   Widget _buildForEditing(BuildContext context) {
@@ -71,8 +68,12 @@ class _TextFieldEmbodimentState extends State<TextFieldEmbodiment> {
   Widget build(BuildContext context) {
     // Add the following Expanded widget to avoid getting an exception during rendering.
     // See item #2 in the Problem Solving section in README.md file.
+/*
     return Flexible(
       child: _buildForEditing(context),
     );
+*/
+
+    return _buildForEditing(context);
   }
 }

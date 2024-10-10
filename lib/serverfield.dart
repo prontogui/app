@@ -71,8 +71,7 @@ class _ServerFieldState extends State<ServerField> {
   Widget build(BuildContext context) {
     // Add the following Expanded widget to avoid getting an exception during rendering.
     // See item #2 in the Problem Solving section in README.md file.
-    return Expanded(
-      child: _buildTextField(context),
-    );
+    // The Expanded widget was removed. [10/10/24 - aj]
+    return _buildTextField(context);
   }
 }
