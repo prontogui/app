@@ -28,11 +28,6 @@ abstract class TableP {
   /// Status represents whether the table is enabled (status = 0), disabled (status = 1),
   /// or hidden (status = 2).
   int get status;
-
-  /// Accessor for the TemplateRow field.
-  ///
-  /// The template for how each row should look, feel, and behave.
-  List<Primitive> get templateRow;
 }
 
 class TableImpl extends PrimitiveBase implements TableP {
@@ -53,10 +48,6 @@ class TableImpl extends PrimitiveBase implements TableP {
   @override
   int status = 0;
 
-  /// Storage for the TemplateRow field.
-  @override
-  List<Primitive> templateRow = [];
-
   // Overrides for PrimitiveBase class.
   @override
   bool get isNotificationPoint {
@@ -75,8 +66,6 @@ class TableImpl extends PrimitiveBase implements TableP {
         rows = createPrimitivesFromCborList2D(v, 0);
       case FKey.status:
         status = cborToInt(v);
-      case FKey.templateRow:
-        templateRow = createPrimitivesFromCborList1D(v, 1);
       default:
         assert(false);
     }
@@ -93,14 +82,12 @@ class TableImpl extends PrimitiveBase implements TableP {
       assert(rowIndex < rows.length);
 
       var colIndex = locator.nextIndex();
-      assert(colIndex < rows.length);
+      assert(colIndex < rows[rowIndex].length);
 
       return rows[rowIndex][colIndex];
     }
-    assert(fieldIndex == 1);
-    var templateIndex = locator.nextIndex();
-    assert(templateIndex < templateRow.length);
-
-    return templateRow[templateIndex];
+    // TODO:  log this error somehow
+    assert(false, 'cannot locate descendent at fieldIndex = $fieldIndex');
+    throw Exception('cannot locate descendent at fieldIndex = $fieldIndex');
   }
 }

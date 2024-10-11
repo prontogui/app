@@ -10,11 +10,17 @@ import 'package:app/primitive/primitive.dart' as pri;
 import 'embodifier.dart';
 import 'package:flutter/material.dart';
 import 'package:app/primitive/text.dart' as pri;
+import '../embodiment_properties/list_embodiment_properties.dart';
 
 class ListEmbodiment extends StatefulWidget {
-  const ListEmbodiment({super.key, required this.list});
+  ListEmbodiment(
+      {super.key,
+      required this.list,
+      required Map<String, dynamic>? embodimentMap})
+      : embodimentProps = ListEmbodimentProperties.fromMap(embodimentMap);
 
   final pri.ListP list;
+  final ListEmbodimentProperties embodimentProps;
 
   @override
   State<ListEmbodiment> createState() {
@@ -31,49 +37,42 @@ class _ListEmbodimentState extends State<ListEmbodiment> {
     });
   }
 
-  Widget? builderForTextItems(BuildContext context, int index) {
+  Widget? builderForSingleItems(BuildContext context, int index) {
     var item = widget.list.listItems[index];
 
-    if (item is! pri.Text) {
-      // TODO:  show something better for error case.  Perhaps log an error also.
-      return const SizedBox(
-        child: Text("?"),
-      );
-    }
-
-    var text = item as pri.Text;
-
     return ListTile(
-      title: Text(text.content),
+      title: embodifySingleItem(context, item),
       onTap: () {
         setCurrentSelected(index);
       },
     );
   }
 
-  Widget? embodifyGroupItem(BuildContext context, pri.Group group,
-      pri.Group template, int itemIndex) {
-    if (itemIndex >= group.groupItems.length ||
-        itemIndex >= template.groupItems.length) {
+  Widget? embodifySingleItem(BuildContext context, pri.Primitive item) {
+    // Only certain primitives are supported
+    if (item is! pri.Text && item is! pri.Command && item is! pri.Check) {
+      // TODO:  show something better for error case.  Perhaps log an error also.
+      return const SizedBox(
+        child: Text("?"),
+      );
+    }
+
+    return embodifier!.buildPrimitive(context, item);
+  }
+
+  Widget? embodifyGroupItem(
+      BuildContext context, pri.Group group, int itemIndex) {
+    if (itemIndex >= group.groupItems.length) {
       return null;
     }
 
     var groupItem = group.groupItems[itemIndex];
-    var templateItem = template.groupItems[itemIndex];
 
-    // Only certain primitives are supported
-    if (templateItem is! pri.Text &&
-        groupItem is! pri.Command &&
-        templateItem is! pri.Check) {
-      return null;
-    }
-
-    return embodifier!.buildPrimitive(context, groupItem, templateItem);
+    return embodifySingleItem(context, groupItem);
   }
 
-  Widget? builderForGroupItems(BuildContext context, int index) {
+  Widget? builderForCardItems(BuildContext context, int index) {
     var item = widget.list.listItems[index];
-    var template = widget.list.templateItem as pri.Group;
 
     if (item is! pri.Group) {
       // TODO:  show something better for error case.  Perhaps log an error also.
@@ -83,10 +82,10 @@ class _ListEmbodimentState extends State<ListEmbodiment> {
     }
 
     var groupItem = item as pri.Group;
-    var leading = embodifyGroupItem(context, groupItem, template, 0);
-    var title = embodifyGroupItem(context, groupItem, template, 1);
-    var subtitle = embodifyGroupItem(context, groupItem, template, 2);
-    var trailing = embodifyGroupItem(context, groupItem, template, 3);
+    var leading = embodifyGroupItem(context, groupItem, 0);
+    var title = embodifyGroupItem(context, groupItem, 1);
+    var subtitle = embodifyGroupItem(context, groupItem, 2);
+    var trailing = embodifyGroupItem(context, groupItem, 3);
 
     return ListTile(
       leading: leading,
@@ -99,24 +98,23 @@ class _ListEmbodimentState extends State<ListEmbodiment> {
     );
   }
 
-  NullableIndexedWidgetBuilder? mapTemplateItemToBuilderFunction(
-      pri.Primitive? templateItem) {
-    // Text primitive?
-    if (templateItem is pri.Text) {
-      return builderForTextItems;
+  NullableIndexedWidgetBuilder? mapToBuilderFunction() {
+    var embodiment = widget.embodimentProps.embodiment;
 
-      // Group primitive?
-    } else if (templateItem is pri.Group) {
-      return builderForGroupItems;
-    } else {
-      return null;
+    switch (embodiment) {
+      case 'normal-list':
+        return builderForSingleItems;
+      case 'card-list':
+        return builderForCardItems;
+      default:
+        return null;
     }
   }
 
   @override
   Widget build(BuildContext context) {
     // Determine the right ListView builder based on the List primitive TemplateItem.
-    var builder = mapTemplateItemToBuilderFunction(widget.list.templateItem);
+    var builder = mapToBuilderFunction();
 
     if (builder == null) {
       // TODO:  show an error box and log an error
@@ -136,9 +134,9 @@ class _ListEmbodimentState extends State<ListEmbodiment> {
     // which will cause an exception of non-zero flex but the vertical constraints are unbounded.
     // For a great explanation, refer to documentation on Column widget.  This video is also
     // helpful and amusing:  https://youtu.be/jckqXR5CrPI
-    return Expanded(
-      child: ListView.builder(
-          itemCount: widget.list.listItems.length, itemBuilder: builder),
-    );
+    //return Expanded(child:
+    return ListView.builder(
+        itemCount: widget.list.listItems.length, itemBuilder: builder);
+    //);
   }
 }

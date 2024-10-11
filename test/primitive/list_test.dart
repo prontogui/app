@@ -18,7 +18,6 @@ void main() {
 
     expect(pimpl.listItems.length, equals(0));
     expect(pimpl.selected, equals(-1));
-    expect(pimpl.templateItem, isNull);
   });
 
   test('Update fields from CBOR.', () {
@@ -29,7 +28,6 @@ void main() {
     expect(pimpl.listItems[0].getParent(), equals(pimpl));
     expect(pimpl.listItems[1].getParent(), equals(pimpl));
     expect(pimpl.selected, equals(1));
-    expect(pimpl.templateItem, isNotNull);
   });
 
   test(

@@ -16,40 +16,33 @@ class CommandEmbodiment extends StatelessWidget {
   final Command command;
   final CommandEmbodimentProperties embodimentProps;
 
-  Widget _buildAsEnabledElevatedButton(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () {
-        command.issueCommand();
-      },
-      child: Text(command.label),
-    );
-  }
+  Widget _buildAsElevatedButton(BuildContext context) {
+    Function()? action;
 
-  Widget _buildAsEnabledOutlinedButton(BuildContext context) {
-    return OutlinedButton(
-      onPressed: () {
+    if (command.status == 0) {
+      action = () {
         command.issueCommand();
-      },
-      child: Text(command.label),
-    );
-  }
-
-  Widget _buildAsEnabled(BuildContext context) {
-    switch (embodimentProps.embodiment) {
-      case "outlined-button":
-        return _buildAsEnabledOutlinedButton(context);
-      case "elevated-button":
-        return _buildAsEnabledElevatedButton(context);
-      default:
-        // TODO:  invalid embodiment setting - log an error and maybe throw an exception
-        return _buildAsHidden(context);
+      };
     }
+
+    return ElevatedButton(
+      onPressed: action,
+      child: Text(command.label),
+    );
   }
 
-  Widget _buildAsDisabled(BuildContext context) {
-    return FloatingActionButton.extended(
-      onPressed: null,
-      label: Text(command.label),
+  Widget _buildAsOutlinedButton(BuildContext context) {
+    Function()? action;
+
+    if (command.status == 0) {
+      action = () {
+        command.issueCommand();
+      };
+    }
+
+    return OutlinedButton(
+      onPressed: action,
+      child: Text(command.label),
     );
   }
 
@@ -59,13 +52,18 @@ class CommandEmbodiment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    switch (command.status) {
-      case 0:
-        return _buildAsEnabled(context);
-      case 1:
-        return _buildAsDisabled(context);
-      case 2:
+    // Is the command hidden?
+    if (command.status == 2) {
+      return _buildAsHidden(context);
+    }
+
+    switch (embodimentProps.embodiment) {
+      case "outlined-button":
+        return _buildAsOutlinedButton(context);
+      case "elevated-button":
+        return _buildAsElevatedButton(context);
       default:
+        // TODO:  invalid embodiment setting - log an error and maybe throw an exception
         return _buildAsHidden(context);
     }
   }

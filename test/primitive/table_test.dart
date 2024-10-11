@@ -15,7 +15,6 @@ void main() {
     var pimpl = TableImpl(args.get);
 
     expect(pimpl.rows.length, equals(0));
-    expect(pimpl.templateRow.length, equals(0));
   });
 
   test('Update fields from CBOR.', () {
@@ -30,10 +29,6 @@ void main() {
     expect(pimpl.rows[0][1].getParent(), equals(pimpl));
     expect(pimpl.rows[1][0].getParent(), equals(pimpl));
     expect(pimpl.rows[1][1].getParent(), equals(pimpl));
-
-    expect(pimpl.templateRow.length, equals(2));
-    expect(pimpl.templateRow[0].getParent(), equals(pimpl));
-    expect(pimpl.templateRow[1].getParent(), equals(pimpl));
   });
 
   test('Locate descendant.', () {

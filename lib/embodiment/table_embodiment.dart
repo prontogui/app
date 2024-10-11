@@ -5,6 +5,7 @@
 import 'package:app/primitive/table.dart';
 import 'package:app/embodiment/embodifier.dart';
 import 'package:flutter/material.dart';
+import 'dart:math';
 
 class TableEmbodiment extends StatelessWidget {
   const TableEmbodiment({super.key, required this.table});
@@ -18,8 +19,11 @@ class TableEmbodiment extends StatelessWidget {
       return const SizedBox();
     }
 
-    // Get the total number of columns to display
-    var totalNumColumns = table.templateRow.length;
+    // Figure out how max # columns to display from headings and length of first row
+    int totalNumColumns = table.headings.length;
+    if (table.rows.isNotEmpty) {
+      totalNumColumns = max(totalNumColumns, table.rows[0].length);
+    }
 
     // Handle the case where table has an empty template row.
     if (totalNumColumns == 0) {
@@ -33,13 +37,6 @@ class TableEmbodiment extends StatelessWidget {
     for (var heading in table.headings) {
       headerFingerprint = "$headerFingerprint|$heading";
 
-/*
-      columnsD.add(DataColumn(
-          label: Expanded(
-        child: Text(heading),
-      )));
-*/
-
       columnsD.add(DataColumn(
         label: Text(heading),
       ));
@@ -47,12 +44,6 @@ class TableEmbodiment extends StatelessWidget {
 
     // Add additional headings to if needed to reach total num. columns
     for (int i = columnsD.length; i < totalNumColumns; i++) {
-/*
-      columnsD.add(const DataColumn(
-          label: Expanded(
-        child: Text(''),
-      )));
-*/
       columnsD.add(const DataColumn(
         label: Text(''),
       ));
@@ -84,12 +75,6 @@ class TableEmbodiment extends StatelessWidget {
         columns: columnsD,
         source: ds,
         key: Key(headerFingerprint));
-    /*
-    return SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child: DataTable(columns: columnsD, rows: rowsD),
-    );
-		*/
   }
 }
 

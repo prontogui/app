@@ -29,14 +29,6 @@ abstract class ListP {
   /// to #items - 1 (last item).  It is -1 if nothing is selected.
   int get selected;
 
-  /// Accessor for the TemplateItem field.
-  ///
-  /// The template item desribes how each repeated item in the list is shown.  This
-  /// is primarily done using the template item's embodiment field.  List items can
-  /// have complexity, e.g. using a Group primitive.  Therefore, the template item should
-  /// have the identical structure as every item in the list.
-  Primitive? get templateItem;
-
   /// Update the selected field and notify listeners with an update.
   ///
   /// Embodiments call this method whenever the selection is changed.
@@ -56,9 +48,6 @@ class ListImpl extends PrimitiveBase implements ListP {
 
   @override
   int selected = -1;
-
-  @override
-  Primitive? templateItem;
 
   /// Notify listeners that selection was updated.
   void notifyUpdated() {
@@ -91,8 +80,6 @@ class ListImpl extends PrimitiveBase implements ListP {
         listItems = createPrimitivesFromCborList1D(v, 0);
       case FKey.selected:
         selected = cborToInt(v);
-      case FKey.templateItem:
-        templateItem = createPrimitiveFromCborMap(v, 1);
       default:
         assert(false);
     }
@@ -110,7 +97,9 @@ class ListImpl extends PrimitiveBase implements ListP {
 
       return listItems[itemIndex];
     }
-    assert(fieldIndex == 1);
-    return templateItem!;
+
+    // TODO:  log this error somehow
+    assert(false, 'cannot locate descendent at fieldIndex = $fieldIndex');
+    throw Exception('cannot locate descendent at fieldIndex = $fieldIndex');
   }
 }

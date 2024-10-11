@@ -92,6 +92,35 @@ CborValue textField(String textEntry) {
   });
 }
 
+CborValue command(String label) {
+  return CborMap({
+    CborString('Label'): CborString(label),
+    CborString('CommandIssued'): const CborBool(false),
+  });
+}
+
+CborValue group([
+  CborValue? v1,
+  CborValue? v2,
+  CborValue? v3,
+  CborValue? v4,
+]) {
+  var items = CborList([v1!]);
+  if (v2 != null) {
+    items.add(v2);
+  }
+  if (v3 != null) {
+    items.add(v3);
+  }
+  if (v4 != null) {
+    items.add(v4);
+  }
+
+  return CborMap({
+    CborString('GroupItems'): items,
+  });
+}
+
 CborValue row(
     [CborValue col0 = const CborNull(),
     CborValue col1 = const CborNull(),
@@ -147,17 +176,65 @@ CborValue buildTextFieldExample() {
   return CborList([const CborBool(true), textField1, textField2, chk]);
 }
 
-CborValue buildToggleUpdate(bool defaultButton) {
-  String embodiment = defaultButton ? "" : "outlined-button";
+CborValue buildList1() {
+  var items = CborList([
+    text('0'),
+    text('1'),
+    text('2'),
+    text('3'),
+    text('4'),
+    text('5'),
+    text('6'),
+    text('7'),
+    text('8'),
+    text('10'),
+  ]);
 
-  var cmdUpdate = CborMap({
-    CborString("B.Embodiment"): CborString(embodiment),
+  var list = CborMap({
+    CborString('ListItems'): items,
+    CborString('Selected'): const CborSmallInt(0),
   });
 
-  var pkey1 = CborList([const CborSmallInt(0), const CborSmallInt(0)]);
-  var pkey2 = CborList([const CborSmallInt(0), const CborSmallInt(1)]);
+  return CborList([const CborBool(true), list]);
+}
 
-  return CborList([const CborBool(false), pkey1, cmdUpdate, pkey2, cmdUpdate]);
+CborValue buildList2() {
+  var items = CborList([
+    group(text('#1'), text('Apple'), text('Sweet fruit'), text('10')),
+    group(text('#2'), text('Peanut'), text('Nutty snack'), text('5')),
+    group(text('#3'), text('Steak'), text('Protein source'), text('2')),
+    group(text('#4'), text('Cigar'), text('Flavorful smoke'), text('9')),
+    group(text('#5'), text('Banana'), text('Smoothie ingredient')),
+    group(text('#6'), text('Acorn')),
+    group(text('#7')),
+  ]);
+
+  var list = CborMap({
+    CborString('ListItems'): items,
+    CborString('Selected'): const CborSmallInt(0),
+    CborString('Embodiment'): CborString('card-list'),
+  });
+
+  return CborList([const CborBool(true), list]);
+}
+
+CborValue buildList3() {
+  var items = CborList([
+    text('#1'),
+    command('Accept 1'),
+    text('#2'),
+    command('Accept 2'),
+    text('#3'),
+    command('Accept 3'),
+  ]);
+
+  var list = CborMap({
+    CborString('ListItems'): items,
+    CborString('Selected'): const CborSmallInt(0),
+    CborString('Embodiment'): CborString('normal-list'),
+  });
+
+  return CborList([const CborBool(true), list]);
 }
 
 /*
@@ -181,6 +258,6 @@ void eventHandler(EventType eventType, PKey pkey, CborMap fieldUpdates) {
 final _model = PrimitiveModel(eventHandler);
 
 PrimitiveModel initializeTestingModel() {
-  _model.updateFromCbor(buildSampleFullUpdate2());
+  _model.updateFromCbor(buildList3());
   return _model;
 }

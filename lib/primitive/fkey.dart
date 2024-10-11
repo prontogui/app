@@ -28,8 +28,6 @@ enum FKey {
   state,
   status,
   tag,
-  templateItem,
-  templateRow,
   textEntry,
   validExtensions,
 
@@ -61,8 +59,6 @@ final fkeyToFieldnameMap = {
   FKey.state: 'State',
   FKey.status: 'Status',
   FKey.tag: 'Tag',
-  FKey.templateItem: 'TemplateItem',
-  FKey.templateRow: 'TemplateRow',
   FKey.textEntry: 'TextEntry',
   FKey.validExtensions: 'ValidExtensions'
 };

@@ -92,7 +92,7 @@ class Embodifier extends InheritedWidget {
       return TristateEmbodiment(tristate: tristate);
     } else if (primitive is pri.ListP) {
       var listp = primitive as pri.ListP;
-      return ListEmbodiment(list: listp);
+      return ListEmbodiment(list: listp, embodimentMap: embodimentMap);
     } else if (primitive is pri.TextField) {
       var tf = primitive as pri.TextField;
       return TextFieldEmbodiment(textfield: tf, key: UniqueKey());
