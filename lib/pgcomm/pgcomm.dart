@@ -298,12 +298,14 @@ class PGComm extends ChangeNotifier {
   Stream<PGUpdate> _outgoingUpdates() async* {
     for (;;) {
       await _completer.future;
-      // print('Sending update XXX ');
-      yield _response;
+      if (_response.cbor.isNotEmpty) {
+        yield _response;
+      }
       _completer = Completer();
     }
   }
 
+  // Starts (or restarts) the timer for checking in with the server.
   void _startTimer(int period) {
     if (_timer != null) {
       _timer!.cancel();
@@ -322,6 +324,8 @@ class PGComm extends ChangeNotifier {
         notifyListeners();
       }
       _state = PGCommState.active;
+
+      // reset the timer for checking in with server
       _startTimer(_serverCheckinPeriod);
 
       if (pgUpdate.cbor.isNotEmpty) {
@@ -348,8 +352,13 @@ class PGComm extends ChangeNotifier {
       _call = _stub!.streamUpdates(_outgoingUpdates());
 
       await _incomingUpdates();
+
+      // This is the main excpetion catcher for when communication problems arise
     } catch (err) {
       print('Error occurred waiting for incoming updates:  $err');
+
+      // Clear any pending response heading back to server
+      _response = PGUpdate();
 
       if (_state == PGCommState.active ||
           _state == PGCommState.reestablishmentDelay) {
