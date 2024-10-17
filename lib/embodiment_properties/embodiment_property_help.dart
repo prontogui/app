@@ -135,3 +135,26 @@ double getNumericPropOrDefault(
 
   return n;
 }
+
+bool getBoolPropOrDefault(Map<String, dynamic>? embodimentMap,
+    String propertyName, bool defaultValue) {
+  if (embodimentMap == null) {
+    return defaultValue;
+  }
+  var value = embodimentMap[propertyName];
+  if (value == null) {
+    return defaultValue;
+  }
+  if (value.runtimeType != String) {
+    throw Exception('embodiment property value is not a string');
+  }
+
+  var boolString = value as String;
+
+  var b = bool.tryParse(boolString);
+  if (b == null) {
+    return defaultValue;
+  }
+
+  return b;
+}

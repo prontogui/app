@@ -39,17 +39,6 @@ class _ListEmbodimentState extends State<ListEmbodiment> {
     });
   }
 
-  Widget? builderForSingleItems(BuildContext context, int index) {
-    var item = widget.list.listItems[index];
-
-    return ListTile(
-      title: embodifySingleItem(context, item),
-      onTap: () {
-        setCurrentSelected(index);
-      },
-    );
-  }
-
   Widget? embodifySingleItem(BuildContext context, pri.Primitive item) {
     // Only certain primitives are supported
     if (item is! pri.Text && item is! pri.Command && item is! pri.Check) {
@@ -73,7 +62,20 @@ class _ListEmbodimentState extends State<ListEmbodiment> {
     return embodifySingleItem(context, groupItem);
   }
 
-  Widget? builderForCardItems(BuildContext context, int index) {
+  Widget? builderForSingleItem(BuildContext context, int index) {
+    var item = widget.list.listItems[index];
+
+    return ListTile(
+      title: embodifySingleItem(context, item),
+      selected: index == widget.list.selected,
+      isThreeLine: false,
+      onTap: () {
+        setCurrentSelected(index);
+      },
+    );
+  }
+
+  Widget? builderForCardItem(BuildContext context, int index) {
     var item = widget.list.listItems[index];
 
     if (item is! pri.Group) {
@@ -94,6 +96,7 @@ class _ListEmbodimentState extends State<ListEmbodiment> {
       title: title,
       subtitle: subtitle,
       trailing: trailing,
+      selected: index == widget.list.selected,
       onTap: () {
         setCurrentSelected(index);
       },
@@ -105,9 +108,9 @@ class _ListEmbodimentState extends State<ListEmbodiment> {
 
     switch (embodiment) {
       case 'normal-list':
-        return builderForSingleItems;
+        return builderForSingleItem;
       case 'card-list':
-        return builderForCardItems;
+        return builderForCardItem;
       default:
         return null;
     }
@@ -131,29 +134,35 @@ class _ListEmbodimentState extends State<ListEmbodiment> {
 
     // Grab the embodifier for other functions in the class to use.
     embodifier ??= Embodifier.of(context);
+    var props = widget.embodimentProps;
 
-    // We use an Expanded widget for the case when there is a Column or ListView parent,
-    // which will cause an exception of non-zero flex but the vertical constraints are unbounded.
-    // For a great explanation, refer to documentation on Column widget.  This video is also
-    // helpful and amusing:  https://youtu.be/jckqXR5CrPI
+    Widget content = ListView.builder(
+        itemCount: widget.list.listItems.length, itemBuilder: builder);
 
-    if (widget.parentWidgetType == "Row" ||
-        widget.parentWidgetType == "Column") {
-      return Flexible(
-        child: ListView.builder(
-            itemCount: widget.list.listItems.length, itemBuilder: builder),
+    if (!props.width.isNaN && !props.height.isNaN) {
+      content = SizedBox(
+        width: props.width,
+        height: props.height,
+        child: content,
       );
-/*
-      return SizedBox(
-        width: 300,
-        height: 300,
-        child: ListView.builder(
-            itemCount: widget.list.listItems.length, itemBuilder: builder),
+    } else if (!props.width.isNaN) {
+      content = SizedBox(
+        width: props.width,
+        child: content,
       );
-*/
+    } else if (!props.height.isNaN) {
+      content = SizedBox(
+        height: props.height,
+        child: content,
+      );
     }
 
-    return ListView.builder(
-        itemCount: widget.list.listItems.length, itemBuilder: builder);
+    if (widget.parentWidgetType == "Column" && content is! SizedBox) {
+      content = Flexible(
+        child: content,
+      );
+    }
+
+    return content;
   }
 }

@@ -57,13 +57,10 @@ class Embodifier extends InheritedWidget {
   /// Builds the particular embodiment for a primitive.
   ///
   /// This is meant to be used internally to this class its closures.
-  Widget _buildEmbodiment(BuildContext context, Primitive primitive,
-      String parentWidgetType, Primitive? templatePrimitive) {
+  Widget _buildEmbodiment(
+      BuildContext context, Primitive primitive, String parentWidgetType) {
     Map<String, dynamic>? embodimentMap;
 
-    if (templatePrimitive != null) {
-      embodimentMap = templatePrimitive.getEmbodimentProperties();
-    }
     embodimentMap ??= primitive.getEmbodimentProperties();
 
     if (primitive is pri.Command) {
@@ -135,15 +132,13 @@ class Embodifier extends InheritedWidget {
       return ListenableBuilder(
         listenable: notifier,
         builder: (BuildContext context, Widget? child) {
-          return _buildEmbodiment(
-              context, primitive, parentWidgetType, templatePrimitive);
+          return _buildEmbodiment(context, primitive, parentWidgetType);
         },
         child: null,
       );
     }
 
-    return _buildEmbodiment(
-        context, primitive, parentWidgetType, templatePrimitive);
+    return _buildEmbodiment(context, primitive, parentWidgetType);
   }
 
   /// Builds a list of embodiments corresponding to a list of primitives.
@@ -159,22 +154,4 @@ class Embodifier extends InheritedWidget {
 
     return widgets;
   }
-
-/*
-  /// Builds a list of embodiments corresponding to a list of primitives.
-  List<Widget> buildPrimitiveListExpanded(
-      BuildContext context, List<Primitive> primitives) {
-    var widgets = <Widget>[];
-
-    for (final primitive in primitives) {
-      widgets.add(
-        Expanded(
-          child: buildPrimitive(context, primitive),
-        ),
-      );
-    }
-
-    return widgets;
-  }
-  */
 }

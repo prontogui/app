@@ -4,8 +4,6 @@
 
 import 'package:app/embodiment/embodifier.dart';
 import 'package:app/primitive/frame.dart';
-import 'package:app/primitive/primitive.dart';
-import 'package:app/primitive/model.dart';
 import 'package:flutter/material.dart';
 import '../embodiment_properties/frame_embodiment_properties.dart';
 
@@ -16,7 +14,6 @@ class FrameEmbodiment extends StatelessWidget {
       required Map<String, dynamic>? embodimentMap,
       required this.parentWidgetType})
       : embodimentProps = FrameEmbodimentProperties.fromMap(embodimentMap);
-
   final Frame frame;
   final FrameEmbodimentProperties embodimentProps;
   final String parentWidgetType;
@@ -26,54 +23,60 @@ class FrameEmbodiment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    late Widget childContent;
+    late Widget content;
+    late bool wrapInExpanded;
 
     switch (embodimentProps.flowDirection) {
       case 'left-to-right':
-        var contentRow = Row(
-          children:
-              // This is very elegant but we'll see how it performs.  Documentation says
-              // stuff in .of method should work in O(1) time with a "small constant".
-              // An alternative approach is to pass Embodifier into constructor of each
-              // embodiment.
-              Embodifier.of(context)
-                  .buildPrimitiveList(context, frame.frameItems, "Row"),
+        content = Row(
+          children: Embodifier.of(context)
+              .buildPrimitiveList(context, frame.frameItems, "Row"),
         );
 
-        if (parentWidgetType == "Column" || parentWidgetType == "Row") {
-          childContent = Flexible(child: contentRow);
-        } else {
-          childContent = contentRow;
-        }
+        wrapInExpanded = (parentWidgetType == "Column");
 
       case 'top-to-bottom':
-        var columnContent = Column(
-          //mainAxisSize: MainAxisSize.min,
+        wrapInExpanded = true;
+
+        content = Column(
           children: Embodifier.of(context)
               .buildPrimitiveList(context, frame.frameItems, "Column"),
         );
 
-        if (parentWidgetType == "Column" || parentWidgetType == "Row") {
-          childContent = Flexible(child: columnContent);
-        } else {
-          childContent = columnContent;
-        }
+        wrapInExpanded = (parentWidgetType == "Row");
 
       default:
         // TODO:  handle this in some way - log an error, display something indicating error, and/or throw an exception
-        childContent = const SizedBox();
+        content = const SizedBox();
+
+        wrapInExpanded = false;
     }
 
-    assert(frame is Primitive);
-    var framePrimitive = frame as Primitive;
+    if (embodimentProps.border == 'outline') {
+      content = Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.black, width: 3.0),
+        ),
+        child: content,
+      );
 
-    // Is it a top-level primitive (i.e., a view)?
-    if (framePrimitive.getParent() is PrimitiveModel) {
-      return Scaffold(
-        body: Center(child: childContent),
+      content = Container(
+        padding: const EdgeInsets.all(10.0),
+        child: content,
       );
     }
 
-    return childContent;
+    if (wrapInExpanded) {
+      content = Expanded(child: content);
+    }
+
+    // Is it a top-level primitive (i.e., a view)?
+    if (parentWidgetType == "<Top>") {
+      content = Scaffold(
+        body: Center(child: content),
+      );
+    }
+
+    return content;
   }
 }

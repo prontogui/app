@@ -10,6 +10,7 @@ class FrameEmbodimentProperties {
   String embodiment;
   String layoutMethod;
   String flowDirection;
+  String border;
 
   static final Set<String> _embodimentChoices = {
     'other',
@@ -26,6 +27,11 @@ class FrameEmbodimentProperties {
     'top-to-bottom'
   };
 
+  static final Set<String> _borderChoices = {
+    'none',
+    'outline',
+  };
+
   bool get isViewFrame {
     return embodiment == 'full-view' || embodiment == 'dialog-view';
   }
@@ -34,7 +40,10 @@ class FrameEmbodimentProperties {
   /// should be called instead.
   @visibleForTesting
   FrameEmbodimentProperties(
-      {this.embodiment = "", this.layoutMethod = "", this.flowDirection = ""});
+      {this.embodiment = "",
+      this.layoutMethod = "",
+      this.flowDirection = "",
+      this.border = ""});
 
   FrameEmbodimentProperties.fromMap(Map<String, dynamic>? embodimentMap)
       : layoutMethod = getEnumStringProp(
@@ -42,5 +51,7 @@ class FrameEmbodimentProperties {
         flowDirection = getEnumStringProp(embodimentMap, 'flowDirection',
             'top-to-bottom', _flowDirectionChoices),
         embodiment = getEnumStringProp(
-            embodimentMap, 'embodiment', 'other', _embodimentChoices);
+            embodimentMap, 'embodiment', 'other', _embodimentChoices),
+        border =
+            getEnumStringProp(embodimentMap, 'border', 'none', _borderChoices);
 }
