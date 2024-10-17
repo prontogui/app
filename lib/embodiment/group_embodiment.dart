@@ -25,7 +25,8 @@ class GroupEmbodiment extends StatelessWidget {
           // stuff in .of method should work in O(1) time with a "small constant".
           // An alternative approach is to pass Embodifier into constructor of each
           // embodiment.
-          Embodifier.of(context).buildPrimitiveList(context, group.groupItems),
+          Embodifier.of(context)
+              .buildPrimitiveList(context, group.groupItems, "Row"),
     );
   }
 }

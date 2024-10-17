@@ -6,9 +6,11 @@ import 'package:app/primitive/textfield.dart' as pri;
 import 'package:flutter/material.dart';
 
 class TextFieldEmbodiment extends StatefulWidget {
-  const TextFieldEmbodiment({super.key, required this.textfield});
+  const TextFieldEmbodiment(
+      {super.key, required this.textfield, required this.parentWidgetType});
 
   final pri.TextField textfield;
+  final String parentWidgetType;
 
   @override
   State<TextFieldEmbodiment> createState() => _TextFieldEmbodimentState();
@@ -68,11 +70,20 @@ class _TextFieldEmbodimentState extends State<TextFieldEmbodiment> {
   Widget build(BuildContext context) {
     // Add the following Expanded widget to avoid getting an exception during rendering.
     // See item #2 in the Problem Solving section in README.md file.
+
+    if (widget.parentWidgetType == "Row" ||
+        widget.parentWidgetType == "Column") {
+      return Flexible(
+        child: _buildForEditing(context),
+      );
 /*
-    return Flexible(
-      child: _buildForEditing(context),
-    );
+      return SizedBox(
+        width: 300,
+        height: 100,
+        child: _buildForEditing(context),
+      );
 */
+    }
 
     return _buildForEditing(context);
   }

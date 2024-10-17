@@ -57,8 +57,8 @@ class Embodifier extends InheritedWidget {
   /// Builds the particular embodiment for a primitive.
   ///
   /// This is meant to be used internally to this class its closures.
-  Widget _buildEmbodiment(
-      BuildContext context, Primitive primitive, Primitive? templatePrimitive) {
+  Widget _buildEmbodiment(BuildContext context, Primitive primitive,
+      String parentWidgetType, Primitive? templatePrimitive) {
     Map<String, dynamic>? embodimentMap;
 
     if (templatePrimitive != null) {
@@ -92,13 +92,25 @@ class Embodifier extends InheritedWidget {
       return TristateEmbodiment(tristate: tristate);
     } else if (primitive is pri.ListP) {
       var listp = primitive as pri.ListP;
-      return ListEmbodiment(list: listp, embodimentMap: embodimentMap);
+      return ListEmbodiment(
+        list: listp,
+        embodimentMap: embodimentMap,
+        parentWidgetType: parentWidgetType,
+      );
     } else if (primitive is pri.TextField) {
       var tf = primitive as pri.TextField;
-      return TextFieldEmbodiment(textfield: tf, key: UniqueKey());
+      return TextFieldEmbodiment(
+        textfield: tf,
+        key: UniqueKey(),
+        parentWidgetType: parentWidgetType,
+      );
     } else if (primitive is pri.Frame) {
       var frame = primitive as pri.Frame;
-      return FrameEmbodiment(frame: frame, embodimentMap: embodimentMap);
+      return FrameEmbodiment(
+        frame: frame,
+        embodimentMap: embodimentMap,
+        parentWidgetType: parentWidgetType,
+      );
     } else if (primitive is pri.TableP) {
       var table = primitive as pri.TableP;
       return TableEmbodiment(table: table);
@@ -113,7 +125,8 @@ class Embodifier extends InheritedWidget {
 
   /// Builds the particular embodiment for a primitive and injects a listenable builder
   /// if the primitive is a notifification point.
-  Widget buildPrimitive(BuildContext context, Primitive primitive,
+  Widget buildPrimitive(
+      BuildContext context, Primitive primitive, String parentWidgetType,
       [Primitive? templatePrimitive]) {
     // Is this embodiment an update point?
     var notifier = primitive.doesNotify();
@@ -122,29 +135,32 @@ class Embodifier extends InheritedWidget {
       return ListenableBuilder(
         listenable: notifier,
         builder: (BuildContext context, Widget? child) {
-          return _buildEmbodiment(context, primitive, templatePrimitive);
+          return _buildEmbodiment(
+              context, primitive, parentWidgetType, templatePrimitive);
         },
         child: null,
       );
     }
 
-    return _buildEmbodiment(context, primitive, templatePrimitive);
+    return _buildEmbodiment(
+        context, primitive, parentWidgetType, templatePrimitive);
   }
 
   /// Builds a list of embodiments corresponding to a list of primitives.
-  List<Widget> buildPrimitiveList(
-      BuildContext context, List<Primitive> primitives) {
+  List<Widget> buildPrimitiveList(BuildContext context,
+      List<Primitive> primitives, String parentWidgetType) {
     var widgets = <Widget>[];
 
     for (final primitive in primitives) {
       widgets.add(
-        buildPrimitive(context, primitive),
+        buildPrimitive(context, primitive, parentWidgetType),
       );
     }
 
     return widgets;
   }
 
+/*
   /// Builds a list of embodiments corresponding to a list of primitives.
   List<Widget> buildPrimitiveListExpanded(
       BuildContext context, List<Primitive> primitives) {
@@ -160,4 +176,5 @@ class Embodifier extends InheritedWidget {
 
     return widgets;
   }
+  */
 }

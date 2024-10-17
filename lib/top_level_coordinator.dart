@@ -171,7 +171,7 @@ class _TopLevelCoordinatorState extends State<TopLevelCoordinator> {
         settings: RouteSettings(
             arguments: RouteArgs(index: index, frame: frame, isFullView: true)),
         builder: (BuildContext context) =>
-            embodifier.buildPrimitive(context, primitive));
+            embodifier.buildPrimitive(context, primitive, "MaterialPageRoute"));
   }
 
   /// Shows a new dialog-view frame.  Internally, this new view gets pushed onto the Navigator.
@@ -185,7 +185,8 @@ class _TopLevelCoordinatorState extends State<TopLevelCoordinator> {
             arguments:
                 RouteArgs(index: index, frame: frame, isFullView: false)),
         builder: (BuildContext context) {
-          return Dialog(child: embodifier.buildPrimitive(context, primitive));
+          return Dialog(
+              child: embodifier.buildPrimitive(context, primitive, "<Dialog>"));
         }).whenComplete(() {
       // Update the model to reflect that dialog was dismissed by the user
       frame.updateWasDismissed();

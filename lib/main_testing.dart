@@ -221,11 +221,8 @@ CborValue buildList2() {
 CborValue buildList3() {
   var items = CborList([
     text('#1'),
-    command('Accept 1'),
     text('#2'),
-    command('Accept 2'),
     text('#3'),
-    command('Accept 3'),
   ]);
 
   var list = CborMap({
@@ -234,7 +231,13 @@ CborValue buildList3() {
     CborString('Embodiment'): CborString('normal-list'),
   });
 
-  return CborList([const CborBool(true), list]);
+  var frame = CborMap({
+    CborString('FrameItems'): CborList([list]),
+    CborString('Showing'): const CborBool(true),
+    CborString('Embodiment'): CborString('full-view'),
+  });
+
+  return CborList([const CborBool(true), frame]);
 }
 
 /*

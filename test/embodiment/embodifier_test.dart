@@ -32,7 +32,7 @@ class TestWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Embodifier.of(context).buildPrimitive(context, primitive);
+    return Embodifier.of(context).buildPrimitive(context, primitive, "Center");
   }
 }
 

@@ -13,11 +13,13 @@ class FrameEmbodiment extends StatelessWidget {
   FrameEmbodiment(
       {super.key,
       required this.frame,
-      required Map<String, dynamic>? embodimentMap})
+      required Map<String, dynamic>? embodimentMap,
+      required this.parentWidgetType})
       : embodimentProps = FrameEmbodimentProperties.fromMap(embodimentMap);
 
   final Frame frame;
   final FrameEmbodimentProperties embodimentProps;
+  final String parentWidgetType;
 
   // Note:  when getting around to implementing a manual layout method, take a look
   // at PositionedDirectional class and Positioned widget.
@@ -28,21 +30,35 @@ class FrameEmbodiment extends StatelessWidget {
 
     switch (embodimentProps.flowDirection) {
       case 'left-to-right':
-        childContent = Row(
+        var contentRow = Row(
           children:
               // This is very elegant but we'll see how it performs.  Documentation says
               // stuff in .of method should work in O(1) time with a "small constant".
               // An alternative approach is to pass Embodifier into constructor of each
               // embodiment.
               Embodifier.of(context)
-                  .buildPrimitiveList(context, frame.frameItems),
+                  .buildPrimitiveList(context, frame.frameItems, "Row"),
         );
+
+        if (parentWidgetType == "Column" || parentWidgetType == "Row") {
+          childContent = Flexible(child: contentRow);
+        } else {
+          childContent = contentRow;
+        }
+
       case 'top-to-bottom':
-        childContent = Column(
+        var columnContent = Column(
           //mainAxisSize: MainAxisSize.min,
           children: Embodifier.of(context)
-              .buildPrimitiveList(context, frame.frameItems),
+              .buildPrimitiveList(context, frame.frameItems, "Column"),
         );
+
+        if (parentWidgetType == "Column" || parentWidgetType == "Row") {
+          childContent = Flexible(child: columnContent);
+        } else {
+          childContent = columnContent;
+        }
+
       default:
         // TODO:  handle this in some way - log an error, display something indicating error, and/or throw an exception
         childContent = const SizedBox();
@@ -56,8 +72,8 @@ class FrameEmbodiment extends StatelessWidget {
       return Scaffold(
         body: Center(child: childContent),
       );
-    } else {
-      return childContent;
     }
+
+    return childContent;
   }
 }

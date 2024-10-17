@@ -16,11 +16,13 @@ class ListEmbodiment extends StatefulWidget {
   ListEmbodiment(
       {super.key,
       required this.list,
-      required Map<String, dynamic>? embodimentMap})
+      required Map<String, dynamic>? embodimentMap,
+      required this.parentWidgetType})
       : embodimentProps = ListEmbodimentProperties.fromMap(embodimentMap);
 
   final pri.ListP list;
   final ListEmbodimentProperties embodimentProps;
+  final String parentWidgetType;
 
   @override
   State<ListEmbodiment> createState() {
@@ -57,7 +59,7 @@ class _ListEmbodimentState extends State<ListEmbodiment> {
       );
     }
 
-    return embodifier!.buildPrimitive(context, item);
+    return embodifier!.buildPrimitive(context, item, "ListTile");
   }
 
   Widget? embodifyGroupItem(
@@ -134,9 +136,24 @@ class _ListEmbodimentState extends State<ListEmbodiment> {
     // which will cause an exception of non-zero flex but the vertical constraints are unbounded.
     // For a great explanation, refer to documentation on Column widget.  This video is also
     // helpful and amusing:  https://youtu.be/jckqXR5CrPI
-    //return Expanded(child:
+
+    if (widget.parentWidgetType == "Row" ||
+        widget.parentWidgetType == "Column") {
+      return Flexible(
+        child: ListView.builder(
+            itemCount: widget.list.listItems.length, itemBuilder: builder),
+      );
+/*
+      return SizedBox(
+        width: 300,
+        height: 300,
+        child: ListView.builder(
+            itemCount: widget.list.listItems.length, itemBuilder: builder),
+      );
+*/
+    }
+
     return ListView.builder(
         itemCount: widget.list.listItems.length, itemBuilder: builder);
-    //);
   }
 }

@@ -58,7 +58,8 @@ class TableEmbodiment extends StatelessWidget {
 
       for (var cell in row) {
         // TODO:  utilize the template row cells when calling .buildPrimitive
-        var cellEmbodiment = embodifier.buildPrimitive(context, cell);
+        var cellEmbodiment =
+            embodifier.buildPrimitive(context, cell, "DataRow");
         cellsD.add(DataCell(cellEmbodiment));
       }
 
