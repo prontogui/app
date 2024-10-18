@@ -23,6 +23,24 @@ class FrameEmbodiment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (embodimentProps.embodiment == "snackbar") {
+      // This is an error
+      return const SizedBox();
+    }
+
+    var content = buildRegularContent(context);
+
+    // Is it a top-level primitive (i.e., a view)?
+    if (parentWidgetType == "<Top>") {
+      content = Scaffold(
+        body: Center(child: content),
+      );
+    }
+
+    return content;
+  }
+
+  Widget buildRegularContent(BuildContext context) {
     late Widget content;
     late bool wrapInExpanded;
 
@@ -78,5 +96,9 @@ class FrameEmbodiment extends StatelessWidget {
     }
 
     return content;
+  }
+
+  SnackBar buildSnackBar() {
+    return const SnackBar(content: Text('Yay! A SnackBar!'));
   }
 }

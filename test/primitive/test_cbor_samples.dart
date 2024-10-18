@@ -42,11 +42,13 @@ CborMap cborForFrame() {
 
 CborList cborForAny1DField() {
   var cmd1 = CborMap({
+    CborString('CommandIssued'): const CborBool(false),
     CborString('Label'): CborString('Press Me!'),
     CborString('Status'): const CborSmallInt(0),
   });
 
   var cmd2 = CborMap({
+    CborString('CommandIssued'): const CborBool(false),
     CborString('Label'): CborString('Click Here! (disable)'),
     CborString('Status'): const CborSmallInt(1),
   });
@@ -69,21 +71,25 @@ CborMap cborForList() {
 
 CborList cborForAny2DField() {
   var cmdR0C0 = CborMap({
+    CborString('CommandIssued'): const CborBool(false),
     CborString('Label'): CborString('Press Me!'),
     CborString('Status'): const CborSmallInt(0),
   });
 
   var cmdR0C1 = CborMap({
+    CborString('CommandIssued'): const CborBool(false),
     CborString('Label'): CborString('Click Here! (disable)'),
     CborString('Status'): const CborSmallInt(1),
   });
 
   var cmdR1C0 = CborMap({
+    CborString('CommandIssued'): const CborBool(false),
     CborString('Label'): CborString('STOP'),
     CborString('Status'): const CborSmallInt(2),
   });
 
   var cmdR1C1 = CborMap({
+    CborString('CommandIssued'): const CborBool(false),
     CborString('Label'): CborString('START'),
     CborString('Status'): const CborSmallInt(2),
   });

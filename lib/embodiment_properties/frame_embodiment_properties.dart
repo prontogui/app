@@ -15,7 +15,8 @@ class FrameEmbodimentProperties {
   static final Set<String> _embodimentChoices = {
     'other',
     'full-view',
-    'dialog-view'
+    'dialog-view',
+    'snackbar',
   };
 
   static final Set<String> _layoutMethodChoices = {

@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 String getEnumStringProp(Map<String, dynamic>? embodimentMap,
@@ -121,6 +122,29 @@ double? getNumericProp(Map<String, dynamic>? embodimentMap, String propertyName,
   return n;
 }
 
+int? getIntProp(Map<String, dynamic>? embodimentMap, String propertyName,
+    int minValue, int maxValue) {
+  if (embodimentMap == null) {
+    return null;
+  }
+  var value = embodimentMap[propertyName];
+  if (value == null) {
+    return null;
+  }
+  if (value.runtimeType != String) {
+    throw Exception('embodiment property value is not a string');
+  }
+
+  var numericString = value as String;
+
+  var n = int.tryParse(numericString);
+  if (n == null || n < minValue || n > maxValue) {
+    return null;
+  }
+
+  return n;
+}
+
 double getNumericPropOrDefault(
     Map<String, dynamic>? embodimentMap,
     String propertyName,
@@ -128,6 +152,17 @@ double getNumericPropOrDefault(
     double maxValue,
     double defaultValue) {
   var n = getNumericProp(embodimentMap, propertyName, minValue, maxValue);
+
+  if (n == null) {
+    return defaultValue;
+  }
+
+  return n;
+}
+
+int getIntPropOrDefault(Map<String, dynamic>? embodimentMap,
+    String propertyName, int minValue, int maxValue, int defaultValue) {
+  var n = getIntProp(embodimentMap, propertyName, minValue, maxValue);
 
   if (n == null) {
     return defaultValue;
@@ -157,4 +192,30 @@ bool getBoolPropOrDefault(Map<String, dynamic>? embodimentMap,
   }
 
   return b;
+}
+
+SnackBarBehavior? getSnackBarBehavior(
+    Map<String, dynamic>? embodimentMap, String propertyName) {
+  if (embodimentMap == null) {
+    return null;
+  }
+  var value = embodimentMap[propertyName];
+  if (value == null) {
+    return null;
+  }
+  if (value.runtimeType != String) {
+    throw Exception(
+        'embodiment property value for $propertyName is not a string');
+  }
+
+  var snackBarBehaviorSpec = (value as String).toLowerCase();
+
+  switch (snackBarBehaviorSpec) {
+    case 'fixed':
+      return SnackBarBehavior.fixed;
+    case 'floating':
+      return SnackBarBehavior.floating;
+  }
+
+  throw Exception('invalid property value for $propertyName');
 }

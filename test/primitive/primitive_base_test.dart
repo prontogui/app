@@ -246,4 +246,33 @@ void main() {
     expect(m!.length, equals(1));
     expect(m['embodiment'] as String, equals('down-and-dirty'));
   });
+
+  test(
+      'convertSimplifiedKVPairsToJson converts valid simplified key:value pairs to JSON',
+      () {
+    var simplified = 'key1:value1,key2:value2,key3:value3';
+    var expectedJson = '{"key1":"value1","key2":"value2","key3":"value3"}';
+
+    var result = convertSimplifiedKVPairsToJson(simplified);
+
+    expect(result, equals(expectedJson));
+  });
+
+  test(
+      'convertSimplifiedKVPairsToJson throws exception for invalid key:value pairs',
+      () {
+    var invalidSimplified = 'key1:value1,key2value2,key3:value3';
+
+    expect(() => convertSimplifiedKVPairsToJson(invalidSimplified),
+        throwsException);
+  });
+
+  test('convertSimplifiedKVPairsToJson handles whitespace correctly', () {
+    var simplified = ' key1 : value1 , key2 : value2 , key3 : value3 ';
+    var expectedJson = '{"key1":"value1","key2":"value2","key3":"value3"}';
+
+    var result = convertSimplifiedKVPairsToJson(simplified);
+
+    expect(result, equals(expectedJson));
+  });
 }

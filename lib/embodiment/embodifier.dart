@@ -24,6 +24,7 @@ import 'package:app/embodiment/frame_embodiment.dart';
 import 'package:app/embodiment/group_embodiment.dart';
 import 'package:app/embodiment/importfile_embodiment.dart';
 import 'package:app/embodiment/list_embodiment.dart';
+import 'package:app/embodiment/snackbar_embodiment.dart';
 import 'package:app/embodiment/table_embodiment.dart';
 import 'package:app/embodiment/text_embodiment.dart';
 import 'package:app/embodiment/textfield_embodiment.dart';
@@ -103,6 +104,11 @@ class Embodifier extends InheritedWidget {
       );
     } else if (primitive is pri.Frame) {
       var frame = primitive as pri.Frame;
+      if (frame.embodimentProperties.embodiment == "snackbar") {
+        return SnackBarEmbodiment(frame: frame, embodimentMap: embodimentMap);
+      }
+
+      // All other embodiments of Frame are handled here
       return FrameEmbodiment(
         frame: frame,
         embodimentMap: embodimentMap,

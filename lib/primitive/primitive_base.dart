@@ -257,6 +257,8 @@ abstract class PrimitiveBase implements Primitive {
       // Complex (full JSON map) or simplified embodiment syntax?
       if (embodiment.startsWith('{')) {
         jsonToParse = embodiment;
+      } else if (embodiment.contains(':')) {
+        jsonToParse = convertSimplifiedKVPairsToJson(embodiment);
       } else {
         jsonToParse = '{"embodiment":"$embodiment"}';
       }
@@ -267,4 +269,25 @@ abstract class PrimitiveBase implements Primitive {
 
     return _embodimentProperties;
   }
+}
+
+String convertSimplifiedKVPairsToJson(String embodiment) {
+  var innerJson = "";
+
+  var pairs = embodiment.split(',');
+
+  for (var pair in pairs) {
+    var kv = pair.split(':');
+    if (kv.length != 2) {
+      throw Exception('Invalid key:value pair in simplified embodiment');
+    }
+
+    if (innerJson.isNotEmpty) {
+      innerJson += ',';
+    }
+
+    innerJson += '"${kv[0].trim()}":"${kv[1].trim()}"';
+  }
+
+  return '{$innerJson}';
 }
