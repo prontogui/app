@@ -8,16 +8,17 @@ CborMap cborEmpty() {
   return CborMap({});
 }
 
-CborMap cborForGroup() {
-  var cmd1 = CborMap({
-    CborString('Label'): CborString('Press Me!'),
-    CborString('Status'): const CborSmallInt(0),
+CborMap command(String label, int status) {
+  return CborMap({
+    CborString('CommandIssued'): const CborBool(false),
+    CborString('Label'): CborString(label),
+    CborString('Status'): CborSmallInt(status),
   });
+}
 
-  var cmd2 = CborMap({
-    CborString('Label'): CborString('Click Here! (disable)'),
-    CborString('Status'): const CborSmallInt(1),
-  });
+CborMap cborForGroup() {
+  var cmd1 = command('Press Me!', 0);
+  var cmd2 = command('Click Here! (disable)', 1);
 
   return CborMap({
     CborString('GroupItems'): CborList([cmd1, cmd2]),
@@ -25,15 +26,8 @@ CborMap cborForGroup() {
 }
 
 CborMap cborForFrame() {
-  var cmd1 = CborMap({
-    CborString('Label'): CborString('Press Me!'),
-    CborString('Status'): const CborSmallInt(0),
-  });
-
-  var cmd2 = CborMap({
-    CborString('Label'): CborString('Click Here! (disable)'),
-    CborString('Status'): const CborSmallInt(1),
-  });
+  var cmd1 = command('Press Me!', 0);
+  var cmd2 = command('Click Here! (disable)', 1);
 
   return CborMap({
     CborString('FrameItems'): CborList([cmd1, cmd2]),
@@ -41,58 +35,24 @@ CborMap cborForFrame() {
 }
 
 CborList cborForAny1DField() {
-  var cmd1 = CborMap({
-    CborString('CommandIssued'): const CborBool(false),
-    CborString('Label'): CborString('Press Me!'),
-    CborString('Status'): const CborSmallInt(0),
-  });
-
-  var cmd2 = CborMap({
-    CborString('CommandIssued'): const CborBool(false),
-    CborString('Label'): CborString('Click Here! (disable)'),
-    CborString('Status'): const CborSmallInt(1),
-  });
+  var cmd1 = command('Press Me!', 0);
+  var cmd2 = command('Click Here! (disable)', 1);
 
   return CborList([cmd1, cmd2]);
 }
 
 CborMap cborForList() {
-  var cmd3 = CborMap({
-    CborString('Label'): CborString('STOP'),
-    CborString('Status'): const CborSmallInt(2),
-  });
-
   return CborMap({
     CborString('ListItems'): cborForAny1DField(),
     CborString('Selected'): const CborSmallInt(1),
-    CborString('TemplateItem'): cmd3,
   });
 }
 
 CborList cborForAny2DField() {
-  var cmdR0C0 = CborMap({
-    CborString('CommandIssued'): const CborBool(false),
-    CborString('Label'): CborString('Press Me!'),
-    CborString('Status'): const CborSmallInt(0),
-  });
-
-  var cmdR0C1 = CborMap({
-    CborString('CommandIssued'): const CborBool(false),
-    CborString('Label'): CborString('Click Here! (disable)'),
-    CborString('Status'): const CborSmallInt(1),
-  });
-
-  var cmdR1C0 = CborMap({
-    CborString('CommandIssued'): const CborBool(false),
-    CborString('Label'): CborString('STOP'),
-    CborString('Status'): const CborSmallInt(2),
-  });
-
-  var cmdR1C1 = CborMap({
-    CborString('CommandIssued'): const CborBool(false),
-    CborString('Label'): CborString('START'),
-    CborString('Status'): const CborSmallInt(2),
-  });
+  var cmdR0C0 = command('Press Me!', 0);
+  var cmdR0C1 = command('Click Here! (disable)', 1);
+  var cmdR1C0 = command('STOP', 2);
+  var cmdR1C1 = command('START', 2);
 
   var row0 = CborList([cmdR0C0, cmdR0C1]);
   var row1 = CborList([cmdR1C0, cmdR1C1]);
@@ -101,31 +61,21 @@ CborList cborForAny2DField() {
 }
 
 CborMap cborForTable() {
-  var cmdTR0 = CborMap({
-    CborString('Label'): CborString('BEGIN'),
-    CborString('Status'): const CborSmallInt(0),
-  });
-
-  var cmdTR1 = CborMap({
-    CborString('Label'): CborString('END'),
-    CborString('Status'): const CborSmallInt(1),
-  });
-
   return CborMap({
     CborString('Rows'): cborForAny2DField(),
-    CborString('TemplateRow'): CborList([cmdTR0, cmdTR1]),
   });
 }
 
 CborMap distinctCborForCommand() {
   return CborMap({
     // Only specify the Distinct Primitive Field
-    CborString('Status'): const CborSmallInt(0),
+    CborString('CommandIssued'): const CborBool(false),
   });
 }
 
 CborMap cborForCommandAsOutlined() {
   return CborMap({
+    CborString('CommandIssued'): const CborBool(false),
     CborString('Status'): const CborSmallInt(0),
     CborString('Embodiment'): CborString('outlined-button'),
   });

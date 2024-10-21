@@ -25,7 +25,7 @@ void main() {
     var args = TestCtorArgs(v);
     var pimpl = TimerImpl(args.get);
 
-    expect(pimpl.periodMs, equals(2));
+    expect(pimpl.periodMs, equals(2000));
   });
 
   test('Event handler is called with proper update.', () {

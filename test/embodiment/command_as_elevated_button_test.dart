@@ -35,7 +35,7 @@ void main() {
     await tester.pumpWidget(
         TestTree(wut: CommandEmbodiment(command: cmd, embodimentMap: null)));
 
-    await tester.tap(find.byType(FloatingActionButton));
+    await tester.tap(find.byType(ElevatedButton));
 
     final labelFinder = find.text("Press Me");
 

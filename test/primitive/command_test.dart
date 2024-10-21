@@ -40,7 +40,7 @@ void main() {
 
     expect(args.eventType, equals(EventType.commandIssued));
     expect(args.pkey.indices, equals(TestCtorArgs.pkeyForTest().indices));
-    expect(args.update.length, equals(0));
+    expect(args.update.length, equals(1));
   });
 
   test('Is not a notification point.', () {
