@@ -80,6 +80,9 @@ class _SnackBarEmbodimentState extends State<SnackBarEmbodiment> {
     var textEmbodiment =
         _embodifier.buildPrimitive(context, textPrimitive, "SnackBarAction");
 
+    var textP = textPrimitive as pri.Text;
+    print("Building snackbar:  ${textP.content}");
+
     // This is a placeholder for the actual SnackBar content.
     return SnackBar(
       content: textEmbodiment,

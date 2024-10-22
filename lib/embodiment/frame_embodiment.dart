@@ -97,8 +97,4 @@ class FrameEmbodiment extends StatelessWidget {
 
     return content;
   }
-
-  SnackBar buildSnackBar() {
-    return const SnackBar(content: Text('Yay! A SnackBar!'));
-  }
 }

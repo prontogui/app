@@ -4,6 +4,7 @@
 
 import 'dart:async';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:grpc/grpc.dart';
 import 'package:app/proto/pg.pbgrpc.dart';
@@ -267,7 +268,9 @@ class PGComm extends ChangeNotifier {
   /// The routine called by a periodic timer to perform a work during certain
   /// states of communication.
   void _timerRoutine(Timer timer) {
-    print('State is $_state (${timer.tick} ticks\n');
+    if (kDebugMode) {
+      print('State is $_state (${timer.tick} ticks\n');
+    }
 
     switch (_state) {
       case PGCommState.inactive:
@@ -318,7 +321,9 @@ class PGComm extends ChangeNotifier {
   /// the update contents.
   Future<void> _incomingUpdates() async {
     await for (var pgUpdate in _call!) {
-      print('Received update of length = ${pgUpdate.cbor.length} bytes');
+      if (kDebugMode) {
+        print('Received update of length = ${pgUpdate.cbor.length} bytes');
+      }
 
       if (_state != PGCommState.active) {
         notifyListeners();
@@ -337,7 +342,9 @@ class PGComm extends ChangeNotifier {
 
   /// An asyncrhonous method that attempts to start streaming uppdates with the server.
   Future<void> _startStreamingIncomingUpdates() async {
-    print('Streaming of updates is starting.');
+    if (kDebugMode) {
+      print('Streaming of updates is starting.');
+    }
 
     final timerPeriod = (_state == PGCommState.connecting)
         ? _connectingPeriod
@@ -355,7 +362,9 @@ class PGComm extends ChangeNotifier {
 
       // This is the main excpetion catcher for when communication problems arise
     } catch (err) {
-      print('Error occurred waiting for incoming updates:  $err');
+      if (kDebugMode) {
+        print('Error occurred waiting for incoming updates:  $err');
+      }
 
       // Clear any pending response heading back to server
       _response = PGUpdate();
