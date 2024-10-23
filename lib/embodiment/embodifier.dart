@@ -129,8 +129,7 @@ class Embodifier extends InheritedWidget {
   /// Builds the particular embodiment for a primitive and injects a listenable builder
   /// if the primitive is a notifification point.
   Widget buildPrimitive(
-      BuildContext context, Primitive primitive, String parentWidgetType,
-      [Primitive? templatePrimitive]) {
+      BuildContext context, Primitive primitive, String parentWidgetType) {
     // Is this embodiment an update point?
     var notifier = primitive.doesNotify();
     if (notifier != null) {

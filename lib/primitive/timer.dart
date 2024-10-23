@@ -15,6 +15,8 @@ abstract class TimerP {
   /// The time period in milliseconds after which the timer fires an event.  If the period is -1 (or any negative number) then the timer is disabled.
   /// A period of 0 will cause the timer to fire immediately after the primitive is updated.
   late int periodMs;
+
+  void timerFired();
 }
 
 /// The Timer primitive.
@@ -37,6 +39,7 @@ class TimerImpl extends PrimitiveBase implements TimerP {
   /// Notify that the timer was fired.
   ///
   /// Embodiments call this method whenever the timer fires.
+  @override
   void timerFired() {
     var fieldUpdates = CborMap({
       // An empty update will suffice
@@ -57,17 +60,6 @@ class TimerImpl extends PrimitiveBase implements TimerP {
     switch (fkey) {
       case FKey.periodMs:
         periodMs = cborToInt(v);
-
-        if (periodMs < 0) {
-          timer = null;
-        } else if (periodMs == 0) {
-          timer = null;
-          timerFired();
-        } else {
-          timer = Timer.periodic(Duration(milliseconds: periodMs), (Timer _) {
-            timerFired();
-          });
-        }
       default:
         assert(false);
     }

@@ -14,9 +14,19 @@ class GroupEmbodiment extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (group.groupItems.isEmpty) {
-      //return const Text("Err");
-      // const SizedBox.shrink();
       return const SizedBox();
+    }
+
+    // Groups with only 1 item will degenerate to a SizedBox with just the item.  This
+    // leads to immutable appearance of the primitive but also creates a notification
+    // point at the Group level.  This can be handy to improve re-rendering performance
+    // when only updating the child primitive because other children at the parent level
+    // don't have to be re-rendered.  For a good example, look at the timer demo in
+    // https://github.com/prontogui/goexamples
+    if (group.groupItems.length == 1) {
+      return SizedBox(
+          child: Embodifier.of(context)
+              .buildPrimitive(context, group.groupItems[0], "SizedBox"));
     }
 
     return Row(
