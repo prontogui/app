@@ -45,6 +45,11 @@ dependencies:
 
   window_manager: ^0.3.9
 
+  dartlib:
+    path: /Users/andy/dev/pg/dartlib
+    
+  args: ^2.6.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

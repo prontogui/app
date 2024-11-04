@@ -2,14 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:app/primitive/ctor_args.dart';
-import 'package:app/primitive/pkey.dart';
-import 'package:app/top_level_coordinator.dart';
-import 'package:app/primitive/frame.dart';
-import 'package:app/primitive/primitive.dart';
+import 'package:app/src/top_level_coordinator.dart';
 import 'package:test/test.dart';
-import './primitive/test_primitive.dart';
-import 'package:cbor/cbor.dart';
+import 'package:dartlib/dartlib.dart' as pg;
 
 void main() {
   test('Dialog sequence comparison #1', () {
@@ -48,9 +43,9 @@ void main() {
   });
 
   test('Analyze showings #1', () {
-    var f1 = TestFrame(false, 'full-view');
-    var f2 = TestFrame(false, 'full-view');
-    var f3 = TestFrame(true, 'full-view');
+    var f1 = testFrame(false, 'full-view');
+    var f2 = testFrame(false, 'full-view');
+    var f3 = testFrame(true, 'full-view');
 
     var sa = testproxyAnalyzeShowings([f1, f2, f3]);
 
@@ -59,12 +54,12 @@ void main() {
   });
 
   test('Analyze showings #2', () {
-    var f1 = TestFrame(false, 'other');
-    var f2 = TestFrame(false, 'other');
-    var f3 = TestFrame(true, 'other');
-    var f4 = TestFrame(true, 'dialog-view');
-    var f5 = TestFrame(false, 'dialog-view');
-    var f6 = TestFrame(true, 'dialog-view');
+    var f1 = testFrame(false, 'other');
+    var f2 = testFrame(false, 'other');
+    var f3 = testFrame(true, 'other');
+    var f4 = testFrame(true, 'dialog-view');
+    var f5 = testFrame(false, 'dialog-view');
+    var f6 = testFrame(true, 'dialog-view');
 
     var sa = testproxyAnalyzeShowings([f1, f2, f3, f4, f5, f6]);
 
@@ -73,12 +68,12 @@ void main() {
   });
 
   test('Analyze showings #3', () {
-    var f1 = TestFrame(false, 'other');
-    var f2 = TestFrame(false, 'other');
-    var f3 = TestFrame(true, 'other');
-    var f4 = TestFrame(false, 'dialog-view');
-    var f5 = TestFrame(false, 'dialog-view');
-    var f6 = TestFrame(false, 'dialog-view');
+    var f1 = testFrame(false, 'other');
+    var f2 = testFrame(false, 'other');
+    var f3 = testFrame(true, 'other');
+    var f4 = testFrame(false, 'dialog-view');
+    var f5 = testFrame(false, 'dialog-view');
+    var f6 = testFrame(false, 'dialog-view');
 
     var sa = testproxyAnalyzeShowings([f1, f2, f3, f4, f5, f6]);
 
@@ -87,12 +82,12 @@ void main() {
   });
 
   test('Analyze showings #4', () {
-    var f1 = TestFrame(false, 'other');
-    var f2 = TestFrame(true, 'full-view');
-    var f3 = TestFrame(true, 'other');
-    var f4 = TestFrame(false, 'dialog-view');
-    var f5 = TestFrame(true, 'dialog-view');
-    var f6 = TestFrame(false, 'dialog-view');
+    var f1 = testFrame(false, 'other');
+    var f2 = testFrame(true, 'full-view');
+    var f3 = testFrame(true, 'other');
+    var f4 = testFrame(false, 'dialog-view');
+    var f5 = testFrame(true, 'dialog-view');
+    var f6 = testFrame(false, 'dialog-view');
 
     var sa = testproxyAnalyzeShowings([f1, f2, f3, f4, f5, f6]);
 
@@ -101,14 +96,6 @@ void main() {
   });
 }
 
-Primitive TestFrame(bool showing, String embodiment) {
-  var testParent = TestPrimitive();
-  void testHandler(EventType, PKey, CborMap) {}
-  var cbor = CborMap({
-    CborString('Embodiment'): CborString(embodiment),
-    CborString('Showing'): CborBool(showing),
-    CborString('FrameItems'): CborList([]),
-  });
-  var args = CtorArgs.once(testParent, testHandler, cbor, PKey.empty());
-  return FrameImpl(args);
+pg.Primitive testFrame(bool showing, String embodiment) {
+  return pg.Frame(embodiment: embodiment, showing: showing);
 }
