@@ -59,6 +59,14 @@ class Embodifier extends InheritedWidget {
     _nextAvailableNotifier = 0;
   }
 
+  /// Notifies the builder associated with the pkey that a change has occurred.
+  void notifyBuilder(pg.PKey pkey) {
+    var found = _pkeyToNotifier[pkey];
+    if (found != null) {
+      found.notifyListeners();
+    }
+  }
+
   /// Tests whether a frame is a view-type frame.
   bool isView(pg.Frame frame) {
     var frameEmbodimentProps =

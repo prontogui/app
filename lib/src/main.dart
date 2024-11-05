@@ -12,6 +12,7 @@ import 'top_level_coordinator.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:dartlib/dartlib.dart' as pg;
 import 'inherited_comm.dart';
+import 'ui_event_synchro.dart';
 
 (String serverAddr, int serverPortNo) parseCommandLineOptions(
     List<String> args) {
@@ -99,8 +100,11 @@ void main(List<String> args) async {
     await windowManager.focus();
   });
 
+  final myApp = const MyApp();
+  final embodifier = Embodifier(child: myApp);
   final model = pg.PrimitiveModel();
-  final updateSynchro = pg.UpdateSynchro(model, null);
+  final eventSynchro = UIEventSynchro(model);
+  final buildSynchro = UIBuilderSynchro(embodifier);
   final commNotifier = CommClientChangeNotifier();
   final fullUpdateNotifier = PrimitiveModelChangeNotifier(notifyOnFull: true);
   final topLevelUpdateNotifier =
@@ -108,7 +112,7 @@ void main(List<String> args) async {
 
   model.addWatcher(fullUpdateNotifier);
   model.addWatcher(topLevelUpdateNotifier);
-  model.addWatcher(updateSynchro);
+  model.addWatcher(eventSynchro);
 
   var grpcComm = pg.GrpcCommClient(
     onUpdate: (cborUpdate) => model.ingestCborUpdate(cborUpdate),
@@ -121,17 +125,16 @@ void main(List<String> args) async {
 
   // TODO:  figure out how to send primitive model updates to the server.
 
-  runApp(Embodifier(
-      child: InheritedCommClient(
+  runApp(InheritedCommClient(
     notifier: commNotifier,
     child: InheritedPrimitiveModel(
       notifier: fullUpdateNotifier,
       child: InheritedTopLevelPrimitives(
         notifier: topLevelUpdateNotifier,
-        child: const MyApp(),
+        child: embodifier,
       ),
     ),
-  )));
+  ));
 }
 
 class MyApp extends StatelessWidget {

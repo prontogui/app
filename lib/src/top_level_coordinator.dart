@@ -109,6 +109,9 @@ class _TopLevelCoordinatorState extends State<TopLevelCoordinator>
     dialogsShowingNow = sa.dlglist;
   }
 
+  @override
+  void onPartialModelUpdate() {}
+
   /// Called in response to primitive(s) being updated (partial update).
   @override
   void onTopLevelPrimitiveUpdate() {

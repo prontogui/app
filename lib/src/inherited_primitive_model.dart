@@ -42,6 +42,11 @@ class PrimitiveModelChangeNotifier extends ChangeNotifier
   }
 
   @override
+  void onPartialModelUpdate() {
+    // Always ignore this
+  }
+
+  @override
   void onSetField(PKey pkey, FKey fkeu, bool structural) {
     // Always ignore this
   }
