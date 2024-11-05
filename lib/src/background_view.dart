@@ -12,13 +12,15 @@ class BackgroundView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var model = InheritedPrimitiveModel.of(context);
+    var embodifier = Embodifier.of(context);
+
+    var topPrimitives = InheritedTopLevelPrimitives.of(context);
 
     List<pg.Primitive> backgroundItems = [];
-    for (var element in model.topPrimitives) {
+    for (var element in topPrimitives) {
       if (element is pg.Frame) {
-        var frame = element as pg.Frame;
-        if (frame.isView) {
+        // Defer to embodifier to know if this is a view-type frame
+        if (embodifier.isView(element)) {
           continue;
         }
       }
@@ -26,28 +28,22 @@ class BackgroundView extends StatelessWidget {
       backgroundItems.add(element);
     }
 
-    // TODO:  try incorporating InheritedPrimitiveModel that notifies on top-level updates
+    Widget buildInnerContent() {
+      if (backgroundItems.isEmpty) {
+        return const SizedBox();
+      } else if (backgroundItems.length == 1) {
+        return Center(
+          child: Embodifier.of(context)
+              .buildPrimitive(context, backgroundItems[0], "Center"),
+        );
+      } else {
+        return Column(
+          children: Embodifier.of(context)
+              .buildPrimitiveList(context, backgroundItems, "Column"),
+        );
+      }
+    }
 
-    return Scaffold(
-      body: ListenableBuilder(
-          listenable:
-              InheritedPrimitiveModel.of(context).topLevelUpdateNotifier,
-          builder: (BuildContext context, Widget? child) {
-            if (backgroundItems.isEmpty) {
-              return const SizedBox();
-            } else if (backgroundItems.length == 1) {
-              return Center(
-                child: Embodifier.of(context)
-                    .buildPrimitive(context, backgroundItems[0], "Center"),
-              );
-            } else {
-              return Column(
-                children: Embodifier.of(context)
-                    .buildPrimitiveList(context, backgroundItems, "Column"),
-              );
-            }
-          }),
-//      ),
-    );
+    return Scaffold(body: buildInnerContent());
   }
 }

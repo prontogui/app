@@ -8,7 +8,7 @@ import 'package:dartlib/dartlib.dart' as pg;
 class ServerField extends StatefulWidget {
   const ServerField({super.key, required this.comm});
 
-  final pg.GrpcCommClient comm;
+  final pg.CommClient comm;
 
   @override
   State<ServerField> createState() => _ServerFieldState();

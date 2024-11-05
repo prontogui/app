@@ -19,13 +19,21 @@ import 'package:app/src/embodiment/textfield_embodiment.dart';
 import 'package:app/src/embodiment/timer_embodiment.dart';
 import 'package:app/src/embodiment/tristate_embodiment.dart';
 import 'package:flutter/widgets.dart';
+import 'notifier.dart';
 
 /// This object builds embodiments for the primitive model.
 class Embodifier extends InheritedWidget {
-  const Embodifier({
+  Embodifier({
     super.key,
     required super.child,
   });
+
+  // The pool of notifiers that are used to rebuild the embodiments when a change occurs.
+  final List<Notifier> _notifierPool = [];
+  int _nextAvailableNotifier = 0;
+
+  // The map of pkeys to notifiers.
+  final Map<pg.PKey, Notifier> _pkeyToNotifier = {};
 
   /// Boilerplate method for InheritedWidget access inside widgets.
   static Embodifier? maybeOf(BuildContext context) {
@@ -42,6 +50,62 @@ class Embodifier extends InheritedWidget {
   /// Boilerplate method for InheritedWidget access inside widgets.
   @override
   bool updateShouldNotify(Embodifier oldWidget) => false;
+
+  /// Prepares for a full rebuild by reseting the notifier pool and the pkey to notifier map.
+  ///
+  /// This should be called when the entire model is updated.
+  void prepareForFullRebuild() {
+    _pkeyToNotifier.clear();
+    _nextAvailableNotifier = 0;
+  }
+
+  /// Tests whether a frame is a view-type frame.
+  bool isView(pg.Frame frame) {
+    var frameEmbodimentProps =
+        FrameEmbodimentProperties.fromMap(frame.embodimentProperties);
+
+    return ["full-view", "dialog-view"]
+        .contains(frameEmbodimentProps.embodiment);
+  }
+
+  /// Returns the next notifier from the pool or adds another to the pool
+  Notifier _getNextAvailableNotifier() {
+    if (_nextAvailableNotifier < _notifierPool.length) {
+      return _notifierPool[_nextAvailableNotifier++];
+    }
+
+    var notifier = Notifier();
+    _notifierPool.add(notifier);
+    return notifier;
+  }
+
+  /// Returns the notifier associate with the primitive or creates a new
+  /// association if one does not exist.
+  Notifier _getOrMakeNotifier(pg.Primitive primitive) {
+    var pkey = primitive.pkey;
+    if (_pkeyToNotifier.containsKey(pkey)) {
+      return _pkeyToNotifier[pkey]!;
+    }
+
+    var notifier = _getNextAvailableNotifier();
+    _pkeyToNotifier[pkey] = notifier;
+    return notifier;
+  }
+
+  /// Returns a Listenable object if the primitive is a notification point.
+  Listenable? _doesNotify(pg.Primitive primitive) {
+    switch (primitive.describeType) {
+      // These are the primitives that are considered notification points
+      case 'Frame':
+      case 'Group':
+      case 'List':
+      case 'Table':
+      case 'Timer':
+        return _getOrMakeNotifier(primitive);
+      default:
+        return null;
+    }
+  }
 
   /// Builds the particular embodiment for a primitive.
   ///
@@ -112,7 +176,7 @@ class Embodifier extends InheritedWidget {
   Widget buildPrimitive(
       BuildContext context, pg.Primitive primitive, String parentWidgetType) {
     // Is this embodiment an update point?
-    var notifier = primitive.doesNotify();
+    var notifier = _doesNotify(primitive);
     if (notifier != null) {
       // Plug-in a parent node that will rebuild the embodiment when the primitive notifies a change occurred
       return ListenableBuilder(

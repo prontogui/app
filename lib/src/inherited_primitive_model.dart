@@ -9,7 +9,14 @@ import 'package:dartlib/dartlib.dart' as pg;
 /// we need this adapter class.
 class PrimitiveModelChangeNotifier extends ChangeNotifier
     implements pg.PrimitiveModelWatcher {
-  PrimitiveModelChangeNotifier();
+  PrimitiveModelChangeNotifier(
+      {this.notifyOnFull = false, this.notifyOnTopLevel = false});
+
+  /// True if this should notify when a full model update happens.
+  final bool notifyOnFull;
+
+  /// True if this should notify when a top-level primitive update happens.
+  final bool notifyOnTopLevel;
 
   pg.PrimitiveModel? _model;
 
@@ -29,17 +36,21 @@ class PrimitiveModelChangeNotifier extends ChangeNotifier
 
   @override
   void onFullModelUpdate() {
-    notifyListeners();
+    if (notifyOnFull) {
+      notifyListeners();
+    }
   }
 
   @override
   void onSetField(PKey pkey, FKey fkeu, bool structural) {
-    // Ignore
+    // Always ignore this
   }
 
   @override
   void onTopLevelPrimitiveUpdate() {
-    // Ignore
+    if (notifyOnTopLevel) {
+      notifyListeners();
+    }
   }
 }
 
@@ -57,5 +68,23 @@ class InheritedPrimitiveModel
         .dependOnInheritedWidgetOfExactType<InheritedPrimitiveModel>()!
         .notifier!
         .model;
+  }
+}
+
+/// A widget that is used to rebuild the widget tree if a top-level primitive is updated.
+class InheritedTopLevelPrimitives
+    extends InheritedNotifier<PrimitiveModelChangeNotifier> {
+  const InheritedTopLevelPrimitives({
+    super.key,
+    super.notifier,
+    required super.child,
+  });
+
+  static List<pg.Primitive> of(BuildContext context) {
+    return context
+        .dependOnInheritedWidgetOfExactType<InheritedTopLevelPrimitives>()!
+        .notifier!
+        .model
+        .topPrimitives;
   }
 }

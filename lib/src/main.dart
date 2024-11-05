@@ -5,8 +5,6 @@
 import 'package:app/src/inherited_primitive_model.dart';
 import 'package:args/args.dart';
 import 'package:app/src/background_view.dart';
-import 'package:app/src/main_testing.dart';
-import 'package:cbor/cbor.dart';
 import 'package:flutter/material.dart';
 import 'package:app/src/embodiment/embodifier.dart';
 import 'waiting_for_server_view.dart';
@@ -101,44 +99,39 @@ void main(List<String> args) async {
     await windowManager.focus();
   });
 
-  late pg.GrpcCommClient comm;
   final model = pg.PrimitiveModel();
-  final updateSync = pg.UpdateSynchro(model, null);
+  final updateSynchro = pg.UpdateSynchro(model, null);
   final commNotifier = CommClientChangeNotifier();
-  final modelNotifier = PrimitiveModelChangeNotifier();
+  final fullUpdateNotifier = PrimitiveModelChangeNotifier(notifyOnFull: true);
+  final topLevelUpdateNotifier =
+      PrimitiveModelChangeNotifier(notifyOnTopLevel: true);
 
-  const isTesting = false;
+  model.addWatcher(fullUpdateNotifier);
+  model.addWatcher(topLevelUpdateNotifier);
+  model.addWatcher(updateSynchro);
 
-  if (isTesting) {
-    model = initializeTestingModel();
+  var grpcComm = pg.GrpcCommClient(
+    onUpdate: (cborUpdate) => model.ingestCborUpdate(cborUpdate),
+    onStateChange: () => commNotifier.onStateChange(),
+  );
 
-    runApp(Embodifier(
-      child: InheritedPrimitiveModel(
-        notifier: model,
-        child: const MyTestApp(),
-      ),
-    ));
-  } else {
-    var grpcComm = pg.GrpcCommClient(
-      onUpdate: (cborUpdate) => model.ingestCborUpdate(cborUpdate),
-      onStateChange: () => commNotifier.onStateChange(),
-    );
+  grpcComm.open(serverAddress: serverAddr, serverPort: serverPort);
 
-    grpcComm.open(serverAddress: serverAddr, serverPort: serverPort);
+  commNotifier.comm = grpcComm;
 
-    commNotifier.comm = grpcComm;
+  // TODO:  figure out how to send primitive model updates to the server.
 
-    // TODO:  figure out how to send primitive model updates to the server.
-
-    runApp(Embodifier(
-        child: InheritedCommClient(
-      notifier: commNotifier,
-      child: InheritedPrimitiveModel(
-        notifier: modelNotifier,
+  runApp(Embodifier(
+      child: InheritedCommClient(
+    notifier: commNotifier,
+    child: InheritedPrimitiveModel(
+      notifier: fullUpdateNotifier,
+      child: InheritedTopLevelPrimitives(
+        notifier: topLevelUpdateNotifier,
         child: const MyApp(),
       ),
-    )));
-  }
+    ),
+  )));
 }
 
 class MyApp extends StatelessWidget {
@@ -159,26 +152,6 @@ class MyApp extends StatelessWidget {
             backgroundView: BackgroundView(),
           ),
         ));
-  }
-}
-
-class MyTestApp extends StatelessWidget {
-  const MyTestApp({super.key});
-
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: true,
-      title: 'Test App',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const TopLevelCoordinator(
-        backgroundView: BackgroundView(),
-      ),
-    );
   }
 }
 

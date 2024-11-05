@@ -62,14 +62,14 @@ class WaitingForServerView extends StatelessWidget {
     );
   }
 
-  Widget _buildInactiveMessage(BuildContext context, pg.CommClient pgcomm) {
+  Widget _buildInactiveMessage(BuildContext context, pg.CommClient comm) {
     return _buildCommon(
-        pgcomm,
+        comm,
         const Text('Communication closed.'),
         SizedBox(
             height: 50,
             child: ServerField(
-              comm: pgcomm,
+              comm: comm,
             )),
         true);
   }
