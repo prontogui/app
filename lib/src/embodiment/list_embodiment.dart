@@ -128,7 +128,7 @@ class _ListEmbodimentState extends State<ListEmbodiment> {
     }
 
     // Grab the embodifier for other functions in the class to use.
-    embodifier ??= Embodifier.of(context);
+    embodifier ??= InheritedEmbodifier.of(context);
     var props = widget.embodimentProps;
 
     Widget content = ListView.builder(

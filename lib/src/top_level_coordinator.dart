@@ -272,7 +272,7 @@ class _TopLevelCoordinatorState extends State<TopLevelCoordinator>
       model = InheritedPrimitiveModel.of(context);
 
       // Get the embodifier
-      embodifier = Embodifier.of(context);
+      embodifier = InheritedEmbodifier.of(context);
 
       // Listen to the model for changes
       model.addWatcher(this);

@@ -6,12 +6,13 @@ typedef UIEventHandler = void Function();
 
 /// A model synchronizer that sends UI events to the server when certain fields are set.
 class UIEventSynchro extends UpdateSynchro {
-  UIEventSynchro(PrimitiveLocator locator) : super(locator, _eventFKeys());
+  UIEventSynchro({required PrimitiveLocator locator, required this.comm})
+      : super(locator, _eventFKeys());
 
   static Set<FKey> _eventFKeys() => const {fkeyChecked, fkeySelected};
 
   /// Optional CommClient to send updates to the server.
-  CommClient? comm;
+  CommClient comm;
 
   Completer? _pendingWait;
 

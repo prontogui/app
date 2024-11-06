@@ -12,7 +12,7 @@ class BackgroundView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var embodifier = Embodifier.of(context);
+    var embodifier = InheritedEmbodifier.of(context);
 
     var topPrimitives = InheritedTopLevelPrimitives.of(context);
 
@@ -33,12 +33,12 @@ class BackgroundView extends StatelessWidget {
         return const SizedBox();
       } else if (backgroundItems.length == 1) {
         return Center(
-          child: Embodifier.of(context)
+          child: InheritedEmbodifier.of(context)
               .buildPrimitive(context, backgroundItems[0], "Center"),
         );
       } else {
         return Column(
-          children: Embodifier.of(context)
+          children: InheritedEmbodifier.of(context)
               .buildPrimitiveList(context, backgroundItems, "Column"),
         );
       }

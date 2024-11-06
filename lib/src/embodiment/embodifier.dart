@@ -22,11 +22,8 @@ import 'package:flutter/widgets.dart';
 import 'notifier.dart';
 
 /// This object builds embodiments for the primitive model.
-class Embodifier extends InheritedWidget {
-  Embodifier({
-    super.key,
-    required super.child,
-  });
+class Embodifier {
+  Embodifier();
 
   // The pool of notifiers that are used to rebuild the embodiments when a change occurs.
   final List<Notifier> _notifierPool = [];
@@ -34,22 +31,6 @@ class Embodifier extends InheritedWidget {
 
   // The map of pkeys to notifiers.
   final Map<pg.PKey, Notifier> _pkeyToNotifier = {};
-
-  /// Boilerplate method for InheritedWidget access inside widgets.
-  static Embodifier? maybeOf(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<Embodifier>();
-  }
-
-  /// Boilerplate method for InheritedWidget access inside widgets.
-  static Embodifier of(BuildContext context) {
-    final Embodifier? result = maybeOf(context);
-    assert(result != null, 'No Embodifier found in context');
-    return result!;
-  }
-
-  /// Boilerplate method for InheritedWidget access inside widgets.
-  @override
-  bool updateShouldNotify(Embodifier oldWidget) => false;
 
   /// Prepares for a full rebuild by reseting the notifier pool and the pkey to notifier map.
   ///
@@ -211,5 +192,31 @@ class Embodifier extends InheritedWidget {
     }
 
     return widgets;
+  }
+}
+
+/// A widget that provides access to the Embodifier object inside build routines.
+class InheritedEmbodifier extends InheritedWidget {
+  const InheritedEmbodifier(
+      {super.key, required super.child, required this.embodifier});
+
+  final Embodifier embodifier;
+
+  /// Boilerplate method for InheritedWidget access inside widgets.
+  @override
+  bool updateShouldNotify(InheritedEmbodifier oldWidget) => false;
+
+  /// Boilerplate method for InheritedWidget access inside widgets.
+  static InheritedEmbodifier? maybeOf(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<InheritedEmbodifier>();
+  }
+
+  /// Boilerplate method for InheritedWidget access inside widgets.
+  static Embodifier of(BuildContext context) {
+    final InheritedEmbodifier? result = maybeOf(context);
+    if (result == null) {
+      throw Exception('No Embodifier found in context');
+    }
+    return result.embodifier;
   }
 }

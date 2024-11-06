@@ -47,7 +47,7 @@ class FrameEmbodiment extends StatelessWidget {
     switch (embodimentProps.flowDirection) {
       case 'left-to-right':
         content = Row(
-          children: Embodifier.of(context)
+          children: InheritedEmbodifier.of(context)
               .buildPrimitiveList(context, frame.frameItems, "Row"),
         );
 
@@ -57,7 +57,7 @@ class FrameEmbodiment extends StatelessWidget {
         wrapInExpanded = true;
 
         content = Column(
-          children: Embodifier.of(context)
+          children: InheritedEmbodifier.of(context)
               .buildPrimitiveList(context, frame.frameItems, "Column"),
         );
 

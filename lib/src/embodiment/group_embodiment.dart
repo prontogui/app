@@ -25,7 +25,7 @@ class GroupEmbodiment extends StatelessWidget {
     // https://github.com/prontogui/goexamples
     if (group.groupItems.length == 1) {
       return SizedBox(
-          child: Embodifier.of(context)
+          child: InheritedEmbodifier.of(context)
               .buildPrimitive(context, group.groupItems[0], "SizedBox"));
     }
 
@@ -35,7 +35,7 @@ class GroupEmbodiment extends StatelessWidget {
           // stuff in .of method should work in O(1) time with a "small constant".
           // An alternative approach is to pass Embodifier into constructor of each
           // embodiment.
-          Embodifier.of(context)
+          InheritedEmbodifier.of(context)
               .buildPrimitiveList(context, group.groupItems, "Row"),
     );
   }

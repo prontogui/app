@@ -1,5 +1,3 @@
-import 'package:dartlib/src/fkey.dart';
-import 'package:dartlib/src/pkey.dart';
 import 'package:flutter/widgets.dart';
 import 'package:dartlib/dartlib.dart' as pg;
 
@@ -10,7 +8,11 @@ import 'package:dartlib/dartlib.dart' as pg;
 class PrimitiveModelChangeNotifier extends ChangeNotifier
     implements pg.PrimitiveModelWatcher {
   PrimitiveModelChangeNotifier(
-      {this.notifyOnFull = false, this.notifyOnTopLevel = false});
+      {required this.model,
+      this.notifyOnFull = false,
+      this.notifyOnTopLevel = false}) {
+    model.addWatcher(this);
+  }
 
   /// True if this should notify when a full model update happens.
   final bool notifyOnFull;
@@ -18,21 +20,7 @@ class PrimitiveModelChangeNotifier extends ChangeNotifier
   /// True if this should notify when a top-level primitive update happens.
   final bool notifyOnTopLevel;
 
-  pg.PrimitiveModel? _model;
-
-  pg.PrimitiveModel get model {
-    if (_model == null) {
-      throw Exception('model has not been assigned.');
-    }
-    return _model!;
-  }
-
-  set model(pg.PrimitiveModel value) {
-    if (_model != null) {
-      throw Exception('model can only be assigned once.');
-    }
-    _model = value;
-  }
+  final pg.PrimitiveModel model;
 
   @override
   void onFullModelUpdate() {
@@ -47,7 +35,7 @@ class PrimitiveModelChangeNotifier extends ChangeNotifier
   }
 
   @override
-  void onSetField(PKey pkey, FKey fkeu, bool structural) {
+  void onSetField(pg.PKey pkey, pg.FKey fkeu, bool structural) {
     // Always ignore this
   }
 

@@ -50,7 +50,7 @@ class TableEmbodiment extends StatelessWidget {
     }
 
     // Build the data rows from primitive rows
-    var embodifier = Embodifier.of(context);
+    var embodifier = InheritedEmbodifier.of(context);
     var rowsD = List<DataRow>.empty(growable: true);
 
     for (var row in table.rows) {

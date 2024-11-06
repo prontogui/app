@@ -13,6 +13,7 @@ import 'package:window_manager/window_manager.dart';
 import 'package:dartlib/dartlib.dart' as pg;
 import 'inherited_comm.dart';
 import 'ui_event_synchro.dart';
+import 'ui_builder_synchro.dart';
 
 (String serverAddr, int serverPortNo) parseCommandLineOptions(
     List<String> args) {
@@ -100,41 +101,78 @@ void main(List<String> args) async {
     await windowManager.focus();
   });
 
-  final myApp = const MyApp();
-  final embodifier = Embodifier(child: myApp);
+  // Create the model that holds the primitives to be displayed.
   final model = pg.PrimitiveModel();
-  final eventSynchro = UIEventSynchro(model);
-  final buildSynchro = UIBuilderSynchro(embodifier);
+
+  // Create the object that notifies other objects when changes occur in
+  // communication with the server.
   final commNotifier = CommClientChangeNotifier();
-  final fullUpdateNotifier = PrimitiveModelChangeNotifier(notifyOnFull: true);
-  final topLevelUpdateNotifier =
-      PrimitiveModelChangeNotifier(notifyOnTopLevel: true);
 
-  model.addWatcher(fullUpdateNotifier);
-  model.addWatcher(topLevelUpdateNotifier);
-  model.addWatcher(eventSynchro);
-
+  // Create the object that communicates with the server.
   var grpcComm = pg.GrpcCommClient(
-    onUpdate: (cborUpdate) => model.ingestCborUpdate(cborUpdate),
+    onUpdate: (cborUpdate) {
+      try {
+        model.ingestCborUpdate(cborUpdate);
+      } catch (e) {
+        print('Error ingesting CBOR update: $e');
+      }
+    },
     onStateChange: () => commNotifier.onStateChange(),
   );
 
-  grpcComm.open(serverAddress: serverAddr, serverPort: serverPort);
-
+  // Attach the comm object to the notifier.
   commNotifier.comm = grpcComm;
 
-  // TODO:  figure out how to send primitive model updates to the server.
+  // Create the object responsible for embodying the model as Widgets and for
+  // rebuilding the UI when the model changes.
+  final embodifier = Embodifier();
 
+  // Create the object that synchronizes UI events with the server.
+  final eventSynchro = UIEventSynchro(locator: model, comm: grpcComm);
+
+  // Create the object that rebuilds all, or portions of, the UI when the model
+  // changes.
+  final builderSynchro = UIBuilderSynchro(embodifier);
+
+  // Create an object that notify portions of the UI when a full update is
+  // ingested into the model.
+  final fullUpdateNotifier =
+      PrimitiveModelChangeNotifier(model: model, notifyOnFull: true);
+
+  // Create an object that notifies portions of the UI when a top-level
+  // primitive is updated.
+  final topLevelUpdateNotifier =
+      PrimitiveModelChangeNotifier(model: model, notifyOnTopLevel: true);
+
+/*
+  // Create an object that notifies portions of the UI when a full update is 
+  // ingested into the model or when a top-level primitive is updated.
+  final fullOrTopLevelUpdateNotifier = PrimitiveModelChangeNotifier(
+      model: model, notifyOnFull: true, notifyOnTopLevel: true);
+*/
+
+  // Add the objects we just created to the model as watchers.
+  model.addWatcher(fullUpdateNotifier);
+  model.addWatcher(topLevelUpdateNotifier);
+  model.addWatcher(eventSynchro);
+  model.addWatcher(builderSynchro);
+
+  // Open the communication channel to the server.
+  grpcComm.open(serverAddress: serverAddr, serverPort: serverPort);
+
+  // Run the app and start rendering the UI.
   runApp(InheritedCommClient(
-    notifier: commNotifier,
-    child: InheritedPrimitiveModel(
-      notifier: fullUpdateNotifier,
-      child: InheritedTopLevelPrimitives(
-        notifier: topLevelUpdateNotifier,
-        child: embodifier,
-      ),
-    ),
-  ));
+      notifier: commNotifier,
+      child: InheritedPrimitiveModel(
+        notifier: fullUpdateNotifier,
+        child: InheritedTopLevelPrimitives(
+          notifier: topLevelUpdateNotifier,
+          child: InheritedEmbodifier(
+            embodifier: embodifier,
+            child: const MyApp(),
+          ),
+        ),
+      )));
 }
 
 class MyApp extends StatelessWidget {

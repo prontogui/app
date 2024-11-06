@@ -95,7 +95,7 @@ class _SnackBarEmbodimentState extends State<SnackBarEmbodiment> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     // Stash away the embodifier
-    _embodifier = Embodifier.of(context);
+    _embodifier = InheritedEmbodifier.of(context);
   }
 
   @override
