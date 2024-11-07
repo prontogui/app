@@ -42,10 +42,16 @@ class Embodifier {
 
   /// Notifies the builder associated with the pkey that a change has occurred.
   void notifyBuilder(pg.PKey pkey) {
-    var found = _pkeyToNotifier[pkey];
-    if (found != null) {
-      found.notifyListeners();
-    }
+    Notifier? found;
+    do {
+      var found = _pkeyToNotifier[pkey];
+      if (found != null) {
+        found.notifyListeners();
+        break;
+      }
+      pkey = pg.PKey.parentOf(pkey);
+    } while (!pkey.isEmpty);
+    throw Exception("No builder notifier found");
   }
 
   /// Tests whether a frame is a view-type frame.

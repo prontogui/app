@@ -15,20 +15,33 @@ class UIEventSynchro extends UpdateSynchro {
   CommClient comm;
 
   Completer? _pendingWait;
+  @override
+  void onFullModelUpdate() {
+    clearPendingUpdates();
+  }
+
+  @override
+  void onBeginPartialModelUpdate() {}
+
+  @override
+  void onPartialModelUpdate() {
+    clearPendingUpdates();
+  }
+
+  @override
+  void onTopLevelPrimitiveUpdate() {
+    clearPendingUpdates();
+  }
 
   @override
   void onSetField(PKey pkey, FKey fkey, bool structural) {
     super.onSetField(pkey, fkey, structural);
 
-    if (comm == null) {
-      return;
-    }
-
     if (!_eventFKeys().contains(fkey)) {
       return;
     }
 
-    comm!.streamUpdateToServer(getPartialUpdate());
+    comm.streamUpdateToServer(getPartialUpdate());
 
     clearPendingUpdates();
 

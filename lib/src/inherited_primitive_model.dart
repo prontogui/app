@@ -30,6 +30,11 @@ class PrimitiveModelChangeNotifier extends ChangeNotifier
   }
 
   @override
+  void onBeginPartialModelUpdate() {
+    // Always ignore this
+  }
+
+  @override
   void onPartialModelUpdate() {
     // Always ignore this
   }

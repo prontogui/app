@@ -110,6 +110,9 @@ class _TopLevelCoordinatorState extends State<TopLevelCoordinator>
   }
 
   @override
+  void onBeginPartialModelUpdate() {}
+
+  @override
   void onPartialModelUpdate() {}
 
   /// Called in response to primitive(s) being updated (partial update).

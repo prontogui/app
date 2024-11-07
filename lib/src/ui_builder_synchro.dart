@@ -9,6 +9,16 @@ class UIBuilderSynchro extends SynchroBase {
   final Embodifier _embodifier;
 
   @override
+  void onTopLevelPrimitiveUpdate() {
+    // Need to handle??
+  }
+
+  @override
+  void onBeginPartialModelUpdate() {
+    clearPendingUpdates();
+  }
+
+  @override
   void onPartialModelUpdate() {
     rebuildUI();
   }
@@ -20,8 +30,7 @@ class UIBuilderSynchro extends SynchroBase {
       }
 
       _embodifier.notifyBuilder(update.pkey);
-
-      clearPendingUpdates();
     }
+    clearPendingUpdates();
   }
 }
