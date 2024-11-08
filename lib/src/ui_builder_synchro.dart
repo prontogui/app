@@ -4,7 +4,7 @@ import './embodiment/embodifier.dart';
 class UIBuilderSynchro extends SynchroBase {
   UIBuilderSynchro(Embodifier embodifier)
       : _embodifier = embodifier,
-        super(null);
+        super(null, true, true);
 
   final Embodifier _embodifier;
 

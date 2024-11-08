@@ -118,6 +118,7 @@ void main(List<String> args) async {
       }
     },
     onStateChange: () => commNotifier.onStateChange(),
+    serverCheckinPeriod: 0,
   );
 
   // Attach the comm object to the notifier.

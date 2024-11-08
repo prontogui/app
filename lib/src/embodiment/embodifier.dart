@@ -22,8 +22,12 @@ import 'package:flutter/widgets.dart';
 import 'notifier.dart';
 
 /// This object builds embodiments for the primitive model.
+/// Set [debug] = true to enable debug output.
 class Embodifier {
-  Embodifier();
+  Embodifier({this.debug = false});
+
+  /// Enable output of debug information.
+  bool debug;
 
   // The pool of notifiers that are used to rebuild the embodiments when a change occurs.
   final List<Notifier> _notifierPool = [];
@@ -42,16 +46,20 @@ class Embodifier {
 
   /// Notifies the builder associated with the pkey that a change has occurred.
   void notifyBuilder(pg.PKey pkey) {
-    Notifier? found;
+    var origPkey = pkey;
+
     do {
       var found = _pkeyToNotifier[pkey];
       if (found != null) {
         found.notifyListeners();
-        break;
+        return;
       }
       pkey = pg.PKey.parentOf(pkey);
     } while (!pkey.isEmpty);
-    throw Exception("No builder notifier found");
+
+    if (debug) {
+      print("No builder notifier found for $origPkey");
+    }
   }
 
   /// Tests whether a frame is a view-type frame.
@@ -71,6 +79,7 @@ class Embodifier {
 
     var notifier = Notifier();
     _notifierPool.add(notifier);
+    _nextAvailableNotifier++;
     return notifier;
   }
 

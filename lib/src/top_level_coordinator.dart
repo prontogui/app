@@ -76,6 +76,11 @@ class _TopLevelCoordinatorState extends State<TopLevelCoordinator>
     // Not handled
   }
 
+  @override
+  void onIngestField(pg.PKey pkey, pg.FKey fkeu, bool structural) {
+    // Not handled
+  }
+
   /// Called in response to structural updates (full updates) are made to the model, especially
   /// the top-level primitive list.
   @override

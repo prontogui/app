@@ -31,17 +31,22 @@ class PrimitiveModelChangeNotifier extends ChangeNotifier
 
   @override
   void onBeginPartialModelUpdate() {
-    // Always ignore this
+    // Not handled
   }
 
   @override
   void onPartialModelUpdate() {
-    // Always ignore this
+    // Not handled
   }
 
   @override
   void onSetField(pg.PKey pkey, pg.FKey fkeu, bool structural) {
-    // Always ignore this
+    // Not handled
+  }
+
+  @override
+  void onIngestField(pg.PKey pkey, pg.FKey fkeu, bool structural) {
+    // Not handled
   }
 
   @override
