@@ -14,6 +14,8 @@ import 'package:dartlib/dartlib.dart' as pg;
 import 'inherited_comm.dart';
 import 'ui_event_synchro.dart';
 import 'ui_builder_synchro.dart';
+import 'package:logger/logger.dart';
+import 'log.dart';
 
 (String serverAddr, int serverPortNo) parseCommandLineOptions(
     List<String> args) {
@@ -82,6 +84,10 @@ import 'ui_builder_synchro.dart';
 
 void main(List<String> args) async {
   var (serverAddr, serverPort) = parseCommandLineOptions(args);
+
+  if (Logger.level.index > Level.trace.index) {
+    logger.i('Starting ProntoGUI App with args: $args');
+  }
 
   WidgetsFlutterBinding.ensureInitialized();
   // Must add this line.
