@@ -1,6 +1,11 @@
+// Copyright 2024 ProntoGUI, LLC.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
 import 'package:dartlib/dartlib.dart';
 import './embodiment/embodifier.dart';
+import 'log.dart';
 
+/// A model synchronizer that rebuilds portions of the UI when changes are made to the model.
 class UIBuilderSynchro extends SynchroBase {
   UIBuilderSynchro(Embodifier embodifier)
       : _embodifier = embodifier,
@@ -9,21 +14,21 @@ class UIBuilderSynchro extends SynchroBase {
   final Embodifier _embodifier;
 
   @override
-  void onTopLevelPrimitiveUpdate() {
-    // Need to handle??
-  }
-
-  @override
   void onBeginPartialModelUpdate() {
     clearPendingUpdates();
   }
 
   @override
   void onPartialModelUpdate() {
-    rebuildUI();
+    _rebuildUI();
   }
 
-  void rebuildUI() {
+  /// Rebuild the UI for all pending updates.  This should be done after a partial
+  /// update cycle is complete.  (Note:  the UI gets rebuilt by a different mechanism
+  /// upon a full model update.)
+  void _rebuildUI() {
+    logger.d('Rebuilding UI for ${pendingUpdates.length} updates');
+
     for (var update in pendingUpdates) {
       if (update.coalesced) {
         continue;

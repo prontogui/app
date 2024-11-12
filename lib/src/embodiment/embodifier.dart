@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import '../log.dart';
 import 'package:dartlib/dartlib.dart' as pg;
 import '../embodiment_properties/frame_embodiment_properties.dart';
 import 'package:app/src/embodiment/check_embodiment.dart';
@@ -22,12 +23,8 @@ import 'package:flutter/widgets.dart';
 import 'notifier.dart';
 
 /// This object builds embodiments for the primitive model.
-/// Set [debug] = true to enable debug output.
 class Embodifier {
-  Embodifier({this.debug = false});
-
-  /// Enable output of debug information.
-  bool debug;
+  Embodifier();
 
   // The pool of notifiers that are used to rebuild the embodiments when a change occurs.
   final List<Notifier> _notifierPool = [];
@@ -40,6 +37,8 @@ class Embodifier {
   ///
   /// This should be called when the entire model is updated.
   void prepareForFullRebuild() {
+    logger.t('Entered prepareForFullRebuild');
+
     _pkeyToNotifier.clear();
     _nextAvailableNotifier = 0;
   }
@@ -57,9 +56,7 @@ class Embodifier {
       pkey = pg.PKey.parentOf(pkey);
     } while (!pkey.isEmpty);
 
-    if (debug) {
-      print("No builder notifier found for $origPkey");
-    }
+    logger.d('No builder notifier found for pkey $origPkey');
   }
 
   /// Tests whether a frame is a view-type frame.
@@ -170,8 +167,10 @@ class Embodifier {
       case "Timer":
         return TimerEmbodiment(timer: primitive as pg.Timer);
       default:
-        // TODO:  throw an exception of some kind
-        return const Text("Unknown Primitive");
+        var errorMsg =
+            'No embodifier for primitive of type ${primitive.describeType} with pkey = ${primitive.pkey}';
+        logger.e(errorMsg);
+        throw Exception(errorMsg);
     }
   }
 

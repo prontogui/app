@@ -1,13 +1,16 @@
+// Copyright 2024 ProntoGUI, LLC.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
 import 'dart:async';
-
 import 'package:dartlib/dartlib.dart';
+import 'log.dart';
 
 typedef UIEventHandler = void Function();
 
 /// A model synchronizer that sends UI events to the server when certain fields are set.
 class UIEventSynchro extends UpdateSynchro {
   UIEventSynchro({required PrimitiveLocator locator, required this.comm})
-      : super(locator, _eventFKeys(), false, true);
+      : super(locator, null, false, true);
 
   static Set<FKey> _eventFKeys() => const {
         fkeyChecked,
@@ -27,21 +30,14 @@ class UIEventSynchro extends UpdateSynchro {
   CommClient comm;
 
   Completer? _pendingWait;
+
   @override
   void onFullModelUpdate() {
     clearPendingUpdates();
   }
 
   @override
-  void onBeginPartialModelUpdate() {}
-
-  @override
   void onPartialModelUpdate() {
-    clearPendingUpdates();
-  }
-
-  @override
-  void onTopLevelPrimitiveUpdate() {
     clearPendingUpdates();
   }
 
@@ -53,7 +49,12 @@ class UIEventSynchro extends UpdateSynchro {
       return;
     }
 
-    comm.streamUpdateToServer(getPartialUpdate());
+    logger.i(
+        'handling onSetField post-filter with pkey: $pkey, fkey: $fkey (${fieldnameFor(fkey)}), structural: $structural');
+
+    var cborUpdate = getPartialUpdate();
+    logger.t('Sending CBOR update: $cborUpdate');
+    comm.streamUpdateToServer(cborUpdate);
 
     clearPendingUpdates();
 

@@ -8,12 +8,12 @@
 PROTOC = protoc
 
 all: 
-	if [ ! -d "proto" ]; then git clone -b v0.0.3 https://andyhjoseph@github.com/prontogui/proto.git; fi
-	mkdir -p lib/proto
-	$(PROTOC) --dart_out=grpc:lib proto/pg.proto
+#	if [ ! -d "proto" ]; then git clone -b v0.0.3 https://andyhjoseph@github.com/prontogui/proto.git; fi
+#	mkdir -p lib/proto
+#	$(PROTOC) --dart_out=grpc:lib proto/pg.proto
 
 .PHONY: all
 
 clean:
-	rm -Rf proto
-	rm -f lib/proto/*.dart
+#	rm -Rf proto
+#	rm -f lib/proto/*.dart
