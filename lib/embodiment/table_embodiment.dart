@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:dartlib/dartlib.dart' as pg;
-import 'package:app/src/embodiment/embodifier.dart';
+import '../facilities/embodifier.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 

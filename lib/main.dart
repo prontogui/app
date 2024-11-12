@@ -2,29 +2,34 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 import 'dart:io';
-import 'package:app/src/inherited_primitive_model.dart';
-import 'package:args/args.dart';
-import 'package:app/src/background_view.dart';
 import 'package:flutter/material.dart';
-import 'package:app/src/embodiment/embodifier.dart';
-import 'waiting_for_server_view.dart';
-import 'top_level_coordinator.dart';
+import 'package:args/args.dart';
 import 'package:window_manager/window_manager.dart';
-import 'package:dartlib/dartlib.dart' as pg;
-import 'inherited_comm.dart';
-import 'ui_event_synchro.dart';
-import 'ui_builder_synchro.dart';
-import 'log.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:dartlib/dartlib.dart';
+import 'facilities/inherited_primitive_model.dart';
+import 'facilities/ui_event_synchro.dart';
+import 'facilities/ui_builder_synchro.dart';
+import 'facilities/inherited_comm.dart';
+import 'facilities/embodifier.dart';
+import 'widgets/app.dart';
+import 'log.dart';
 
+/// The main entry point for the ProntoGUI application.  This function sets up
+/// several objects responsible for core functionality of the application and
+/// hands off operation to the App widget.
 void main(List<String> args) async {
   // Be sure to add this line if `PackageInfo.fromPlatform()` is called before runApp()
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Get information about this App
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
 
-  logger.i('Welcome to ProntoGUI version ${packageInfo.version}');
-  var (serverAddr, serverPort) = _parseCommandLineOptions(args);
+  var (serverAddr, serverPort, logLevel) = _parseCommandLineOptions(args);
 
+  loggingLevel = logLevel;
+
+  logger.i('Welcome to ProntoGUI version ${packageInfo.version}');
   logger.i('Starting ProntoGUI App with args: $args');
 
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,7 +37,7 @@ void main(List<String> args) async {
   await windowManager.ensureInitialized();
 
   WindowOptions windowOptions = const WindowOptions(
-    //size: Size(1200, 800),
+    size: Size(1200, 800),
     center: true,
     backgroundColor: Colors.transparent,
     skipTaskbar: false,
@@ -46,14 +51,15 @@ void main(List<String> args) async {
   });
 
   // Create the model that holds the primitives to be displayed.
-  final model = pg.PrimitiveModel();
+  final model = PrimitiveModel();
 
   // Create the object that notifies other objects when changes occur in
   // communication with the server.
   final commNotifier = CommClientChangeNotifier();
 
   // Create the object that communicates with the server.
-  var grpcComm = pg.GrpcCommClient(
+  var grpcComm = GrpcCommClient(
+    // Handler for receiving CBOR updates from the server.
     onUpdate: (cborUpdate) {
       logger.t('Received CBOR update: $cborUpdate');
       try {
@@ -90,14 +96,8 @@ void main(List<String> args) async {
   final topLevelUpdateNotifier =
       PrimitiveModelChangeNotifier(model: model, notifyOnTopLevel: true);
 
-/*
-  // Create an object that notifies portions of the UI when a full update is 
-  // ingested into the model or when a top-level primitive is updated.
-  final fullOrTopLevelUpdateNotifier = PrimitiveModelChangeNotifier(
-      model: model, notifyOnFull: true, notifyOnTopLevel: true);
-*/
-
   // Add the objects we just created to the model as watchers.
+  model.addWatcher(embodifier);
   model.addWatcher(fullUpdateNotifier);
   model.addWatcher(topLevelUpdateNotifier);
   model.addWatcher(eventSynchro);
@@ -115,37 +115,16 @@ void main(List<String> args) async {
           notifier: topLevelUpdateNotifier,
           child: InheritedEmbodifier(
             embodifier: embodifier,
-            child: const MyApp(),
+            child: const App(),
           ),
         ),
       )));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'ProntoGUI',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
-        ),
-        home: const WaitingForServerView(
-          operatingView: TopLevelCoordinator(
-            backgroundView: BackgroundView(),
-          ),
-        ));
-  }
-}
-
 /// Parses the command-line options for the program.  If there are invalid
 /// options then it prints the usage and exits the program with an error code (-1).
-(String serverAddr, int serverPortNo) _parseCommandLineOptions(
-    List<String> args) {
+(String serverAddr, int serverPortNo, LoggingLevel logLevel)
+    _parseCommandLineOptions(List<String> args) {
   // Default values for options
   const defaultAddr = '127.0.0.1';
   const defaultPort = '50053';
@@ -161,8 +140,22 @@ class MyApp extends StatelessWidget {
         help: 'The address of the server with an optional [:port] specified.')
     ..addFlag('help',
         abbr: 'h',
-        help: 'Display help on command-line options for this program.');
+        help: 'Display help on command-line options for this program.')
+    ..addOption('loglevel',
+        abbr: 'l',
+        defaultsTo: 'warning',
+        allowed: [
+          'off',
+          'fatal',
+          'error',
+          'warning',
+          'info',
+          'debug',
+          'trace',
+        ],
+        help: 'Set the logging level for the program.');
 
+  /// Prints the command-line usage and options for this application.
   void printUsage(String message) {
     stdout.writeln('\n$message\n${parser.usage}');
   }
@@ -186,7 +179,7 @@ class MyApp extends StatelessWidget {
 
     if (serverOptionParts.length > 2) {
       printUsage('Invalid command line usage:  server option is invalid.');
-      return (defaultAddr, defaultPortInt);
+      exit(-1);
     }
 
     serverAddr = serverOptionParts[0];
@@ -195,15 +188,38 @@ class MyApp extends StatelessWidget {
       var port = int.tryParse(serverOptionParts[1]);
       if (port == null) {
         printUsage('Invalid command line usage:  port must be a number.');
-        return (defaultAddr, defaultPortInt);
+        exit(-1);
       }
       serverPort = port;
     }
   }
 
-  if (parsedArgs.flag('help')) {
-    printUsage('Command line usage:');
+  var logLevelOption = parsedArgs['loglevel'];
+  var logLevel = LoggingLevel.warning;
+  switch (logLevelOption) {
+    case 'off':
+      logLevel = LoggingLevel.off;
+    case 'fatal':
+      logLevel = LoggingLevel.fatal;
+    case 'error':
+      logLevel = LoggingLevel.error;
+    case 'warning':
+      logLevel = LoggingLevel.warning;
+    case 'info':
+      logLevel = LoggingLevel.info;
+    case 'debug':
+      logLevel = LoggingLevel.debug;
+    case 'trace':
+      logLevel = LoggingLevel.trace;
+    default:
+      printUsage('Invalid command line usage:  loglevel is invalid.');
+      exit(-1);
   }
 
-  return (serverAddr, serverPort);
+  if (parsedArgs.flag('help')) {
+    printUsage('Command line usage:');
+    exit(0);
+  }
+
+  return (serverAddr, serverPort, logLevel);
 }

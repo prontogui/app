@@ -23,6 +23,11 @@ class PrimitiveModelChangeNotifier extends ChangeNotifier
   final pg.PrimitiveModel model;
 
   @override
+  void onBeginFullModelUpdate() {
+    // Not handled
+  }
+
+  @override
   void onFullModelUpdate() {
     if (notifyOnFull) {
       notifyListeners();

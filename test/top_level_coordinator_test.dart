@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:app/src/top_level_coordinator.dart';
+import 'package:app/widgets/top_level_coordinator.dart';
 import 'package:test/test.dart';
 import 'package:dartlib/dartlib.dart' as pg;
 

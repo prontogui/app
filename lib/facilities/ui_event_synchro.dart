@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 import 'dart:async';
 import 'package:dartlib/dartlib.dart';
-import 'log.dart';
+import '../log.dart';
 
 typedef UIEventHandler = void Function();
 

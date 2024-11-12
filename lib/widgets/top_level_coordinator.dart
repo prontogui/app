@@ -4,10 +4,10 @@
 
 import 'package:dartlib/dartlib.dart' as pg;
 import 'package:flutter/material.dart';
-import 'package:app/src/embodiment/embodifier.dart';
-import 'inherited_primitive_model.dart';
-import './embodiment_properties/frame_embodiment_properties.dart';
-import 'log.dart';
+import '../facilities/embodifier.dart';
+import '../facilities/inherited_primitive_model.dart';
+import '../embodiment_properties/frame_embodiment_properties.dart';
+import '../log.dart';
 
 /// The top-level coordinator is responsible for tracking the top-level primitives,
 /// sorting them into background primitives, full-view frames, and diaglog-view
@@ -81,6 +81,9 @@ class _TopLevelCoordinatorState extends State<TopLevelCoordinator>
   void onIngestField(pg.PKey pkey, pg.FKey fkeu, bool structural) {
     // Not handled
   }
+
+  @override
+  void onBeginFullModelUpdate() {}
 
   /// Called in response to structural updates (full updates) are made to the model, especially
   /// the top-level primitive list.

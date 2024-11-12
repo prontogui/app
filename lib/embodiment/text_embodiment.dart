@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:app/src/embodiment_properties/text_embodiment_properties.dart';
+import '../embodiment_properties/text_embodiment_properties.dart';
 import 'package:flutter/material.dart';
 import 'package:dartlib/dartlib.dart' as pg;
 

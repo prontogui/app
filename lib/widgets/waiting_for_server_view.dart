@@ -4,7 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'serverfield.dart';
-import 'inherited_comm.dart';
+import '../facilities/inherited_comm.dart';
 import 'package:dartlib/dartlib.dart' as pg;
 
 class WaitingForServerView extends StatelessWidget {
