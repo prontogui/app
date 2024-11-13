@@ -45,7 +45,6 @@ dependencies:
   dartlib:
     path: /Users/andy/dev/pg/dartlib
   args: ^2.6.0
-  logger: ^2.4.0
   package_info_plus: ^8.1.1
 
 dev_dependencies:

@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 import 'package:dartlib/dartlib.dart';
 import '../facilities/embodifier.dart';
-import '../log.dart';
 
 /// A model synchronizer that rebuilds portions of the UI when changes are made to the model.
 class UIBuilderSynchro extends SynchroBase {

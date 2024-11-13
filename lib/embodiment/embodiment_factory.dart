@@ -15,7 +15,6 @@ import 'textfield_embodiment.dart';
 import 'timer_embodiment.dart';
 import 'tristate_embodiment.dart';
 import '../embodiment_properties/frame_embodiment_properties.dart';
-import '../log.dart';
 
 /// Static class/method for creating embodiments.
 class EmbodimentFactory {

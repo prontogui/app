@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import '../log.dart';
 import 'package:dartlib/dartlib.dart'; // as pg;
 import '../embodiment_properties/frame_embodiment_properties.dart';
 import 'package:flutter/widgets.dart';
