@@ -30,8 +30,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  protobuf: '>=2.0.0 <4.0.0'
-  grpc: '>=3.2.4'
 
   cbor: ^6.1.1
   

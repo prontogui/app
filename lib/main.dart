@@ -1,9 +1,8 @@
 // Copyright 2024 ProntoGUI, LLC.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-import 'dart:io';
+import 'package:app/src/cmd_line_options.dart';
 import 'package:flutter/material.dart';
-import 'package:args/args.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:dartlib/dartlib.dart';
@@ -24,15 +23,16 @@ void main(List<String> args) async {
   // Get information about this App
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
 
-  var (serverAddr, serverPort, logLevel) = _parseCommandLineOptions(args);
+  // Parse the command-line options
+  final options = CmdLineOptions.from(args);
 
-  loggingLevel = logLevel;
+  // Set the logging level of Logger
+  loggingLevel = options.logLevel;
 
   logger.i('Welcome to ProntoGUI version ${packageInfo.version}');
-  logger.i('Starting ProntoGUI App with args: $args');
+  logger.i('Started with args: $args');
 
-  WidgetsFlutterBinding.ensureInitialized();
-  // Must add this line.
+  // Initialize the window manager
   await windowManager.ensureInitialized();
 
   WindowOptions windowOptions = const WindowOptions(
@@ -103,7 +103,8 @@ void main(List<String> args) async {
   model.addWatcher(builderSynchro);
 
   // Open the communication channel to the server.
-  grpcComm.open(serverAddress: serverAddr, serverPort: serverPort);
+  grpcComm.open(
+      serverAddress: options.serverAddr, serverPort: options.serverPort);
 
   // Run the app and start rendering the UI.
   runApp(InheritedCommClient(
@@ -118,107 +119,4 @@ void main(List<String> args) async {
           ),
         ),
       )));
-}
-
-/// Parses the command-line options for the program.  If there are invalid
-/// options then it prints the usage and exits the program with an error code (-1).
-(String serverAddr, int serverPortNo, LoggingLevel logLevel)
-    _parseCommandLineOptions(List<String> args) {
-  // Default values for options
-  const defaultAddr = '127.0.0.1';
-  const defaultPort = '50053';
-  var defaultPortInt = int.parse(defaultPort);
-  var defaultServer = '$defaultAddr:$defaultPort';
-//  var defaultServerPortNo = int.parse(defaultServerPort);
-
-  // Parse the command-line args
-  final parser = ArgParser()
-    ..addOption('server',
-        abbr: 's',
-        defaultsTo: defaultServer,
-        help: 'The address of the server with an optional [:port] specified.')
-    ..addFlag('help',
-        abbr: 'h',
-        help: 'Display help on command-line options for this program.')
-    ..addOption('loglevel',
-        abbr: 'l',
-        defaultsTo: 'warning',
-        allowed: [
-          'off',
-          'fatal',
-          'error',
-          'warning',
-          'info',
-          'debug',
-          'trace',
-        ],
-        help: 'Set the logging level for the program.');
-
-  /// Prints the command-line usage and options for this application.
-  void printUsage(String message) {
-    stdout.writeln('\n$message\n${parser.usage}');
-  }
-
-  late ArgResults parsedArgs;
-
-  try {
-    parsedArgs = parser.parse(args);
-  } catch (err) {
-    printUsage('Invalid command line usage.');
-    exit(-1);
-  }
-
-  String serverAddr = defaultAddr;
-  int serverPort = defaultPortInt;
-
-  var serverOption = parsedArgs.option('server');
-  if (serverOption != null) {
-    // Parse server option as addr:port
-    var serverOptionParts = serverOption.split(':');
-
-    if (serverOptionParts.length > 2) {
-      printUsage('Invalid command line usage:  server option is invalid.');
-      exit(-1);
-    }
-
-    serverAddr = serverOptionParts[0];
-
-    if (serverOptionParts.length == 2) {
-      var port = int.tryParse(serverOptionParts[1]);
-      if (port == null) {
-        printUsage('Invalid command line usage:  port must be a number.');
-        exit(-1);
-      }
-      serverPort = port;
-    }
-  }
-
-  var logLevelOption = parsedArgs['loglevel'];
-  var logLevel = LoggingLevel.warning;
-  switch (logLevelOption) {
-    case 'off':
-      logLevel = LoggingLevel.off;
-    case 'fatal':
-      logLevel = LoggingLevel.fatal;
-    case 'error':
-      logLevel = LoggingLevel.error;
-    case 'warning':
-      logLevel = LoggingLevel.warning;
-    case 'info':
-      logLevel = LoggingLevel.info;
-    case 'debug':
-      logLevel = LoggingLevel.debug;
-    case 'trace':
-      logLevel = LoggingLevel.trace;
-    default:
-      printUsage('Invalid command line usage:  loglevel is invalid.');
-      exit(-1);
-  }
-
-  if (parsedArgs.flag('help')) {
-    printUsage('Command line usage:');
-    exit(0);
-  }
-
-  return (serverAddr, serverPort, logLevel);
 }
