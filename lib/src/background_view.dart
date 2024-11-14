@@ -3,9 +3,9 @@
 // found in the LICENSE file.
 
 import 'package:dartlib/dartlib.dart' as pg;
-import '../facilities/embodifier.dart';
+import 'embodifier.dart';
 import 'package:flutter/material.dart';
-import '../facilities/inherited_primitive_model.dart';
+import 'inherited_primitive_model.dart';
 
 class BackgroundView extends StatelessWidget {
   const BackgroundView({super.key});

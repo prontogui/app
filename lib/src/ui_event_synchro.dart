@@ -1,7 +1,7 @@
 // Copyright 2024 ProntoGUI, LLC.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-import 'dart:async';
+//import 'dart:async';
 import 'package:dartlib/dartlib.dart';
 
 typedef UIEventHandler = void Function();
@@ -25,10 +25,10 @@ class UIEventSynchro extends UpdateSynchro {
         fkeyTimerFired
       };
 
-  /// Optional CommClient to send updates to the server.
+  /// Optional CommClientData to send updates to the server.
   CommClientData? comm;
 
-  Completer? _pendingWait;
+  //Completer? _pendingWait;
 
   @override
   void onFullModelUpdate() {
@@ -59,14 +59,17 @@ class UIEventSynchro extends UpdateSynchro {
 
     clearPendingUpdates();
 
+/*
     if (_pendingWait != null) {
       _pendingWait!.complete();
       _pendingWait = null;
     }
+    */
   }
-
+/*
   Future<void> wait() async {
     _pendingWait = Completer();
     return _pendingWait!.future;
   }
+  */
 }

@@ -1,0 +1,3 @@
+// Core exports that can be used by other packages.
+export 'src/embodifier.dart' show Embodifier, InheritedEmbodifier;
+// and so on...

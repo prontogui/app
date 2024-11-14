@@ -3,10 +3,10 @@
 // found in the LICENSE file.
 
 import 'package:dartlib/dartlib.dart'; // as pg;
-import '../embodiment_properties/frame_embodiment_properties.dart';
 import 'package:flutter/widgets.dart';
-import '../embodiment/notifier.dart';
-import '../embodiment/embodiment_factory.dart';
+import 'embodiment/notifier.dart';
+import 'embodiment/embodiment_factory.dart';
+import 'embodiment_properties/frame_embodiment_properties.dart';
 
 /// This object builds embodiments for the primitive model.
 class Embodifier implements PrimitiveModelWatcher {

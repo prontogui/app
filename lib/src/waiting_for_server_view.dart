@@ -3,8 +3,8 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'serverfield.dart';
-import '../facilities/inherited_comm.dart';
+import 'widgets/serverfield.dart';
+import 'inherited_comm.dart';
 import 'package:dartlib/dartlib.dart' as pg;
 
 class WaitingForServerView extends StatelessWidget {
@@ -34,7 +34,7 @@ class WaitingForServerView extends StatelessWidget {
     return const Scaffold(body: SizedBox());
   }
 
-  Widget _openButton(pg.CommClient pgcomm) {
+  Widget _openButton(pg.CommClientCtl pgcomm) {
     return OutlinedButton.icon(
       onPressed: () {
         pgcomm.open();
@@ -48,7 +48,7 @@ class WaitingForServerView extends StatelessWidget {
     );
   }
 
-  Widget _closeButton(pg.CommClient pgcomm) {
+  Widget _closeButton(pg.CommClientCtl pgcomm) {
     return OutlinedButton.icon(
       onPressed: () {
         pgcomm.close();
@@ -62,7 +62,7 @@ class WaitingForServerView extends StatelessWidget {
     );
   }
 
-  Widget _buildInactiveMessage(BuildContext context, pg.CommClient comm) {
+  Widget _buildInactiveMessage(BuildContext context, pg.CommClientCtl comm) {
     return _buildCommon(
         comm,
         const Text('Communication closed.'),
@@ -75,7 +75,7 @@ class WaitingForServerView extends StatelessWidget {
   }
 
   Widget _buildConnectingWaitMessage(
-      BuildContext context, pg.CommClient pgcomm) {
+      BuildContext context, pg.CommClientCtl pgcomm) {
     return _buildCommon(
         pgcomm,
         Row(
@@ -92,7 +92,7 @@ class WaitingForServerView extends StatelessWidget {
   }
 
   Widget _buildReestablishmentDelayMessage(
-      BuildContext context, pg.CommClient pgcomm) {
+      BuildContext context, pg.CommClientCtl pgcomm) {
     return _buildCommon(
       pgcomm,
       Row(
@@ -112,7 +112,7 @@ class WaitingForServerView extends StatelessWidget {
   }
 
   Widget _buildCommon(
-      pg.CommClient pgcomm, Widget widget1, Widget? widget2, bool openMode) {
+      pg.CommClientCtl pgcomm, Widget widget1, Widget? widget2, bool openMode) {
     return Scaffold(
         body: Center(
       child: SizedBox(

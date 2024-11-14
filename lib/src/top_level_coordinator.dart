@@ -4,10 +4,9 @@
 
 import 'package:dartlib/dartlib.dart' as pg;
 import 'package:flutter/material.dart';
-import '../facilities/embodifier.dart';
-import '../facilities/inherited_primitive_model.dart';
-import '../embodiment_properties/frame_embodiment_properties.dart';
-import '../log.dart';
+import 'embodifier.dart';
+import 'inherited_primitive_model.dart';
+import 'embodiment_properties/frame_embodiment_properties.dart';
 
 /// The top-level coordinator is responsible for tracking the top-level primitives,
 /// sorting them into background primitives, full-view frames, and diaglog-view
@@ -89,7 +88,7 @@ class _TopLevelCoordinatorState extends State<TopLevelCoordinator>
   /// the top-level primitive list.
   @override
   void onFullModelUpdate() {
-    logger.t('Entered onFullModelUpdate');
+    pg.logger.t('Entered onFullModelUpdate');
 
     // Pop all routes
     Navigator.of(context).popUntil((route) {
@@ -103,7 +102,7 @@ class _TopLevelCoordinatorState extends State<TopLevelCoordinator>
     // Analyze Showings
     var sa = _analyzeShowings(model.topPrimitives);
 
-    logger.i('now showing: ${sa.showing}, dlglist: ${sa.dlglist}');
+    pg.logger.i('now showing: ${sa.showing}, dlglist: ${sa.dlglist}');
 
     // Show the right stuff
     if (sa.showing >= 0) {
@@ -131,12 +130,12 @@ class _TopLevelCoordinatorState extends State<TopLevelCoordinator>
   /// Called in response to primitive(s) being updated (partial update).
   @override
   void onTopLevelPrimitiveUpdate() {
-    logger.t('Entered onTopLevelPrimitiveUpdate');
+    pg.logger.t('Entered onTopLevelPrimitiveUpdate');
 
     // Analyze Showings
     var sa = _analyzeShowings(model.topPrimitives);
 
-    logger.i('now showing: ${sa.showing}, dlglist: ${sa.dlglist}');
+    pg.logger.i('now showing: ${sa.showing}, dlglist: ${sa.dlglist}');
 
     // Do we need to show a different full view (or no full-view) than previously?
     if (sa.showing != fullViewShowingNow) {
@@ -287,7 +286,7 @@ class _TopLevelCoordinatorState extends State<TopLevelCoordinator>
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    logger.i('handling didChangeDependencies');
+    pg.logger.i('handling didChangeDependencies');
 
     // If we aren't listening to the model yet, then add the listeners now
     if (!listeningToModel) {
@@ -296,7 +295,7 @@ class _TopLevelCoordinatorState extends State<TopLevelCoordinator>
       // Get the embodifier
       embodifier = InheritedEmbodifier.of(context);
 
-      logger.i('add self as model watcher');
+      pg.logger.i('add self as model watcher');
 
       // Listen to the model for changes
       model.addWatcher(this);
@@ -307,7 +306,7 @@ class _TopLevelCoordinatorState extends State<TopLevelCoordinator>
 
   @override
   void dispose() {
-    logger.t('Entered dispose');
+    pg.logger.t('Entered dispose');
 
     // Stop listening to model changes
     model.removeWatcher(this);
@@ -317,7 +316,7 @@ class _TopLevelCoordinatorState extends State<TopLevelCoordinator>
 
   @override
   Widget build(BuildContext context) {
-    logger.t('Entered build');
+    pg.logger.t('Entered build');
     // If this is the first time building the widget, then add a post-frame
     // callback to perform work we normally do when the model is updated.  This is
     // necessary in cases where the model is already populated in quiescent state and

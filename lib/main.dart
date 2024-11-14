@@ -7,11 +7,12 @@ import 'package:args/args.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:dartlib/dartlib.dart';
-import 'facilities/inherited_primitive_model.dart';
-import 'facilities/ui_builder_synchro.dart';
-import 'facilities/inherited_comm.dart';
-import 'facilities/embodifier.dart';
-import 'widgets/app.dart';
+import 'src/inherited_primitive_model.dart';
+import 'src/ui_builder_synchro.dart';
+import 'src/ui_event_synchro.dart';
+import 'src/inherited_comm.dart';
+import 'src/embodifier.dart';
+import 'src/app.dart';
 
 /// The main entry point for the ProntoGUI application.  This function sets up
 /// several objects responsible for core functionality of the application and

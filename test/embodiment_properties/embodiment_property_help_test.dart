@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:app/embodiment_properties/embodiment_property_help.dart';
+import 'package:app/src/embodiment_properties/embodiment_property_help.dart';
 
 void main() {
   group('getEnumStringProp', () {

@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:dartlib/dartlib.dart' as pg;
+import 'package:dartlib/dartlib.dart';
 
 /// An adapter class to allow the pg.CommClient to notify listeners of state changes.
 ///
@@ -8,16 +8,16 @@ import 'package:dartlib/dartlib.dart' as pg;
 class CommClientChangeNotifier extends ChangeNotifier {
   CommClientChangeNotifier();
 
-  pg.CommClient? _comm;
+  CommClientCtl? _comm;
 
-  pg.CommClient get comm {
+  CommClientCtl get comm {
     if (_comm == null) {
       throw Exception('comm has not been assigned.');
     }
     return _comm!;
   }
 
-  set comm(pg.CommClient value) {
+  set comm(CommClientCtl value) {
     if (_comm != null) {
       throw Exception('comm can only be assigned once.');
     }
@@ -37,7 +37,7 @@ class InheritedCommClient extends InheritedNotifier<CommClientChangeNotifier> {
     required super.child,
   });
 
-  static pg.CommClient of(BuildContext context) {
+  static CommClientCtl of(BuildContext context) {
     return context
         .dependOnInheritedWidgetOfExactType<InheritedCommClient>()!
         .notifier!
