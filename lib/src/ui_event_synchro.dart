@@ -28,8 +28,6 @@ class UIEventSynchro extends UpdateSynchro {
   /// Optional CommClientData to send updates to the server.
   CommClientData? comm;
 
-  //Completer? _pendingWait;
-
   @override
   void onFullModelUpdate() {
     clearPendingUpdates();
@@ -54,22 +52,9 @@ class UIEventSynchro extends UpdateSynchro {
     if (comm != null) {
       var cborUpdate = getPartialUpdate();
       logger.t('Sending CBOR update: $cborUpdate');
-      comm!.streamUpdateToServer(cborUpdate);
+      comm!.submitUpdateToServer(cborUpdate);
     }
 
     clearPendingUpdates();
-
-/*
-    if (_pendingWait != null) {
-      _pendingWait!.complete();
-      _pendingWait = null;
-    }
-    */
   }
-/*
-  Future<void> wait() async {
-    _pendingWait = Completer();
-    return _pendingWait!.future;
-  }
-  */
 }

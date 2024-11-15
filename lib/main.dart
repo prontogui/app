@@ -58,18 +58,19 @@ void main(List<String> args) async {
 
   // Create the object that communicates with the server.
   var grpcComm = GrpcCommClient(
-    // Handler for receiving CBOR updates from the server.
-    onUpdate: (cborUpdate) {
-      logger.t('Received CBOR update: $cborUpdate');
-      try {
-        model.ingestCborUpdate(cborUpdate);
-      } catch (e) {
-        logger.e('Error ingesting CBOR update: $e');
-      }
-    },
     onStateChange: () => commNotifier.onStateChange(),
     serverCheckinPeriod: 0,
   );
+
+  // Handler for receiving CBOR updates from the server.
+  grpcComm.updatesFromServer.listen((cborUpdate) {
+    logger.t('Received CBOR update: $cborUpdate');
+    try {
+      model.ingestCborUpdate(cborUpdate);
+    } catch (e) {
+      logger.e('Error ingesting CBOR update: $e');
+    }
+  });
 
   // Attach the comm object to the notifier.
   commNotifier.comm = grpcComm;
