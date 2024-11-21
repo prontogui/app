@@ -29,6 +29,9 @@ void main(List<String> args) async {
   // Set the logging level of Logger
   loggingLevel = options.logLevel;
 
+  // TODO:  REMOVE THE FOLLOWING FOR PRODUCTION
+  loggingLevel = LoggingLevel.info;
+
   logger.i('Welcome to ProntoGUI version ${packageInfo.version}');
   logger.i('Started with args: $args');
 
@@ -36,7 +39,7 @@ void main(List<String> args) async {
   await windowManager.ensureInitialized();
 
   WindowOptions windowOptions = const WindowOptions(
-    size: Size(1200, 800),
+    size: Size(800, 600),
     center: true,
     backgroundColor: Colors.transparent,
     skipTaskbar: false,
@@ -63,14 +66,20 @@ void main(List<String> args) async {
   );
 
   // Handler for receiving CBOR updates from the server.
-  grpcComm.updatesFromServer.listen((cborUpdate) {
-    logger.t('Received CBOR update: $cborUpdate');
-    try {
-      model.ingestCborUpdate(cborUpdate);
-    } catch (e) {
-      logger.e('Error ingesting CBOR update: $e');
-    }
-  });
+  grpcComm.updatesFromServer.listen(
+    (cborUpdate) {
+      logger.i('Received CBOR update.');
+      try {
+        model.ingestCborUpdate(cborUpdate);
+      } catch (e) {
+        logger.e('Error ingesting CBOR update: $e');
+      }
+    },
+    onError: (e) {
+      logger.e(e.toString());
+      model.topPrimitives = [];
+    },
+  );
 
   // Attach the comm object to the notifier.
   commNotifier.comm = grpcComm;

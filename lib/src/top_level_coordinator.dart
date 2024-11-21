@@ -316,7 +316,6 @@ class _TopLevelCoordinatorState extends State<TopLevelCoordinator>
 
   @override
   Widget build(BuildContext context) {
-    pg.logger.t('Entered build');
     // If this is the first time building the widget, then add a post-frame
     // callback to perform work we normally do when the model is updated.  This is
     // necessary in cases where the model is already populated in quiescent state and
