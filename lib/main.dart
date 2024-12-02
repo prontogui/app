@@ -125,7 +125,7 @@ void main(List<String> args) async {
           notifier: topLevelUpdateNotifier,
           child: InheritedEmbodifier(
             embodifier: embodifier,
-            child: const App(),
+            child: const App.remote(),
           ),
         ),
       )));
