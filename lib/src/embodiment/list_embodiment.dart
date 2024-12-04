@@ -36,7 +36,10 @@ class _ListEmbodimentState extends State<ListEmbodiment> {
 
   Widget? embodifySingleItem(BuildContext context, pg.Primitive item) {
     // Only certain primitives are supported
-    if (item is! pg.Text && item is! pg.Command && item is! pg.Check) {
+    if (item is! pg.Text &&
+        item is! pg.Command &&
+        item is! pg.Check &&
+        item is! pg.Choice) {
       // TODO:  show something better for error case.  Perhaps log an error also.
       return const SizedBox(
         child: Text("?"),
@@ -71,16 +74,15 @@ class _ListEmbodimentState extends State<ListEmbodiment> {
   }
 
   Widget? builderForCardItem(BuildContext context, int index) {
-    var item = widget.list.listItems[index];
+    var groupItem = widget.list.listItems[index];
 
-    if (item is! pg.Group) {
+    if (groupItem is! pg.Group) {
       // TODO:  show something better for error case.  Perhaps log an error also.
       return const SizedBox(
         child: Text("?"),
       );
     }
 
-    var groupItem = item as pg.Group;
     var leading = embodifyGroupItem(context, groupItem, 0);
     var title = embodifyGroupItem(context, groupItem, 1);
     var subtitle = embodifyGroupItem(context, groupItem, 2);
@@ -98,6 +100,29 @@ class _ListEmbodimentState extends State<ListEmbodiment> {
     );
   }
 
+  Widget? builderForPropertyItem(BuildContext context, int index) {
+    var groupItem = widget.list.listItems[index];
+
+    if (groupItem is! pg.Group) {
+      // TODO:  show something better for error case.  Perhaps log an error also.
+      return const SizedBox(
+        child: Text("?"),
+      );
+    }
+
+    var propLabel = embodifyGroupItem(context, groupItem, 0);
+    var propValue = embodifyGroupItem(context, groupItem, 1);
+
+    return Row(
+      children: [
+        Expanded(
+            child: Align(alignment: Alignment.centerLeft, child: propLabel)),
+        Expanded(
+            child: Align(alignment: Alignment.centerRight, child: propValue)),
+      ],
+    );
+  }
+
   NullableIndexedWidgetBuilder? mapToBuilderFunction() {
     var embodiment = widget.embodimentProps.embodiment;
 
@@ -106,6 +131,8 @@ class _ListEmbodimentState extends State<ListEmbodiment> {
         return builderForSingleItem;
       case 'card-list':
         return builderForCardItem;
+      case 'property-list':
+        return builderForPropertyItem;
       default:
         return null;
     }

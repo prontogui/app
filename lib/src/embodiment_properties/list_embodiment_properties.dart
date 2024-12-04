@@ -8,7 +8,11 @@ import 'embodiment_property_help.dart';
 class ListEmbodimentProperties with CommonProperties {
   String embodiment;
 
-  static final Set<String> _validEmbodiments = {'card-list', 'normal-list'};
+  static final Set<String> _validEmbodiments = {
+    'card-list',
+    'normal-list',
+    'property-list'
+  };
 
   ListEmbodimentProperties.fromMap(Map<String, dynamic>? embodimentMap)
       : embodiment = getEnumStringProp(
