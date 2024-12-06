@@ -4,27 +4,40 @@
 
 import 'package:dartlib/dartlib.dart' as pg;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
-class TextFieldEmbodiment extends StatefulWidget {
-  const TextFieldEmbodiment(
-      {super.key, required this.textfield, required this.parentWidgetType});
+class NumericFieldEmbodiment extends StatefulWidget {
+  const NumericFieldEmbodiment(
+      {super.key, required this.numfield, required this.parentWidgetType});
 
-  final pg.TextField textfield;
+  final pg.NumericField numfield;
   final String parentWidgetType;
 
   @override
-  State<TextFieldEmbodiment> createState() => _TextFieldEmbodimentState();
+  State<NumericFieldEmbodiment> createState() => _NumericFieldEmbodimentState();
 }
 
-class _TextFieldEmbodimentState extends State<TextFieldEmbodiment> {
+class _NumericFieldEmbodimentState extends State<NumericFieldEmbodiment> {
   late TextEditingController _controller;
   late FocusNode _focusNode;
   bool _hasFocus = false;
 
+  late RegExp _pattern;
+  late TextInputFormatter _inputFmt;
+
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController(text: widget.textfield.textEntry);
+
+    _pattern = RegExp(r'^[0-9]+$');
+
+    _inputFmt = TextInputFormatter.withFunction(
+      (TextEditingValue oldValue, TextEditingValue newValue) {
+        return _pattern.hasMatch(newValue.text) ? newValue : oldValue;
+      },
+    );
+
+    _controller = TextEditingController(text: widget.numfield.numericEntry);
     _focusNode = FocusNode();
     _focusNode.addListener(() {
       setState(() => _hasFocus = _focusNode.hasFocus);
@@ -44,11 +57,11 @@ class _TextFieldEmbodimentState extends State<TextFieldEmbodiment> {
 
   void saveText(String value) {
     // Do nothing if text hasn't changed
-    if (value == widget.textfield.textEntry) {
+    if (value == widget.numfield.numericEntry) {
       return;
     }
 
-    widget.textfield.textEntry = value;
+    widget.numfield.numericEntry = value;
   }
 
   Widget _buildForEditing(BuildContext context) {
@@ -58,12 +71,15 @@ class _TextFieldEmbodimentState extends State<TextFieldEmbodiment> {
       decor = const InputDecoration(border: OutlineInputBorder());
     }
 
-    return TextField(
-      controller: _controller,
-      decoration: decor,
-      onSubmitted: (value) => saveText(value),
-      focusNode: _focusNode,
-    );
+    return Container(
+        color: Colors.white,
+        child: TextField(
+          controller: _controller,
+          decoration: decor,
+          onSubmitted: (value) => saveText(value),
+          focusNode: _focusNode,
+          inputFormatters: [_inputFmt],
+        ));
   }
 
   @override
