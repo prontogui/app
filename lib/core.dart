@@ -11,6 +11,3 @@ export 'src/inherited_primitive_model.dart'
 export 'src/app.dart' show App;
 // and so on...
 
-// TEMPORARY - REMOVE FOR PRODUCTION
-export 'src/embodiment/numericfield_embodiment.dart'
-    show NumericFieldEmbodiment;

@@ -12,11 +12,14 @@ import 'src/ui_event_synchro.dart';
 import 'src/inherited_comm.dart';
 import 'src/embodifier.dart';
 import 'src/app.dart';
+import 'altmain.dart';
 
 /// The main entry point for the ProntoGUI application.  This function sets up
 /// several objects responsible for core functionality of the application and
 /// hands off operation to the App widget.
 void main(List<String> args) async {
+  return altmain2(args);
+
   // Be sure to add this line if `PackageInfo.fromPlatform()` is called before runApp()
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -125,7 +128,7 @@ void main(List<String> args) async {
           notifier: topLevelUpdateNotifier,
           child: InheritedEmbodifier(
             embodifier: embodifier,
-            child: const App.remote(),
+            child: App.remote(),
           ),
         ),
       )));

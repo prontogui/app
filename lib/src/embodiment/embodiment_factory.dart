@@ -14,6 +14,7 @@ import 'text_embodiment.dart';
 import 'textfield_embodiment.dart';
 import 'timer_embodiment.dart';
 import 'tristate_embodiment.dart';
+import 'numericfield_embodiment.dart';
 import '../embodiment_properties/frame_embodiment_properties.dart';
 
 /// Static class/method for creating embodiments.
@@ -69,6 +70,10 @@ class EmbodimentFactory {
         return TableEmbodiment(table: primitive as Table);
       case "Timer":
         return TimerEmbodiment(timer: primitive as Timer);
+      case "NumericField":
+        return NumericFieldEmbodiment(
+            numfield: primitive as NumericField,
+            parentWidgetType: parentWidgetType);
       default:
         var errorMsg =
             'No embodifier for primitive of type ${primitive.describeType} with pkey = ${primitive.pkey}';
