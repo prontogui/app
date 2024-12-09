@@ -29,7 +29,7 @@ class _NumericFieldEmbodimentState extends State<NumericFieldEmbodiment> {
   void initState() {
     super.initState();
 
-    _pattern = RegExp(r'^[0-9]+$');
+    _pattern = RegExp(r'^[+-]?[0-9]*\.?[0-9]*$');
 
     _inputFmt = TextInputFormatter.withFunction(
       (TextEditingValue oldValue, TextEditingValue newValue) {
