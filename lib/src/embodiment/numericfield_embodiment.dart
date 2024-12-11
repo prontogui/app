@@ -5,13 +5,20 @@
 import 'package:dartlib/dartlib.dart' as pg;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../embodiment_properties/numericfield_embodiment_properties.dart';
 
 class NumericFieldEmbodiment extends StatefulWidget {
-  const NumericFieldEmbodiment(
-      {super.key, required this.numfield, required this.parentWidgetType});
+  NumericFieldEmbodiment(
+      {super.key,
+      required this.numfield,
+      required Map<String, dynamic>? embodimentMap,
+      required this.parentWidgetType})
+      : embodimentProps =
+            NumericFieldEmbodimentProperties.fromMap(embodimentMap);
 
   final pg.NumericField numfield;
   final String parentWidgetType;
+  final NumericFieldEmbodimentProperties embodimentProps;
 
   @override
   State<NumericFieldEmbodiment> createState() => _NumericFieldEmbodimentState();
@@ -21,7 +28,7 @@ class _NumericFieldEmbodimentState extends State<NumericFieldEmbodiment> {
   late TextEditingController _controller;
   late FocusNode _focusNode;
   bool _hasFocus = false;
-
+  String? _selectedFont = "";
   late RegExp _pattern;
   late TextInputFormatter _inputFmt;
 
@@ -82,6 +89,67 @@ class _NumericFieldEmbodimentState extends State<NumericFieldEmbodiment> {
         ));
   }
 
+  Widget _buildForFontSize(BuildContext context) {
+    InputDecoration? decor;
+
+    if (_hasFocus) {
+      decor = const InputDecoration(border: OutlineInputBorder());
+    }
+
+    var items = [
+      8,
+      9,
+      10,
+      11,
+      12,
+      14,
+      16,
+      20,
+      24,
+      28,
+      32,
+      35,
+      40,
+      44,
+      54,
+      60,
+      68,
+      72,
+      80,
+      88,
+      96
+    ].map(
+      (e) {
+        return DropdownMenuEntry<String>(
+            value: e.toString(), label: e.toString());
+      },
+    ).toList();
+
+    return Container(
+        color: Colors.white,
+        child: DropdownMenu<String>(
+          controller: _controller,
+          dropdownMenuEntries: items,
+          menuHeight: 400,
+          onSelected: (String? value) {
+            setState(() {
+              _selectedFont = value;
+            });
+          },
+        ));
+  }
+
+  Widget _build(BuildContext context) {
+    switch (widget.embodimentProps.embodiment) {
+      case 'default':
+        return _buildForEditing(context);
+      case 'font-size':
+        return _buildForFontSize(context);
+      default:
+        return _buildForEditing(context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // Add the following Flexible widget to avoid getting an exception during rendering.
@@ -90,10 +158,10 @@ class _NumericFieldEmbodimentState extends State<NumericFieldEmbodiment> {
     if (widget.parentWidgetType == "Row" ||
         widget.parentWidgetType == "Column") {
       return Flexible(
-        child: _buildForEditing(context),
+        child: _build(context),
       );
     }
 
-    return _buildForEditing(context);
+    return _build(context);
   }
 }

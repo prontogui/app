@@ -73,6 +73,7 @@ class EmbodimentFactory {
       case "NumericField":
         return NumericFieldEmbodiment(
             numfield: primitive as NumericField,
+            embodimentMap: embodimentMap,
             parentWidgetType: parentWidgetType);
       default:
         var errorMsg =
