@@ -39,7 +39,8 @@ class _ListEmbodimentState extends State<ListEmbodiment> {
     if (item is! pg.Text &&
         item is! pg.Command &&
         item is! pg.Check &&
-        item is! pg.Choice) {
+        item is! pg.Choice &&
+        item is! pg.NumericField) {
       // TODO:  show something better for error case.  Perhaps log an error also.
       return const SizedBox(
         child: Text("?"),
