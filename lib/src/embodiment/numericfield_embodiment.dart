@@ -45,20 +45,35 @@ class _NumericFieldEmbodimentState extends State<NumericFieldEmbodiment> {
     );
 
     _controller = TextEditingController(text: widget.numfield.numericEntry);
+    _controller.addListener(
+      () {
+        print('current value = ${_controller.text}');
+      },
+    );
     _focusNode = FocusNode();
     _focusNode.addListener(() {
-      setState(() => _hasFocus = _focusNode.hasFocus);
+      setState(() => _hasFocus = _focusNode.hasPrimaryFocus);
       // Save text changes upon losing focus
+
+      /*
       if (!_hasFocus) {
         saveText(_controller.text);
       }
+      */
     });
+
+    FocusManager.instance.addListener(onFocusChange);
+  }
+
+  void onFocusChange() {
+    saveText(_controller.text);
   }
 
   @override
   void dispose() {
     _controller.dispose();
     _focusNode.dispose();
+    FocusManager.instance.removeListener(onFocusChange);
     super.dispose();
   }
 
@@ -67,7 +82,7 @@ class _NumericFieldEmbodimentState extends State<NumericFieldEmbodiment> {
     if (value == widget.numfield.numericEntry) {
       return;
     }
-
+    print('saved value = $value');
     widget.numfield.numericEntry = value;
   }
 
@@ -90,10 +105,10 @@ class _NumericFieldEmbodimentState extends State<NumericFieldEmbodiment> {
   }
 
   Widget _buildForFontSize(BuildContext context) {
-    InputDecoration? decor;
+    Decoration? decor;
 
     if (_hasFocus) {
-      decor = const InputDecoration(border: OutlineInputBorder());
+      decor = BoxDecoration(border: Border.all(width: 3));
     }
 
     var items = [
@@ -127,12 +142,63 @@ class _NumericFieldEmbodimentState extends State<NumericFieldEmbodiment> {
 
     return Container(
         color: Colors.white,
+        //  decoration: decor,
         child: DropdownMenu<String>(
           controller: _controller,
           dropdownMenuEntries: items,
           menuHeight: 400,
+          //focusNode: _focusNode,
           onSelected: (String? value) {
             setState(() {
+              _selectedFont = value;
+            });
+          },
+        ));
+  }
+
+  // See https://www.rapidtables.com/web/color/RGB_Color.html for good reference.
+  static const _colorRecords = <(String value, Color color, String label)>[
+    ('0x00000000', Colors.black, 'Black'),
+    ('0x00FFFFFF', Colors.white, 'White'),
+    ('0x00FF0000', Colors.red, 'Red')
+  ];
+
+  Widget _buildForColor(BuildContext context) {
+    var items = _colorRecords.map(
+      (e) {
+        return DropdownMenuEntry<String>(
+            value: e.$1,
+            label: e.$3,
+            leadingIcon: Icon(Icons.rectangle, color: e.$2));
+      },
+    ).toList();
+
+    Icon? leadingIcon;
+    switch (_controller.text) {
+      case 'Black':
+        var color = _colorRecords[0];
+        leadingIcon = Icon(Icons.rectangle, color: color.$2);
+      case 'White':
+        var color = _colorRecords[1];
+        leadingIcon = Icon(Icons.rectangle, color: color.$2);
+      case 'Red':
+        var color = _colorRecords[2];
+        leadingIcon = Icon(Icons.rectangle, color: color.$2);
+      default:
+        leadingIcon = const Icon(Icons.rectangle_outlined, color: Colors.grey);
+    }
+
+    return Container(
+        color: Colors.white,
+        child: DropdownMenu<String>(
+          controller: _controller,
+          dropdownMenuEntries: items,
+          menuHeight: 400,
+          leadingIcon: leadingIcon,
+          //focusNode: _focusNode,
+          onSelected: (String? value) {
+            setState(() {
+              print('Dropdown value = $value');
               _selectedFont = value;
             });
           },
@@ -145,6 +211,8 @@ class _NumericFieldEmbodimentState extends State<NumericFieldEmbodiment> {
         return _buildForEditing(context);
       case 'font-size':
         return _buildForFontSize(context);
+      case 'color':
+        return _buildForColor(context);
       default:
         return _buildForEditing(context);
     }

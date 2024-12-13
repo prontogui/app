@@ -7,6 +7,7 @@ class NumericFieldEmbodimentProperties with CommonProperties {
   static final Set<String> _validEmbodiments = {
     'default',
     'font-size',
+    'color'
   };
 
   NumericFieldEmbodimentProperties.fromMap(Map<String, dynamic>? embodimentMap)
