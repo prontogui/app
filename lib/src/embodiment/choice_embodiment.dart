@@ -40,6 +40,7 @@ class _ChoiceEmbodimentState extends State<ChoiceEmbodiment> {
       ));
     }
 
+    // TODO:  convert this over to DropdownMenu for consistent look and feel with NumericField
     return DropdownButton<String>(
       items: choicesD,
       value: widget.choice.choice,

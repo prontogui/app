@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart' as flutter;
+import 'package:flutter/widgets.dart';
 import 'package:dartlib/dartlib.dart';
 import 'check_embodiment.dart';
 import 'choice_embodiment.dart';
@@ -15,12 +15,82 @@ import 'textfield_embodiment.dart';
 import 'timer_embodiment.dart';
 import 'tristate_embodiment.dart';
 import 'numericfield_embodiment.dart';
-import '../embodiment_properties/frame_embodiment_properties.dart';
+import '../embodiment_properties/embodiment_property_help.dart';
+import 'embodiment_interface.dart';
 
 /// Static class/method for creating embodiments.
 class EmbodimentFactory {
-  static flutter.Widget createEmbodiment(Primitive primitive,
+  EmbodimentFactory() {
+    var allManifests = <String, Map<String, EmbodimentManifestEntry>>{};
+
+    void addManifestInfo(EmbodimentPackageManifest manifest) {
+      var pinfo = allManifests[manifest.primitiveType];
+      pinfo ??= <String, EmbodimentManifestEntry>{};
+      for (var entry in manifest.entries) {
+        if (allManifests.containsKey(entry.embodiment)) {
+          throw Exception(
+              'duplicate embodiment name for primitive ${manifest.primitiveType}');
+        }
+        pinfo[entry.embodiment] = entry;
+      }
+      allManifests[manifest.primitiveType] = pinfo;
+    }
+
+    var manifests = collectManifests();
+    for (var mi in manifests) {
+      addManifestInfo(mi);
+    }
+
+    _factoryInfo = allManifests;
+  }
+
+  List<EmbodimentPackageManifest> collectManifests() {
+    var manifests = List<EmbodimentPackageManifest>.empty(growable: true);
+
+    // For each embodiment package...
+    manifests.add(getManifest());
+
+    return manifests;
+  }
+
+  late final Map<String, Map<String, EmbodimentManifestEntry>> _factoryInfo;
+
+  Widget createEmbodiment(Primitive primitive,
       Map<String, dynamic> embodimentMap, String parentWidgetType) {
+    var embodiment = getStringProp(embodimentMap, 'embodiment', '');
+
+    var primitiveType = primitive.describeType;
+    var pinfo = _factoryInfo[primitiveType];
+    if (pinfo == null) {
+      var msg =
+          'No embodifier for primitive of type $primitiveType with pkey = ${primitive.pkey}';
+      logger.e(msg);
+      throw Exception(msg);
+    }
+
+    var einfo = pinfo[embodiment];
+    if (einfo == null) {
+      var msg =
+          'Embodiment named "$embodiment" does not exist for primitive of type $primitiveType with pkey = ${primitive.pkey}.  Using default embodiment.';
+      logger.w(msg);
+
+      einfo = pinfo['default'];
+      if (einfo == null) {
+        var msg =
+            'Default embodiment (default) not found for primitive of type $primitiveType with pkey = ${primitive.pkey}.  Using default embodiment.';
+        logger.e(msg);
+        throw Exception(msg);
+      }
+    }
+
+    Key? key;
+    if (einfo.keyRequired) {
+      key = UniqueKey();
+    }
+
+    var args = EmbodimentArgs(primitive, embodimentMap, parentWidgetType, key);
+    return einfo.factoryFunction(args);
+/*
     switch (primitive.describeType) {
       case "Command":
         return CommandEmbodiment(
@@ -70,16 +140,12 @@ class EmbodimentFactory {
         return TableEmbodiment(table: primitive as Table);
       case "Timer":
         return TimerEmbodiment(timer: primitive as Timer);
-      case "NumericField":
-        return NumericFieldEmbodiment(
-            numfield: primitive as NumericField,
-            embodimentMap: embodimentMap,
-            parentWidgetType: parentWidgetType);
       default:
         var errorMsg =
             'No embodifier for primitive of type ${primitive.describeType} with pkey = ${primitive.pkey}';
         logger.e(errorMsg);
         throw Exception(errorMsg);
     }
+    */
   }
 }
