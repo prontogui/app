@@ -8,40 +8,59 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'common_properties.dart';
 
-class DefaultEmbodimentProperties with CommonProperties {
-  DefaultEmbodimentProperties.fromMap(Map<String, dynamic>? embodimentMap) {
-    super.initializeFromMap(embodimentMap);
-  }
-}
-
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('NumericField', [
     EmbodimentManifestEntry('default', (args) {
-      return DefaultNumericFieldEmbodiment(args);
+      return DefaultNumericFieldEmbodiment(
+        key: args.key,
+        numfield: args.primitive as pg.NumericField,
+        props:
+            DefaultNumericFieldEmbodimentProperties.fromMap(args.embodimentMap),
+        parentWidgetType: args.parentWidgetType,
+      );
     }),
     EmbodimentManifestEntry('font-size', (args) {
-      return FontSizeNumericFieldEmbodiment(args);
+      return FontSizeNumericFieldEmbodiment(
+        key: args.key,
+        numfield: args.primitive as pg.NumericField,
+        props:
+            FontSizeNumericFielEmbodimentProperties.fromMap(args.embodimentMap),
+        parentWidgetType: args.parentWidgetType,
+      );
     }),
     EmbodimentManifestEntry('color', (args) {
-      return ColorNumericFieldEmbodiment(args);
+      return ColorNumericFieldEmbodiment(
+        key: args.key,
+        numfield: args.primitive as pg.NumericField,
+        props:
+            ColorNumericFieldEmbodimentProperties.fromMap(args.embodimentMap),
+        parentWidgetType: args.parentWidgetType,
+      );
     })
   ]);
 }
 
 class DefaultNumericFieldEmbodiment extends StatefulWidget {
-  DefaultNumericFieldEmbodiment(this.args)
-      : numfield = args.primitive as pg.NumericField,
-        embodimentProps =
-            DefaultEmbodimentProperties.fromMap(args.embodimentMap),
-        super(key: args.key);
+  const DefaultNumericFieldEmbodiment(
+      {super.key,
+      required this.numfield,
+      required this.props,
+      required this.parentWidgetType});
 
-  final EmbodimentArgs args;
   final pg.NumericField numfield;
-  final DefaultEmbodimentProperties embodimentProps;
+  final DefaultNumericFieldEmbodimentProperties props;
+  final String parentWidgetType;
 
   @override
   State<DefaultNumericFieldEmbodiment> createState() {
     return _DefaultEmbodimentState();
+  }
+}
+
+class DefaultNumericFieldEmbodimentProperties with CommonProperties {
+  DefaultNumericFieldEmbodimentProperties.fromMap(
+      Map<String, dynamic>? embodimentMap) {
+    super.initializeFromMap(embodimentMap);
   }
 }
 
@@ -115,8 +134,8 @@ class _DefaultEmbodimentState extends State<DefaultNumericFieldEmbodiment> {
     // Add the following Flexible widget to avoid getting an exception during rendering.
     // See item #2 in the Problem Solving section in README.md file.
 
-    if (widget.args.parentWidgetType == "Row" ||
-        widget.args.parentWidgetType == "Column") {
+    if (widget.parentWidgetType == "Row" ||
+        widget.parentWidgetType == "Column") {
       return Flexible(
         child: content,
       );
@@ -127,19 +146,26 @@ class _DefaultEmbodimentState extends State<DefaultNumericFieldEmbodiment> {
 }
 
 class FontSizeNumericFieldEmbodiment extends StatefulWidget {
-  FontSizeNumericFieldEmbodiment(this.args)
-      : numfield = args.primitive as pg.NumericField,
-        embodimentProps =
-            NumericFieldEmbodimentProperties.fromMap(args.embodimentMap),
-        super(key: args.key);
+  const FontSizeNumericFieldEmbodiment(
+      {super.key,
+      required this.numfield,
+      required this.props,
+      required this.parentWidgetType});
 
-  final EmbodimentArgs args;
   final pg.NumericField numfield;
-  final NumericFieldEmbodimentProperties embodimentProps;
+  final FontSizeNumericFielEmbodimentProperties props;
+  final String parentWidgetType;
 
   @override
   State<FontSizeNumericFieldEmbodiment> createState() {
     return _FontSizeEmbodimentState();
+  }
+}
+
+class FontSizeNumericFielEmbodimentProperties with CommonProperties {
+  FontSizeNumericFielEmbodimentProperties.fromMap(
+      Map<String, dynamic>? embodimentMap) {
+    super.initializeFromMap(embodimentMap);
   }
 }
 
@@ -226,8 +252,8 @@ class _FontSizeEmbodimentState extends State<FontSizeNumericFieldEmbodiment> {
     // Add the following Flexible widget to avoid getting an exception during rendering.
     // See item #2 in the Problem Solving section in README.md file.
 
-    if (widget.args.parentWidgetType == "Row" ||
-        widget.args.parentWidgetType == "Column") {
+    if (widget.parentWidgetType == "Row" ||
+        widget.parentWidgetType == "Column") {
       return Flexible(
         child: content,
       );
@@ -238,19 +264,26 @@ class _FontSizeEmbodimentState extends State<FontSizeNumericFieldEmbodiment> {
 }
 
 class ColorNumericFieldEmbodiment extends StatefulWidget {
-  ColorNumericFieldEmbodiment(this.args)
-      : numfield = args.primitive as pg.NumericField,
-        embodimentProps =
-            NumericFieldEmbodimentProperties.fromMap(args.embodimentMap),
-        super(key: args.key);
+  const ColorNumericFieldEmbodiment(
+      {super.key,
+      required this.numfield,
+      required this.props,
+      required this.parentWidgetType});
 
-  final EmbodimentArgs args;
   final pg.NumericField numfield;
-  final NumericFieldEmbodimentProperties embodimentProps;
+  final ColorNumericFieldEmbodimentProperties props;
+  final String parentWidgetType;
 
   @override
   State<ColorNumericFieldEmbodiment> createState() {
     return _ColorEmbodimentState();
+  }
+}
+
+class ColorNumericFieldEmbodimentProperties with CommonProperties {
+  ColorNumericFieldEmbodimentProperties.fromMap(
+      Map<String, dynamic>? embodimentMap) {
+    super.initializeFromMap(embodimentMap);
   }
 }
 
@@ -328,8 +361,8 @@ class _ColorEmbodimentState extends State<ColorNumericFieldEmbodiment> {
     // Add the following Flexible widget to avoid getting an exception during rendering.
     // See item #2 in the Problem Solving section in README.md file.
 
-    if (widget.args.parentWidgetType == "Row" ||
-        widget.args.parentWidgetType == "Column") {
+    if (widget.parentWidgetType == "Row" ||
+        widget.parentWidgetType == "Column") {
       return Flexible(
         child: content,
       );

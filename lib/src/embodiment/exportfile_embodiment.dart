@@ -6,6 +6,16 @@ import 'package:dartlib/dartlib.dart' as pg;
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:io';
+import 'package:app/src/embodiment/embodiment_interface.dart';
+
+EmbodimentPackageManifest getManifest() {
+  return EmbodimentPackageManifest('ExportFile', [
+    EmbodimentManifestEntry('default', (args) {
+      return ExportFileEmbodiment(
+          key: args.key, exportFile: args.primitive as pg.ExportFile);
+    }),
+  ]);
+}
 
 class ExportFileEmbodiment extends StatelessWidget {
   const ExportFileEmbodiment({

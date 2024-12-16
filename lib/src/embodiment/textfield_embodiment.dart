@@ -4,6 +4,19 @@
 
 import 'package:dartlib/dartlib.dart' as pg;
 import 'package:flutter/material.dart';
+import 'embodiment_interface.dart';
+
+EmbodimentPackageManifest getManifest() {
+  return EmbodimentPackageManifest('TextField', [
+    EmbodimentManifestEntry('default', (args) {
+      return TextFieldEmbodiment(
+        key: args.key,
+        textfield: args.primitive as pg.TextField,
+        parentWidgetType: args.parentWidgetType,
+      );
+    }),
+  ]);
+}
 
 class TextFieldEmbodiment extends StatefulWidget {
   const TextFieldEmbodiment(

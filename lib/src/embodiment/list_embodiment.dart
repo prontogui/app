@@ -5,19 +5,53 @@
 import 'package:dartlib/dartlib.dart' as pg;
 import '../embodifier.dart';
 import 'package:flutter/material.dart';
-import '../embodiment_properties/list_embodiment_properties.dart';
+import 'embodiment_interface.dart';
+import 'common_properties.dart';
+import 'embodiment_property_help.dart';
+
+EmbodimentPackageManifest getManifest() {
+  return EmbodimentPackageManifest('List', [
+    EmbodimentManifestEntry('default', (args) {
+      return ListEmbodiment(
+          key: args.key,
+          list: args.primitive as pg.ListP,
+          props: ListEmbodimentProperties.fromMap(args.embodimentMap),
+          parentWidgetType: args.parentWidgetType,
+          style: ListStyle.normal);
+    }),
+    EmbodimentManifestEntry('card-list', (args) {
+      return ListEmbodiment(
+          key: args.key,
+          list: args.primitive as pg.ListP,
+          props: ListEmbodimentProperties.fromMap(args.embodimentMap),
+          parentWidgetType: args.parentWidgetType,
+          style: ListStyle.card);
+    }),
+    EmbodimentManifestEntry('property-list', (args) {
+      return ListEmbodiment(
+          key: args.key,
+          list: args.primitive as pg.ListP,
+          props: ListEmbodimentProperties.fromMap(args.embodimentMap),
+          parentWidgetType: args.parentWidgetType,
+          style: ListStyle.property);
+    }),
+  ]);
+}
+
+enum ListStyle { card, property, normal }
 
 class ListEmbodiment extends StatefulWidget {
-  ListEmbodiment(
+  const ListEmbodiment(
       {super.key,
       required this.list,
-      required Map<String, dynamic>? embodimentMap,
-      required this.parentWidgetType})
-      : embodimentProps = ListEmbodimentProperties.fromMap(embodimentMap);
+      required this.props,
+      required this.parentWidgetType,
+      required this.style});
 
   final pg.ListP list;
-  final ListEmbodimentProperties embodimentProps;
+  final ListEmbodimentProperties props;
   final String parentWidgetType;
+  final ListStyle style;
 
   @override
   State<ListEmbodiment> createState() {
@@ -125,17 +159,13 @@ class _ListEmbodimentState extends State<ListEmbodiment> {
   }
 
   NullableIndexedWidgetBuilder? mapToBuilderFunction() {
-    var embodiment = widget.embodimentProps.embodiment;
-
-    switch (embodiment) {
-      case 'normal-list':
+    switch (widget.style) {
+      case ListStyle.normal:
         return builderForSingleItem;
-      case 'card-list':
+      case ListStyle.card:
         return builderForCardItem;
-      case 'property-list':
+      case ListStyle.property:
         return builderForPropertyItem;
-      default:
-        return null;
     }
   }
 
@@ -157,10 +187,12 @@ class _ListEmbodimentState extends State<ListEmbodiment> {
 
     // Grab the embodifier for other functions in the class to use.
     embodifier ??= InheritedEmbodifier.of(context);
-    var props = widget.embodimentProps;
+    // var props = widget.embodimentProps;
 
     Widget content = ListView.builder(
         itemCount: widget.list.listItems.length, itemBuilder: builder);
+
+    var props = widget.props;
 
     if (!props.width.isNaN && !props.height.isNaN) {
       content = SizedBox(
@@ -187,5 +219,21 @@ class _ListEmbodimentState extends State<ListEmbodiment> {
     }
 
     return content;
+  }
+}
+
+class ListEmbodimentProperties with CommonProperties {
+  String embodiment;
+
+  static final Set<String> _validEmbodiments = {
+    'card-list',
+    'normal-list',
+    'property-list'
+  };
+
+  ListEmbodimentProperties.fromMap(Map<String, dynamic>? embodimentMap)
+      : embodiment = getEnumStringProp(
+            embodimentMap, 'embodiment', 'normal-list', _validEmbodiments) {
+    super.initializeFromMap(embodimentMap);
   }
 }

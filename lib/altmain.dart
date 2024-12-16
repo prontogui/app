@@ -65,7 +65,10 @@ void altmain2(List<String> args) async {
   logger.i('Running alternate-main 2 program for development purposes.');
 
   var p = NumericField();
-  var e = NumericFieldEmbodiment(numfield: p, parentWidgetType: 'MaterialApp');
+  var props = DefaultNumericFieldEmbodimentProperties.fromMap({});
+  var e = DefaultNumericFieldEmbodiment(
+      numfield: p, props: props, parentWidgetType: 'MaterialApp');
+
   // Run the app and start rendering the UI.
   runApp(
     App.altdev2(devWidget: e),

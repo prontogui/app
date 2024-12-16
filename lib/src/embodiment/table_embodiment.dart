@@ -6,6 +6,15 @@ import 'package:dartlib/dartlib.dart' as pg;
 import '../embodifier.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
+import 'embodiment_interface.dart';
+
+EmbodimentPackageManifest getManifest() {
+  return EmbodimentPackageManifest('Table', [
+    EmbodimentManifestEntry('default', (args) {
+      return TableEmbodiment(key: args.key, table: args.primitive as pg.Table);
+    }),
+  ]);
+}
 
 class TableEmbodiment extends StatelessWidget {
   const TableEmbodiment({super.key, required this.table});

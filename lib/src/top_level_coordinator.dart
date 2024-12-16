@@ -6,7 +6,7 @@ import 'package:dartlib/dartlib.dart' as pg;
 import 'package:flutter/material.dart';
 import 'embodifier.dart';
 import 'inherited_primitive_model.dart';
-import 'embodiment_properties/frame_embodiment_properties.dart';
+import 'embodiment/embodiment_property_help.dart';
 
 /// The top-level coordinator is responsible for tracking the top-level primitives,
 /// sorting them into background primitives, full-view frames, and diaglog-view
@@ -261,9 +261,10 @@ class _TopLevelCoordinatorState extends State<TopLevelCoordinator>
     for (int i = 0; i < primitives.length; i++) {
       if (primitives[i] is pg.Frame) {
         var frame = primitives[i] as pg.Frame;
-        var ep = FrameEmbodimentProperties.fromMap(frame.embodimentProperties);
+        var embodiment =
+            getStringProp(frame.embodimentProperties, 'embodiment', '');
 
-        switch (ep.embodiment) {
+        switch (embodiment) {
           case "full-view":
             if (frame.showing) {
               // Note, the rule is:  the frame with the highest index takes precedence.

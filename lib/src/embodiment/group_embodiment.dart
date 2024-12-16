@@ -5,6 +5,15 @@
 import '../embodifier.dart';
 import 'package:dartlib/dartlib.dart' as pg;
 import 'package:flutter/material.dart';
+import 'embodiment_interface.dart';
+
+EmbodimentPackageManifest getManifest() {
+  return EmbodimentPackageManifest('Group', [
+    EmbodimentManifestEntry('default', (args) {
+      return GroupEmbodiment(key: args.key, group: args.primitive as pg.Group);
+    }),
+  ]);
+}
 
 class GroupEmbodiment extends StatelessWidget {
   const GroupEmbodiment({super.key, required this.group});

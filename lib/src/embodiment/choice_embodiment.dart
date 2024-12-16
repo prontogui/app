@@ -4,6 +4,16 @@
 
 import 'package:dartlib/dartlib.dart' as pg;
 import 'package:flutter/material.dart';
+import 'package:app/src/embodiment/embodiment_interface.dart';
+
+EmbodimentPackageManifest getManifest() {
+  return EmbodimentPackageManifest('Choice', [
+    EmbodimentManifestEntry('default', (args) {
+      return ChoiceEmbodiment(
+          key: args.key, choice: args.primitive as pg.Choice);
+    }),
+  ]);
+}
 
 class ChoiceEmbodiment extends StatefulWidget {
   const ChoiceEmbodiment({super.key, required this.choice});

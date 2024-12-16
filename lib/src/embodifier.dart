@@ -6,7 +6,7 @@ import 'package:dartlib/dartlib.dart'; // as pg;
 import 'package:flutter/widgets.dart';
 import 'embodiment/notifier.dart';
 import 'embodiment/embodiment_factory.dart';
-import 'embodiment_properties/frame_embodiment_properties.dart';
+import 'embodiment/embodiment_property_help.dart';
 
 /// This object builds embodiments for the primitive model.
 class Embodifier implements PrimitiveModelWatcher {
@@ -18,6 +18,9 @@ class Embodifier implements PrimitiveModelWatcher {
 
   // The map of pkeys to notifiers.
   final Map<PKey, Notifier> _pkeyToNotifier = {};
+
+  // The object that creates embodiments
+  final _factory = EmbodimentFactory();
 
   /// Notifies the builder associated with the pkey that a change has occurred.
   void notifyBuilder(PKey pkey) {
@@ -37,11 +40,10 @@ class Embodifier implements PrimitiveModelWatcher {
 
   /// Tests whether a frame is a view-type frame.
   bool isView(Frame frame) {
-    var frameEmbodimentProps =
-        FrameEmbodimentProperties.fromMap(frame.embodimentProperties);
+    var embodiment =
+        getStringProp(frame.embodimentProperties, 'embodiment', '');
 
-    return ["full-view", "dialog-view"]
-        .contains(frameEmbodimentProps.embodiment);
+    return ["full-view", "dialog-view"].contains(embodiment);
   }
 
   /// Returns the next notifier from the pool or adds another to the pool
@@ -93,7 +95,7 @@ class Embodifier implements PrimitiveModelWatcher {
 
     embodimentMap ??= primitive.embodimentProperties;
 
-    return EmbodimentFactory.createEmbodiment(
+    return _factory.createEmbodiment(
         primitive, embodimentMap, parentWidgetType);
   }
 

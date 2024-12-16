@@ -5,6 +5,16 @@
 import 'package:dartlib/dartlib.dart' as pg;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'embodiment_interface.dart';
+
+EmbodimentPackageManifest getManifest() {
+  return EmbodimentPackageManifest('Tristate', [
+    EmbodimentManifestEntry('default', (args) {
+      return TristateEmbodiment(
+          key: args.key, tristate: args.primitive as pg.Tristate);
+    }),
+  ]);
+}
 
 class TristateEmbodiment extends StatefulWidget {
   const TristateEmbodiment({super.key, required this.tristate});

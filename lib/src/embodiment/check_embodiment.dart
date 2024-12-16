@@ -5,6 +5,15 @@
 import 'package:dartlib/dartlib.dart' as pg;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'embodiment_interface.dart';
+
+EmbodimentPackageManifest getManifest() {
+  return EmbodimentPackageManifest('Check', [
+    EmbodimentManifestEntry('default', (args) {
+      return CheckEmbodiment(key: args.key, check: args.primitive as pg.Check);
+    }),
+  ]);
+}
 
 class CheckEmbodiment extends StatefulWidget {
   const CheckEmbodiment({super.key, required this.check});
