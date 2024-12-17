@@ -6,7 +6,9 @@ import 'package:app/src/embodiment/embodiment_interface.dart';
 import 'package:dartlib/dartlib.dart' as pg;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_color_picker_plus/flutter_color_picker_plus.dart';
 import 'common_properties.dart';
+import '../widgets/color_picker.dart' as cp;
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('NumericField', [
@@ -317,9 +319,9 @@ class _ColorEmbodimentState extends State<ColorNumericFieldEmbodiment> {
 
   // See https://www.rapidtables.com/web/color/RGB_Color.html for good reference.
   static const _colorRecords = <(String value, Color color, String label)>[
-    ('0x00000000', Colors.black, 'Black'),
-    ('0x00FFFFFF', Colors.white, 'White'),
-    ('0x00FF0000', Colors.red, 'Red')
+    ('0x00000000', Colors.black, ''),
+    ('0x00FFFFFF', Colors.white, ''),
+    ('0x00FF0000', Colors.red, '')
   ];
 
   @override
@@ -327,9 +329,10 @@ class _ColorEmbodimentState extends State<ColorNumericFieldEmbodiment> {
     var items = _colorRecords.map(
       (e) {
         return DropdownMenuEntry<String>(
-            value: e.$1,
-            label: e.$3,
-            leadingIcon: Icon(Icons.rectangle, color: e.$2));
+          value: e.$1,
+          label: e.$3,
+          leadingIcon: Icon(Icons.rectangle, color: e.$2),
+        );
       },
     ).toList();
 
@@ -351,11 +354,33 @@ class _ColorEmbodimentState extends State<ColorNumericFieldEmbodiment> {
 
     var content = Container(
         color: Colors.white,
-        child: DropdownMenu<String>(
-          controller: _controller,
-          dropdownMenuEntries: items,
-          menuHeight: 400,
-          leadingIcon: leadingIcon,
+        child: Row(
+          children: [
+            SizedBox(
+                width: 100,
+                child: TextField(
+                  controller: _controller,
+                  onSubmitted: (value) => saveText(value),
+                )),
+            const cp.ColorPicker(),
+            /*
+            DropdownMenu<String>(
+              //controller: _controller,
+              width: 100,
+              dropdownMenuEntries: items,
+              menuHeight: 100,
+              leadingIcon: leadingIcon,
+              label: const SizedBox.shrink(),
+              enableFilter: false,
+              enableSearch: false,
+              onSelected: (value) {
+                setState(
+                  () {},
+                );
+              },
+            )
+            */
+          ],
         ));
 
     // Add the following Flexible widget to avoid getting an exception during rendering.

@@ -20,7 +20,7 @@ void altmain1(List<String> args) async {
   // Create the model that holds the primitives to be displayed.
   final model = PrimitiveModel();
 
-  var p = NumericField();
+  var p = NumericField(embodiment: 'color', numericEntry: 'Red');
   model.topPrimitives = [p];
 
   // Create the object responsible for embodying the model as Widgets and for
@@ -65,8 +65,9 @@ void altmain2(List<String> args) async {
   logger.i('Running alternate-main 2 program for development purposes.');
 
   var p = NumericField();
-  var props = DefaultNumericFieldEmbodimentProperties.fromMap({});
-  var e = DefaultNumericFieldEmbodiment(
+  var props =
+      ColorNumericFieldEmbodimentProperties.fromMap({'embodiment': 'color'});
+  var e = ColorNumericFieldEmbodiment(
       numfield: p, props: props, parentWidgetType: 'MaterialApp');
 
   // Run the app and start rendering the UI.
