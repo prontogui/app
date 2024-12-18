@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_color_picker_plus/flutter_color_picker_plus.dart';
 import 'common_properties.dart';
-import '../widgets/color_picker.dart' as cp;
+import '../widgets/color_chooser.dart' as cp;
+import 'dart:core';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('NumericField', [
@@ -296,6 +297,11 @@ class _ColorEmbodimentState extends State<ColorNumericFieldEmbodiment> {
   void initState() {
     super.initState();
     _controller = TextEditingController(text: widget.numfield.numericEntry);
+    _controller.addListener(onTextChanged);
+  }
+
+  void onTextChanged() {
+    saveText(_controller.text);
   }
 
   void onFocusChange() {
@@ -314,7 +320,27 @@ class _ColorEmbodimentState extends State<ColorNumericFieldEmbodiment> {
       return;
     }
     print('saved value = $value');
-    widget.numfield.numericEntry = value;
+    setState(
+      () {
+        widget.numfield.numericEntry = value;
+      },
+    );
+  }
+
+  Color getColor() {
+    var hexColor = _controller.text.replaceAll('#', '');
+    if (hexColor.length == 6) {
+      hexColor = 'FF$hexColor'; // Add alpha value if not provided
+    }
+    return Color(int.parse(hexColor, radix: 16));
+  }
+
+  void saveColor(Color color) {
+    var colorValue = color.toHexString(includeHashSign: true);
+    setState(() {
+      _controller.text = colorValue;
+      widget.numfield.numericEntry = colorValue;
+    });
   }
 
   // See https://www.rapidtables.com/web/color/RGB_Color.html for good reference.
@@ -362,7 +388,10 @@ class _ColorEmbodimentState extends State<ColorNumericFieldEmbodiment> {
                   controller: _controller,
                   onSubmitted: (value) => saveText(value),
                 )),
-            const cp.ColorPicker(),
+            cp.ColorChooser2(
+              initialColor: getColor(),
+              onColorPicked: saveColor,
+            ),
             /*
             DropdownMenu<String>(
               //controller: _controller,
