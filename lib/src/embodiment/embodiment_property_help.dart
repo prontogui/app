@@ -234,3 +234,85 @@ SnackBarBehavior? getSnackBarBehavior(
 
   throw Exception('invalid property value for $propertyName');
 }
+
+/// Returns true if the hex color value is normalized.  It is normalized when
+/// it begins with a hash sign #, is less than 9 digits total (including hash),
+/// and only contains upper case hex digits.
+bool isNormalizedHexColorValue(String value) {
+  bool invalidDigits() {
+    for (int i = 1; i < value.length; i++) {
+      if (!'01234567890ABCDEF'.contains(value[i])) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  return !(value.isEmpty ||
+      value.length > 9 ||
+      value[0] != '#' ||
+      invalidDigits());
+}
+
+/// Normalizes a hex color value according to definition describe in function
+/// isNormalizedHexColorValue.
+String normalizeHexColorValue(String value) {
+  var value2 = value.trim().toUpperCase();
+  return (value2.isEmpty || value2[0] != '#') ? '#$value2' : value2;
+}
+
+/// Canonizes an assumed-to-be normalized hex color value.  Canonized form
+/// is a 9 character string starting with a hash sign, then Alpha, Red, Green,
+/// and Blue components with 2 hex digits each.
+String canonizeHexColorValue(String normalizedValue) {
+  assert(isNormalizedHexColorValue(normalizedValue));
+
+  // default to 100% for alpha and zero for RGB
+  String alpha = 'FF';
+  String red = '00';
+  String green = '00';
+  String blue = '00';
+
+  String getComponent(int startingAt, bool twoDigits) {
+    if (twoDigits) {
+      return normalizedValue.substring(startingAt, startingAt + 2);
+    } else {
+      var digit = normalizedValue.substring(startingAt, startingAt + 1);
+      return '0$digit';
+    }
+  }
+
+  switch (normalizedValue.length) {
+    case 2:
+      red = getComponent(1, false);
+    case 3:
+      red = getComponent(1, true);
+    case 4:
+      red = getComponent(1, true);
+      green = getComponent(3, false);
+    case 5:
+      red = getComponent(1, true);
+      green = getComponent(3, true);
+    case 6:
+      red = getComponent(1, true);
+      green = getComponent(3, true);
+      blue = getComponent(5, false);
+    case 7:
+      red = getComponent(1, true);
+      green = getComponent(3, true);
+      blue = getComponent(5, true);
+    case 8:
+      alpha = getComponent(1, false);
+      red = getComponent(2, true);
+      green = getComponent(4, true);
+      blue = getComponent(6, true);
+    case 9:
+      alpha = getComponent(1, true);
+      red = getComponent(3, true);
+      green = getComponent(5, true);
+      blue = getComponent(7, true);
+  }
+
+  // Return the canonized form
+  return '#$alpha$red$green$blue';
+}

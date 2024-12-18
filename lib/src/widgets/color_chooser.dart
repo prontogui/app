@@ -2,71 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_color_picker_plus/flutter_color_picker_plus.dart'
     as cpplus;
 
-class ColorChooser2 extends StatelessWidget {
-  const ColorChooser2(
-      {super.key,
-      this.initialColor = Colors.white,
-      required this.onColorPicked});
-
-  final Color initialColor;
-  final void Function(Color color) onColorPicked;
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      icon: const Icon(Icons.palette),
-      onPressed: () {
-        show(context);
-      },
-    );
-  }
-
-  Future<void> show(BuildContext context) {
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Choose a color'),
-          content: SingleChildScrollView(
-            child: cpplus.ColorPicker(
-              pickerColor: initialColor,
-              onColorChanged: onColorPicked,
-            ),
-            // Use Material color picker:
-            //
-            // child: MaterialPicker(
-            //   pickerColor: pickerColor,
-            //   onColorChanged: changeColor,
-            //   showLabel: true, // only on portrait mode
-            // ),
-            //
-            // Use Block color picker:
-            //
-            // child: BlockPicker(
-            //   pickerColor: currentColor,
-            //   onColorChanged: changeColor,
-            // ),
-            //
-            // child: MultipleChoiceBlockPicker(
-            //   pickerColors: currentColors,
-            //   onColorsChanged: changeColors,
-            // ),
-          ),
-          actions: <Widget>[
-            ElevatedButton(
-              child: const Text('Accept'),
-              onPressed: () {
-                // setState(() => currentColor = pickerColor);
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-}
-
+/// Shows an icon button that displays a popup dialog providing the user
+/// a visual/colorful means to choose a color.
 class ColorChooser extends StatefulWidget {
   const ColorChooser(
       {super.key,
@@ -83,12 +20,12 @@ class ColorChooser extends StatefulWidget {
 }
 
 class ColorChooserState extends State<ColorChooser> {
-  late Color pickerColor;
+  late Color chosenColor;
 
   @override
   void initState() {
     super.initState();
-    pickerColor = widget.initialColor;
+    chosenColor = widget.initialColor;
   }
 
   @override
@@ -102,8 +39,7 @@ class ColorChooserState extends State<ColorChooser> {
   }
 
   void changeColor(Color color) {
-    setState(() => pickerColor = color);
-    widget.onColorPicked(pickerColor);
+    setState(() => chosenColor = color);
   }
 
   Future<void> show(BuildContext context) {
@@ -114,7 +50,7 @@ class ColorChooserState extends State<ColorChooser> {
           title: const Text('Choose a color'),
           content: SingleChildScrollView(
             child: cpplus.ColorPicker(
-              pickerColor: pickerColor,
+              pickerColor: chosenColor,
               onColorChanged: changeColor,
             ),
             // Use Material color picker:
@@ -143,6 +79,7 @@ class ColorChooserState extends State<ColorChooser> {
               onPressed: () {
                 // setState(() => currentColor = pickerColor);
                 Navigator.of(context).pop();
+                widget.onColorPicked(chosenColor);
               },
             ),
           ],

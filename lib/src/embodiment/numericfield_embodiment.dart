@@ -2,7 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:app/src/embodiment/embodiment_interface.dart';
+import 'embodiment_interface.dart';
+import 'embodiment_property_help.dart';
 import 'package:dartlib/dartlib.dart' as pg;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -112,7 +113,6 @@ class _DefaultEmbodimentState extends State<DefaultNumericFieldEmbodiment> {
     if (value == widget.numfield.numericEntry) {
       return;
     }
-    print('saved value = $value');
     widget.numfield.numericEntry = value;
   }
 
@@ -207,7 +207,6 @@ class _FontSizeEmbodimentState extends State<FontSizeNumericFieldEmbodiment> {
     if (value == widget.numfield.numericEntry) {
       return;
     }
-    print('saved value = $value');
     widget.numfield.numericEntry = value;
   }
 
@@ -247,9 +246,13 @@ class _FontSizeEmbodimentState extends State<FontSizeNumericFieldEmbodiment> {
         //  decoration: decor,
         child: DropdownMenu<String>(
           enableSearch: false,
+          enableFilter: false,
           controller: _controller,
           dropdownMenuEntries: items,
-          menuHeight: 400,
+          menuHeight: 300,
+          requestFocusOnTap: true,
+          alignmentOffset: const Offset(-125, 1),
+          inputFormatters: [_inputFmt],
         ));
 
     // Add the following Flexible widget to avoid getting an exception during rendering.
@@ -293,50 +296,106 @@ class ColorNumericFieldEmbodimentProperties with CommonProperties {
 class _ColorEmbodimentState extends State<ColorNumericFieldEmbodiment> {
   late TextEditingController _controller;
   late TextInputFormatter _inputFmt;
+  late FocusNode _focusNode;
+//  final _replacePattern = RegExp(r'(0x|#|h|H)?');
+  final _allowedInputPattern = RegExp(r'^\s*(#)?[0-9a-fA-F]{0,8}\s*$');
+  bool _hasFocus = false;
+
+  String prepareInitialValue() {
+    var value = widget.numfield.numericEntry;
+    if (_allowedInputPattern.hasMatch(value)) {
+      return canonizeHexColorValue(normalizeHexColorValue(value));
+    }
+    return canonizeHexColorValue('#');
+  }
+
+  TextSelection _restrictTextSelection(
+      TextSelection prevSelection, int newLength) {
+    int min(int a, int b) => (a < b) ? a : b;
+    return TextSelection(
+        baseOffset: min(prevSelection.baseOffset, newLength),
+        extentOffset: min(prevSelection.extentOffset, newLength));
+  }
 
   @override
   void initState() {
     super.initState();
 
-    var pattern = RegExp(r'^[0-9a-fA-F]{0,8}$');
-
     _inputFmt = TextInputFormatter.withFunction(
       (TextEditingValue oldValue, TextEditingValue newValue) {
-        if (pattern.hasMatch(newValue.text)) {
-          var capText = newValue.text.toUpperCase();
-          saveText(capText);
-          return TextEditingValue(
-              text: newValue.text.toUpperCase(),
-              selection: newValue.selection,
-              composing: newValue.composing);
+        var enteredText = newValue.text.trim();
+        if (_allowedInputPattern.hasMatch(enteredText)) {
+          String updatedText;
+
+          // Entered text is empty
+          if (enteredText.isEmpty) {
+            updatedText = '';
+            return newValue.copyWith(
+              text: '',
+              selection: const TextSelection(baseOffset: 0, extentOffset: 0),
+            );
+
+            // Entered (or pasted) a value without leading hash sign
+          } else if (enteredText[0] != '#') {
+            // Normalize the value and put in the hash sign
+            updatedText = normalizeHexColorValue(enteredText);
+            // Return the new value and adjust the selection
+            return newValue.copyWith(
+              text: updatedText,
+              selection: TextSelection(
+                  baseOffset: updatedText.length,
+                  extentOffset: updatedText.length),
+            );
+            // All other cases
+          } else {
+            updatedText = normalizeHexColorValue(enteredText);
+            return newValue.copyWith(
+                text: updatedText,
+                selection: _restrictTextSelection(
+                    newValue.selection, updatedText.length));
+          }
         }
         return oldValue;
       },
     );
 
-    _controller = TextEditingController(text: widget.numfield.numericEntry);
+    _controller = TextEditingController(text: prepareInitialValue());
+    _focusNode = FocusNode();
+    _focusNode.addListener(onFocusChange);
   }
 
-  void onTextChanged() {
-    saveText(_controller.text);
-  }
+  /// The current color value as a canonical hex string.
+  String get currentColorValue =>
+      canonizeHexColorValue(normalizeHexColorValue(_controller.text));
+
+  /// The current color as a Color value.
+  Color get currentColor =>
+      Color(int.parse(currentColorValue.substring(1), radix: 16));
 
   void onFocusChange() {
-    saveText(_controller.text);
+    _hasFocus = _focusNode.hasPrimaryFocus;
+    if (_hasFocus) {
+      _controller.selection =
+          TextSelection(baseOffset: 0, extentOffset: _controller.text.length);
+    } else {
+      var currentValue = currentColorValue;
+      storeColorValue(currentValue);
+      _controller.text = currentValue;
+    }
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
-  void saveText(String value) {
+  void storeColorValue(String value) {
     // Do nothing if text hasn't changed
     if (value == widget.numfield.numericEntry) {
       return;
     }
-    print('saved value = $value');
     setState(
       () {
         widget.numfield.numericEntry = value;
@@ -344,94 +403,42 @@ class _ColorEmbodimentState extends State<ColorNumericFieldEmbodiment> {
     );
   }
 
-  Color getColor() {
-    var textValue = _controller.text;
-    // TODO:  check for valid color value
-    if (textValue == '') {
-      return Colors.black;
-    }
-    var hexColor = _controller.text.replaceAll('#', '');
-    if (hexColor.length == 6) {
-      hexColor = 'FF$hexColor'; // Add alpha value if not provided
-    }
-    return Color(int.parse(hexColor, radix: 16));
-  }
-
-  void saveColor(Color color) {
-    var colorValue = color.toHexString(includeHashSign: true);
+  void updateColorField(Color color) {
+    var colorValue =
+        colorToHex(color, enableAlpha: true, includeHashSign: true);
     setState(() {
       _controller.text = colorValue;
-      widget.numfield.numericEntry = colorValue;
+      storeColorValue(colorValue);
     });
   }
 
-  // See https://www.rapidtables.com/web/color/RGB_Color.html for good reference.
-  static const _colorRecords = <(String value, Color color, String label)>[
-    ('0x00000000', Colors.black, ''),
-    ('0x00FFFFFF', Colors.white, ''),
-    ('0x00FF0000', Colors.red, '')
-  ];
-
   @override
   Widget build(BuildContext context) {
-    var items = _colorRecords.map(
-      (e) {
-        return DropdownMenuEntry<String>(
-          value: e.$1,
-          label: e.$3,
-          leadingIcon: Icon(Icons.rectangle, color: e.$2),
-        );
-      },
-    ).toList();
+    InputDecoration? decor;
 
-    // TODO:  generalize this code
-    Icon? leadingIcon;
-    switch (_controller.text) {
-      case 'Black':
-        var color = _colorRecords[0];
-        leadingIcon = Icon(Icons.rectangle, color: color.$2);
-      case 'White':
-        var color = _colorRecords[1];
-        leadingIcon = Icon(Icons.rectangle, color: color.$2);
-      case 'Red':
-        var color = _colorRecords[2];
-        leadingIcon = Icon(Icons.rectangle, color: color.$2);
-      default:
-        leadingIcon = const Icon(Icons.rectangle_outlined, color: Colors.grey);
+    if (_hasFocus) {
+      decor = const InputDecoration(border: OutlineInputBorder());
     }
 
     var content = Container(
         color: Colors.white,
         child: Row(
           children: [
+            Icon(Icons.rectangle, color: currentColor),
             SizedBox(
-                width: 100,
+                width: 150,
                 child: TextField(
                   controller: _controller,
-                  onSubmitted: (value) => saveText(value),
+                  onSubmitted: (value) => storeColorValue(currentColorValue),
                   inputFormatters: [_inputFmt],
+                  focusNode: _focusNode,
+                  decoration: decor,
                 )),
-            cp.ColorChooser2(
-              initialColor: getColor(),
-              onColorPicked: saveColor,
+            cp.ColorChooser(
+              key: UniqueKey(),
+              initialColor: currentColor,
+              onColorPicked: updateColorField,
             ),
-            /*
-            DropdownMenu<String>(
-              //controller: _controller,
-              width: 100,
-              dropdownMenuEntries: items,
-              menuHeight: 100,
-              leadingIcon: leadingIcon,
-              label: const SizedBox.shrink(),
-              enableFilter: false,
-              enableSearch: false,
-              onSelected: (value) {
-                setState(
-                  () {},
-                );
-              },
-            )
-            */
           ],
         ));
 
