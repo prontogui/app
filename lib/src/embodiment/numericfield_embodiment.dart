@@ -292,12 +292,29 @@ class ColorNumericFieldEmbodimentProperties with CommonProperties {
 
 class _ColorEmbodimentState extends State<ColorNumericFieldEmbodiment> {
   late TextEditingController _controller;
+  late TextInputFormatter _inputFmt;
 
   @override
   void initState() {
     super.initState();
+
+    var pattern = RegExp(r'^[0-9a-fA-F]{0,8}$');
+
+    _inputFmt = TextInputFormatter.withFunction(
+      (TextEditingValue oldValue, TextEditingValue newValue) {
+        if (pattern.hasMatch(newValue.text)) {
+          var capText = newValue.text.toUpperCase();
+          saveText(capText);
+          return TextEditingValue(
+              text: newValue.text.toUpperCase(),
+              selection: newValue.selection,
+              composing: newValue.composing);
+        }
+        return oldValue;
+      },
+    );
+
     _controller = TextEditingController(text: widget.numfield.numericEntry);
-    _controller.addListener(onTextChanged);
   }
 
   void onTextChanged() {
@@ -328,6 +345,11 @@ class _ColorEmbodimentState extends State<ColorNumericFieldEmbodiment> {
   }
 
   Color getColor() {
+    var textValue = _controller.text;
+    // TODO:  check for valid color value
+    if (textValue == '') {
+      return Colors.black;
+    }
     var hexColor = _controller.text.replaceAll('#', '');
     if (hexColor.length == 6) {
       hexColor = 'FF$hexColor'; // Add alpha value if not provided
@@ -387,6 +409,7 @@ class _ColorEmbodimentState extends State<ColorNumericFieldEmbodiment> {
                 child: TextField(
                   controller: _controller,
                   onSubmitted: (value) => saveText(value),
+                  inputFormatters: [_inputFmt],
                 )),
             cp.ColorChooser2(
               initialColor: getColor(),
