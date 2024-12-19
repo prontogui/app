@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_color_picker_plus/flutter_color_picker_plus.dart';
 import 'common_properties.dart';
-import '../widgets/color_chooser.dart' as cp;
+import '../widgets/popup.dart';
 import 'dart:core';
 
 EmbodimentPackageManifest getManifest() {
@@ -89,6 +89,7 @@ class _DefaultEmbodimentState extends State<DefaultNumericFieldEmbodiment> {
 
     _controller = TextEditingController(text: widget.numfield.numericEntry);
     _focusNode = FocusNode();
+    _focusNode.addListener(onFocusChange);
     _focusNode.addListener(() {
       setState(() => _hasFocus = _focusNode.hasPrimaryFocus);
     });
@@ -97,23 +98,37 @@ class _DefaultEmbodimentState extends State<DefaultNumericFieldEmbodiment> {
   }
 
   void onFocusChange() {
-    saveText(_controller.text);
+    setState(
+      () {
+        _hasFocus = _focusNode.hasPrimaryFocus;
+      },
+    );
+    if (_hasFocus) {
+      _controller.selection =
+          TextSelection(baseOffset: 0, extentOffset: _controller.text.length);
+    } else {
+      storeValue(_controller.text);
+    }
   }
 
   @override
   void dispose() {
     _controller.dispose();
     _focusNode.dispose();
-    //FocusManager.instance.removeListener(onFocusChange);
     super.dispose();
   }
 
-  void saveText(String value) {
+  void storeValue(String value) {
     // Do nothing if text hasn't changed
     if (value == widget.numfield.numericEntry) {
       return;
     }
-    widget.numfield.numericEntry = value;
+    setState(
+      () {
+        widget.numfield.numericEntry = value;
+      },
+    );
+    pg.logger.t('Default numeric field saved value $value');
   }
 
   @override
@@ -129,7 +144,7 @@ class _DefaultEmbodimentState extends State<DefaultNumericFieldEmbodiment> {
         child: TextField(
           controller: _controller,
           decoration: decor,
-          onSubmitted: (value) => saveText(value),
+          onSubmitted: (value) => storeValue(value),
           focusNode: _focusNode,
           inputFormatters: [_inputFmt],
         ));
@@ -176,6 +191,8 @@ class _FontSizeEmbodimentState extends State<FontSizeNumericFieldEmbodiment> {
   late TextEditingController _controller;
   late RegExp _pattern;
   late TextInputFormatter _inputFmt;
+  late FocusNode _focusNode;
+  bool _hasFocus = false;
 
   @override
   void initState() {
@@ -190,24 +207,38 @@ class _FontSizeEmbodimentState extends State<FontSizeNumericFieldEmbodiment> {
     );
 
     _controller = TextEditingController(text: widget.numfield.numericEntry);
+    _focusNode = FocusNode();
+    _focusNode.addListener(onFocusChange);
   }
 
   void onFocusChange() {
-    saveText(_controller.text);
+    _hasFocus = _focusNode.hasPrimaryFocus;
+    if (_hasFocus) {
+      _controller.selection =
+          TextSelection(baseOffset: 0, extentOffset: _controller.text.length);
+    } else {
+      storeValue(_controller.text);
+    }
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
-  void saveText(String value) {
+  void storeValue(String value) {
     // Do nothing if text hasn't changed
     if (value == widget.numfield.numericEntry) {
       return;
     }
-    widget.numfield.numericEntry = value;
+    setState(
+      () {
+        widget.numfield.numericEntry = value;
+      },
+    );
+    pg.logger.t('Font size numeric field saved value $value');
   }
 
   @override
@@ -243,7 +274,6 @@ class _FontSizeEmbodimentState extends State<FontSizeNumericFieldEmbodiment> {
 
     var content = Container(
         color: Colors.white,
-        //  decoration: decor,
         child: DropdownMenu<String>(
           enableSearch: false,
           enableFilter: false,
@@ -253,6 +283,7 @@ class _FontSizeEmbodimentState extends State<FontSizeNumericFieldEmbodiment> {
           requestFocusOnTap: true,
           alignmentOffset: const Offset(-125, 1),
           inputFormatters: [_inputFmt],
+          focusNode: _focusNode,
         ));
 
     // Add the following Flexible widget to avoid getting an exception during rendering.
@@ -297,9 +328,9 @@ class _ColorEmbodimentState extends State<ColorNumericFieldEmbodiment> {
   late TextEditingController _controller;
   late TextInputFormatter _inputFmt;
   late FocusNode _focusNode;
-//  final _replacePattern = RegExp(r'(0x|#|h|H)?');
   final _allowedInputPattern = RegExp(r'^\s*(#)?[0-9a-fA-F]{0,8}\s*$');
   bool _hasFocus = false;
+  late Color pickedColor;
 
   String prepareInitialValue() {
     var value = widget.numfield.numericEntry;
@@ -364,6 +395,13 @@ class _ColorEmbodimentState extends State<ColorNumericFieldEmbodiment> {
     _focusNode.addListener(onFocusChange);
   }
 
+  @override
+  void dispose() {
+    _controller.dispose();
+    _focusNode.dispose();
+    super.dispose();
+  }
+
   /// The current color value as a canonical hex string.
   String get currentColorValue =>
       canonizeHexColorValue(normalizeHexColorValue(_controller.text));
@@ -384,13 +422,6 @@ class _ColorEmbodimentState extends State<ColorNumericFieldEmbodiment> {
     }
   }
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    _focusNode.dispose();
-    super.dispose();
-  }
-
   void storeColorValue(String value) {
     // Do nothing if text hasn't changed
     if (value == widget.numfield.numericEntry) {
@@ -401,6 +432,7 @@ class _ColorEmbodimentState extends State<ColorNumericFieldEmbodiment> {
         widget.numfield.numericEntry = value;
       },
     );
+    pg.logger.t('Color numeric field saved value $value');
   }
 
   void updateColorField(Color color) {
@@ -414,32 +446,103 @@ class _ColorEmbodimentState extends State<ColorNumericFieldEmbodiment> {
 
   @override
   Widget build(BuildContext context) {
-    InputDecoration? decor;
+    var theme = Theme.of(context);
 
-    if (_hasFocus) {
-      decor = const InputDecoration(border: OutlineInputBorder());
+    var content = Popup(
+      followerAnchor: Alignment.topCenter,
+      flip: true,
+      child: (context, controller) => Container(
+          color: theme.colorScheme.surfaceContainer,
+          child: TextField(
+            controller: _controller,
+            onSubmitted: (value) => storeColorValue(currentColorValue),
+            inputFormatters: [_inputFmt],
+            focusNode: _focusNode,
+            style: theme.textTheme.bodyLarge, // Same used for DropdownMenu
+            decoration: InputDecoration(
+              border: const OutlineInputBorder(),
+              prefixIcon: const Icon(Icons.rectangle),
+              prefixIconColor: currentColor,
+              suffixIcon: IconButton(
+                icon: const Icon(Icons.palette),
+                onPressed: controller.show,
+              ),
+            ).applyDefaults(theme.inputDecorationTheme),
+          )),
+      follower: (context, controller) => PopupFollower(
+        onDismiss: () {
+          controller.hide();
+          updateColorField(pickedColor);
+          //       widget.onColorPicked(chosenColor);
+        },
+        child: Container(
+          width: 400,
+          height: 475,
+          color: theme.colorScheme.surfaceContainer,
+          child: ColorPicker(
+            pickerColor: currentColor,
+            onColorChanged: (color) {
+              pickedColor = color;
+            },
+            portraitOnly: true,
+          ),
+          // Use Material color picker:
+          //
+          // child: MaterialPicker(
+          //   pickerColor: pickerColor,
+          //   onColorChanged: changeColor,
+          //   showLabel: true, // only on portrait mode
+          // ),
+          //
+          // Use Block color picker:
+          //
+          // child: BlockPicker(
+          //   pickerColor: currentColor,
+          //   onColorChanged: changeColor,
+          // ),
+          //
+          // child: MultipleChoiceBlockPicker(
+          //   pickerColors: currentColors,
+          //   onColorsChanged: changeColors,
+          // ),
+        ),
+      ),
+    );
+
+    // Add the following Flexible widget to avoid getting an exception during rendering.
+    // See item #2 in the Problem Solving section in README.md file.
+
+    if (widget.parentWidgetType == "Row" ||
+        widget.parentWidgetType == "Column") {
+      return Flexible(
+        child: content,
+      );
     }
 
+    return content;
+  }
+
+/*
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     var content = Container(
-        color: Colors.white,
-        child: Row(
-          children: [
-            Icon(Icons.rectangle, color: currentColor),
-            SizedBox(
-                width: 150,
-                child: TextField(
-                  controller: _controller,
-                  onSubmitted: (value) => storeColorValue(currentColorValue),
-                  inputFormatters: [_inputFmt],
-                  focusNode: _focusNode,
-                  decoration: decor,
-                )),
-            cp.ColorChooser(
-              key: UniqueKey(),
+        color: theme.colorScheme.surfaceContainer,
+        child: TextField(
+          controller: _controller,
+          onSubmitted: (value) => storeColorValue(currentColorValue),
+          inputFormatters: [_inputFmt],
+          focusNode: _focusNode,
+          style: theme.textTheme.bodyLarge, // Same used for DropdownMenu
+          decoration: InputDecoration(
+            prefixIcon: const Icon(Icons.rectangle),
+            prefixIconColor: currentColor,
+            suffixIcon: cp.ColorChooser(
               initialColor: currentColor,
               onColorPicked: updateColorField,
             ),
-          ],
+          ).applyDefaults(theme.inputDecorationTheme),
         ));
 
     // Add the following Flexible widget to avoid getting an exception during rendering.
@@ -454,4 +557,5 @@ class _ColorEmbodimentState extends State<ColorNumericFieldEmbodiment> {
 
     return content;
   }
+  */
 }

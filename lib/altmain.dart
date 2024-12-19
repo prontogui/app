@@ -59,22 +59,26 @@ void altmain1(List<String> args) async {
 /// several objects responsible for core functionality of the application and
 /// hands off operation to the App widget.
 void altmain2(List<String> args) async {
-  loggingLevel = LoggingLevel.info;
+  loggingLevel = LoggingLevel.trace;
 
   logger.i('Welcome to ProntoGUI version ?.?.?');
   logger.i('Running alternate-main 2 program for development purposes.');
 
   var p = NumericField();
 
+  var props =
+      ColorNumericFieldEmbodimentProperties.fromMap({'embodiment': 'color'});
+
+  var e = ColorNumericFieldEmbodiment(
+      numfield: p, props: props, parentWidgetType: 'MaterialApp');
+
+/*
   var props = FontSizeNumericFielEmbodimentProperties.fromMap(
       {'embodiment': 'font-size'});
 
-  /*
-  var props =
-      ColorNumericFieldEmbodimentProperties.fromMap({'embodiment': 'color'});
-      */
   var e = FontSizeNumericFieldEmbodiment(
       numfield: p, props: props, parentWidgetType: 'MaterialApp');
+*/
 
   // Run the app and start rendering the UI.
   runApp(
