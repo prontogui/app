@@ -1,3 +1,6 @@
+// This code was copied from the project https://github.com/hawkkiller/popup_playground
+// which was developed by Michael Lazebny.  For a good introduction to how this works, he
+// published a good article at https://lazebny.io/popups-in-flutter/
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'enhanced_composited_transform_follower.dart';

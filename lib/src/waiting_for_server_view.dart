@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'widgets/serverfield.dart';
+import 'widgets/server_field.dart';
 import 'inherited_comm.dart';
 import 'package:dartlib/dartlib.dart' as pg;
 

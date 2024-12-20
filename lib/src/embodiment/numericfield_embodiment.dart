@@ -3,13 +3,11 @@
 // found in the LICENSE file.
 
 import 'embodiment_interface.dart';
-import 'embodiment_property_help.dart';
 import 'package:dartlib/dartlib.dart' as pg;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_color_picker_plus/flutter_color_picker_plus.dart';
 import 'common_properties.dart';
-import '../widgets/popup.dart';
+import '../widgets/color_field.dart';
 import 'dart:core';
 
 EmbodimentPackageManifest getManifest() {
@@ -300,7 +298,14 @@ class _FontSizeEmbodimentState extends State<FontSizeNumericFieldEmbodiment> {
   }
 }
 
-class ColorNumericFieldEmbodiment extends StatefulWidget {
+class ColorNumericFieldEmbodimentProperties with CommonProperties {
+  ColorNumericFieldEmbodimentProperties.fromMap(
+      Map<String, dynamic>? embodimentMap) {
+    super.initializeFromMap(embodimentMap);
+  }
+}
+
+class ColorNumericFieldEmbodiment extends StatelessWidget {
   const ColorNumericFieldEmbodiment(
       {super.key,
       required this.numfield,
@@ -312,263 +317,19 @@ class ColorNumericFieldEmbodiment extends StatefulWidget {
   final String parentWidgetType;
 
   @override
-  State<ColorNumericFieldEmbodiment> createState() {
-    return _ColorEmbodimentState();
-  }
-}
-
-class ColorNumericFieldEmbodimentProperties with CommonProperties {
-  ColorNumericFieldEmbodimentProperties.fromMap(
-      Map<String, dynamic>? embodimentMap) {
-    super.initializeFromMap(embodimentMap);
-  }
-}
-
-class _ColorEmbodimentState extends State<ColorNumericFieldEmbodiment> {
-  late TextEditingController _controller;
-  late TextInputFormatter _inputFmt;
-  late FocusNode _focusNode;
-  final _allowedInputPattern = RegExp(r'^\s*(#)?[0-9a-fA-F]{0,8}\s*$');
-  bool _hasFocus = false;
-  Color? pickedColor;
-
-  String prepareInitialValue() {
-    var value = widget.numfield.numericEntry;
-    if (_allowedInputPattern.hasMatch(value)) {
-      return canonizeHexColorValue(normalizeHexColorValue(value));
-    }
-    return canonizeHexColorValue('#');
-  }
-
-  TextSelection _restrictTextSelection(
-      TextSelection prevSelection, int newLength) {
-    int min(int a, int b) => (a < b) ? a : b;
-    return TextSelection(
-        baseOffset: min(prevSelection.baseOffset, newLength),
-        extentOffset: min(prevSelection.extentOffset, newLength));
-  }
-
-  @override
-  void initState() {
-    super.initState();
-
-    _inputFmt = TextInputFormatter.withFunction(
-      (TextEditingValue oldValue, TextEditingValue newValue) {
-        var enteredText = newValue.text.trim();
-        if (_allowedInputPattern.hasMatch(enteredText)) {
-          String updatedText;
-
-          // Entered text is empty
-          if (enteredText.isEmpty) {
-            updatedText = '';
-            return newValue.copyWith(
-              text: '',
-              selection: const TextSelection(baseOffset: 0, extentOffset: 0),
-            );
-
-            // Entered (or pasted) a value without leading hash sign
-          } else if (enteredText[0] != '#') {
-            // Normalize the value and put in the hash sign
-            updatedText = normalizeHexColorValue(enteredText);
-            // Return the new value and adjust the selection
-            return newValue.copyWith(
-              text: updatedText,
-              selection: TextSelection(
-                  baseOffset: updatedText.length,
-                  extentOffset: updatedText.length),
-            );
-            // All other cases
-          } else {
-            updatedText = normalizeHexColorValue(enteredText);
-            return newValue.copyWith(
-                text: updatedText,
-                selection: _restrictTextSelection(
-                    newValue.selection, updatedText.length));
-          }
-        }
-        return oldValue;
-      },
-    );
-
-    _controller = TextEditingController(text: prepareInitialValue());
-    _focusNode = FocusNode();
-    _focusNode.addListener(onFocusChange);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    _focusNode.dispose();
-    super.dispose();
-  }
-
-  /// The current color value as a canonical hex string.
-  String get currentColorValue =>
-      canonizeHexColorValue(normalizeHexColorValue(_controller.text));
-
-  /// The current color as a Color value.
-  Color get currentColor =>
-      Color(int.parse(currentColorValue.substring(1), radix: 16));
-
-  void onFocusChange() {
-    _hasFocus = _focusNode.hasPrimaryFocus;
-    if (_hasFocus) {
-      _controller.selection =
-          TextSelection(baseOffset: 0, extentOffset: _controller.text.length);
-    } else {
-      var currentValue = currentColorValue;
-      storeColorValue(currentValue);
-      _controller.text = currentValue;
-    }
-  }
-
-  void storeColorValue(String value) {
-    // Do nothing if text hasn't changed
-    if (value == widget.numfield.numericEntry) {
-      return;
-    }
-    setState(
-      () {
-        widget.numfield.numericEntry = value;
-      },
-    );
-    pg.logger.t('Color numeric field saved value $value');
-  }
-
-  void updateColorField() {
-    var color = pickedColor != null ? pickedColor! : currentColor;
-    var colorValue =
-        colorToHex(color, enableAlpha: true, includeHashSign: true);
-    setState(() {
-      _controller.text = colorValue;
-      storeColorValue(colorValue);
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context);
+    var field = ColorField(
+        initialValue: numfield.numericEntry,
+        onSubmitted: (value) {
+          numfield.numericEntry = value;
+        });
 
-    var content = Popup(
-        followerAnchor: Alignment.topCenter,
-        flip: true,
-        child: (context, controller) => Container(
-            color: theme.colorScheme.surfaceContainer,
-            child: TextField(
-              controller: _controller,
-              onSubmitted: (value) => storeColorValue(currentColorValue),
-              inputFormatters: [_inputFmt],
-              focusNode: _focusNode,
-              style: theme.textTheme.bodyLarge, // Same used for DropdownMenu
-              decoration: InputDecoration(
-                border: const OutlineInputBorder(),
-                prefixIcon: const Icon(Icons.rectangle),
-                prefixIconColor: currentColor,
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.palette),
-                  onPressed: controller.show,
-                ),
-              ).applyDefaults(theme.inputDecorationTheme),
-            )),
-        follower: (context, controller) => PopupFollower(
-            onDismiss: () {
-              controller.hide();
-              updateColorField();
-              //       widget.onColorPicked(chosenColor);
-            },
-            child: CallbackShortcuts(
-              bindings: <ShortcutActivator, VoidCallback>{
-                const SingleActivator(LogicalKeyboardKey.enter): () {
-                  controller.hide();
-                  updateColorField();
-                },
-                const SingleActivator(LogicalKeyboardKey.escape): () {
-                  controller.hide();
-                },
-              },
-              child: Focus(
-                autofocus: true,
-                child: Container(
-                  width: 400,
-                  height: 475,
-                  color: theme.colorScheme.surfaceContainer,
-                  child: ColorPicker(
-                    pickerColor: currentColor,
-                    onColorChanged: (color) {
-                      pickedColor = color;
-                    },
-                    portraitOnly: true,
-                  ),
-                  // Use Material color picker:
-                  //
-                  // child: MaterialPicker(
-                  //   pickerColor: pickerColor,
-                  //   onColorChanged: changeColor,
-                  //   showLabel: true, // only on portrait mode
-                  // ),
-                  //
-                  // Use Block color picker:
-                  //
-                  // child: BlockPicker(
-                  //   pickerColor: currentColor,
-                  //   onColorChanged: changeColor,
-                  // ),
-                  //
-                  // child: MultipleChoiceBlockPicker(
-                  //   pickerColors: currentColors,
-                  //   onColorsChanged: changeColors,
-                  // ),
-                ),
-              ),
-            )));
-
-    // Add the following Flexible widget to avoid getting an exception during rendering.
-    // See item #2 in the Problem Solving section in README.md file.
-
-    if (widget.parentWidgetType == "Row" ||
-        widget.parentWidgetType == "Column") {
+    if (parentWidgetType == "Row" || parentWidgetType == "Column") {
       return Flexible(
-        child: content,
+        child: field,
       );
     }
 
-    return content;
+    return field;
   }
-
-/*
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    var content = Container(
-        color: theme.colorScheme.surfaceContainer,
-        child: TextField(
-          controller: _controller,
-          onSubmitted: (value) => storeColorValue(currentColorValue),
-          inputFormatters: [_inputFmt],
-          focusNode: _focusNode,
-          style: theme.textTheme.bodyLarge, // Same used for DropdownMenu
-          decoration: InputDecoration(
-            prefixIcon: const Icon(Icons.rectangle),
-            prefixIconColor: currentColor,
-            suffixIcon: cp.ColorChooser(
-              initialColor: currentColor,
-              onColorPicked: updateColorField,
-            ),
-          ).applyDefaults(theme.inputDecorationTheme),
-        ));
-
-    // Add the following Flexible widget to avoid getting an exception during rendering.
-    // See item #2 in the Problem Solving section in README.md file.
-
-    if (widget.parentWidgetType == "Row" ||
-        widget.parentWidgetType == "Column") {
-      return Flexible(
-        child: content,
-      );
-    }
-
-    return content;
-  }
-  */
 }
