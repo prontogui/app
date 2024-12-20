@@ -165,10 +165,6 @@ class _ColorFieldState extends State<ColorField> {
             color: theme.colorScheme.surfaceContainer,
             child: TextField(
               controller: _controller,
-              onSubmitted: (value) => storeColorValue(currentColorValue),
-              inputFormatters: [_inputFmt],
-              focusNode: _focusNode,
-              style: theme.textTheme.bodyLarge, // Same used for DropdownMenu
               decoration: InputDecoration(
                 border: const OutlineInputBorder(),
                 prefixIcon: const Icon(Icons.rectangle),
@@ -178,6 +174,10 @@ class _ColorFieldState extends State<ColorField> {
                   onPressed: controller.show,
                 ),
               ).applyDefaults(theme.inputDecorationTheme),
+              onSubmitted: (value) => storeColorValue(currentColorValue),
+              inputFormatters: [_inputFmt],
+              focusNode: _focusNode,
+              style: theme.textTheme.bodyLarge, // Same used for DropdownMenu
             )),
         follower: (context, controller) => PopupFollower(
             onDismiss: () {

@@ -140,9 +140,9 @@ class _NumericFieldState extends State<NumericField> {
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
 
-    Widget buildField() {
+    if (widget.popupChoices == null) {
       return Container(
-          color: Colors.white,
+          color: theme.colorScheme.surfaceContainer,
           child: TextField(
             controller: _controller,
             decoration: InputDecoration(
@@ -152,50 +152,76 @@ class _NumericFieldState extends State<NumericField> {
             focusNode: _focusNode,
             inputFormatters: [_inputFmt],
           ));
-    }
-
-    if (widget.popupChoices == null) {
-      return buildField();
     } else {
+      var selectedColor =
+          Colors.grey; // = theme.colorScheme.surfaceContainerLow;
+
       return Popup(
+          followerAnchor: Alignment.topCenter,
+          flip: true,
           child: (context, controller) => Container(
-                color: Colors.white,
+                color: theme.colorScheme.surfaceContainer,
                 child: TextField(
                   controller: _controller,
                   decoration: InputDecoration(
-                    border: _hasFocus ? const OutlineInputBorder() : null,
+                    border: const OutlineInputBorder(),
                     suffixIcon: widget.popupChoices != null
                         ? IconButton(
                             icon: chooserIcon,
                             onPressed: controller.show,
                           )
                         : null,
-                  ),
+                  ).applyDefaults(theme.inputDecorationTheme),
                   onSubmitted: (value) => storeValue(value),
                   focusNode: _focusNode,
+                  style: theme.textTheme.bodyLarge,
                   inputFormatters: [_inputFmt],
                 ),
               ),
           follower: (context, controller) => PopupFollower(
-                  child: ListView.builder(
-                itemBuilder: (context, index) =>
-                    builderPopupItem(context, index, controller),
-              )));
+              onDismiss: () {
+                controller.hide();
+                updateField();
+              },
+              child: CallbackShortcuts(
+                  bindings: <ShortcutActivator, VoidCallback>{
+                    const SingleActivator(LogicalKeyboardKey.enter): () {
+                      controller.hide();
+                      updateField();
+                    },
+                    const SingleActivator(LogicalKeyboardKey.escape): () {
+                      controller.hide();
+                    },
+                  },
+                  child: Focus(
+                      autofocus: true,
+                      child: Container(
+                          width: 200,
+                          height: 200,
+                          color: theme.colorScheme.surfaceContainer,
+                          child: Material(
+                              child: ListView.builder(
+                            itemBuilder: (context, index) => builderPopupItem(
+                                context, index, controller, selectedColor),
+                          )))))));
     }
   }
 
-  Widget? builderPopupItem(
-      BuildContext context, int index, OverlayPortalController controller) {
+  Widget? builderPopupItem(BuildContext context, int index,
+      OverlayPortalController controller, Color selectedColor) {
     if (index >= popupChoicesWidgets.length) {
       return null;
     }
 
     var item = popupChoicesWidgets[index];
 
+    //var isSelected = index == _selectedItem;
+
     return ListTile(
       title: item,
-      selected: index == _selectedItem,
+      //selected: isSelected,
       isThreeLine: false,
+      //selectedTileColor: Colors.red, //isSelected ? selectedColor : null,
       onTap: () {
         controller.hide();
         _selectedItem = index;
