@@ -1,14 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'popup.dart';
 
 class NumericField extends StatefulWidget {
-  const NumericField({super.key, required this.onSubmitted, this.initialValue});
+  const NumericField(
+      {super.key,
+      required this.onSubmitted,
+      this.initialValue,
+      this.popupChoices,
+      this.popupChooserIcon});
 
   /// Handler for new values submitted after entering them.
   final void Function(String value) onSubmitted;
 
   /// The initial value (optional).
   final String? initialValue;
+
+  /// Entries to show in the popup chooser (optional).  If this is null then
+  /// popup chooser will be hidden.
+  final List<String>? popupChoices;
+
+  /// The icon to display for the popup chooser button (optional).  It defaults
+  /// to an ellipses.
+  final Icon? popupChooserIcon;
 
   @override
   State<NumericField> createState() => _NumericFieldState();
@@ -19,6 +33,10 @@ class _NumericFieldState extends State<NumericField> {
   late FocusNode _focusNode;
   late RegExp _allowedInputPattern;
   late TextInputFormatter _inputFmt;
+  int _selectedItem = -1;
+
+  // Cached list of popup choices represented as widgets
+  List<Widget>? _popupChoicesWidgets;
 
   // This field currently has focus.
   bool _hasFocus = false;
@@ -57,6 +75,12 @@ class _NumericFieldState extends State<NumericField> {
     widget.onSubmitted(value);
   }
 
+  void updateField() {
+    var value = widget.popupChoices![_selectedItem];
+    setState(() => _controller.text = value);
+    storeValue(value);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -90,25 +114,93 @@ class _NumericFieldState extends State<NumericField> {
   void didUpdateWidget(covariant oldWidget) {
     _controller.text = prepareInitialValue();
     _submittedValue = null;
+    _popupChoicesWidgets = null;
     super.didUpdateWidget(oldWidget);
+  }
+
+  Icon get chooserIcon {
+    return widget.popupChooserIcon != null
+        ? widget.popupChooserIcon!
+        : const Icon(Icons.more);
+  }
+
+  List<Widget> get popupChoicesWidgets {
+    _popupChoicesWidgets ??= widget.popupChoices == null
+        ? List<Widget>.empty(growable: false)
+        : widget.popupChoices!
+            .map(
+              (e) => Text(e),
+            )
+            .toList();
+
+    return _popupChoicesWidgets!;
   }
 
   @override
   Widget build(BuildContext context) {
-    InputDecoration? decor;
+    var theme = Theme.of(context);
 
-    if (_hasFocus) {
-      decor = const InputDecoration(border: OutlineInputBorder());
+    Widget buildField() {
+      return Container(
+          color: Colors.white,
+          child: TextField(
+            controller: _controller,
+            decoration: InputDecoration(
+              border: _hasFocus ? const OutlineInputBorder() : null,
+            ),
+            onSubmitted: (value) => storeValue(value),
+            focusNode: _focusNode,
+            inputFormatters: [_inputFmt],
+          ));
     }
 
-    return Container(
-        color: Colors.white,
-        child: TextField(
-          controller: _controller,
-          decoration: decor,
-          onSubmitted: (value) => storeValue(value),
-          focusNode: _focusNode,
-          inputFormatters: [_inputFmt],
-        ));
+    if (widget.popupChoices == null) {
+      return buildField();
+    } else {
+      return Popup(
+          child: (context, controller) => Container(
+                color: Colors.white,
+                child: TextField(
+                  controller: _controller,
+                  decoration: InputDecoration(
+                    border: _hasFocus ? const OutlineInputBorder() : null,
+                    suffixIcon: widget.popupChoices != null
+                        ? IconButton(
+                            icon: chooserIcon,
+                            onPressed: controller.show,
+                          )
+                        : null,
+                  ),
+                  onSubmitted: (value) => storeValue(value),
+                  focusNode: _focusNode,
+                  inputFormatters: [_inputFmt],
+                ),
+              ),
+          follower: (context, controller) => PopupFollower(
+                  child: ListView.builder(
+                itemBuilder: (context, index) =>
+                    builderPopupItem(context, index, controller),
+              )));
+    }
+  }
+
+  Widget? builderPopupItem(
+      BuildContext context, int index, OverlayPortalController controller) {
+    if (index >= popupChoicesWidgets.length) {
+      return null;
+    }
+
+    var item = popupChoicesWidgets[index];
+
+    return ListTile(
+      title: item,
+      selected: index == _selectedItem,
+      isThreeLine: false,
+      onTap: () {
+        controller.hide();
+        _selectedItem = index;
+        updateField();
+      },
+    );
   }
 }

@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'common_properties.dart';
 import '../widgets/color_field.dart';
+import '../widgets/numeric_field.dart';
 import 'dart:core';
 
 EmbodimentPackageManifest getManifest() {
@@ -42,7 +43,14 @@ EmbodimentPackageManifest getManifest() {
   ]);
 }
 
-class DefaultNumericFieldEmbodiment extends StatefulWidget {
+class DefaultNumericFieldEmbodimentProperties with CommonProperties {
+  DefaultNumericFieldEmbodimentProperties.fromMap(
+      Map<String, dynamic>? embodimentMap) {
+    super.initializeFromMap(embodimentMap);
+  }
+}
+
+class DefaultNumericFieldEmbodiment extends StatelessWidget {
   const DefaultNumericFieldEmbodiment(
       {super.key,
       required this.numfield,
@@ -54,113 +62,87 @@ class DefaultNumericFieldEmbodiment extends StatefulWidget {
   final String parentWidgetType;
 
   @override
-  State<DefaultNumericFieldEmbodiment> createState() {
-    return _DefaultEmbodimentState();
+  Widget build(BuildContext context) {
+    var field = NumericField(
+        initialValue: numfield.numericEntry,
+        onSubmitted: (value) {
+          numfield.numericEntry = value;
+        });
+
+    if (parentWidgetType == "Row" || parentWidgetType == "Column") {
+      return Flexible(
+        child: field,
+      );
+    }
+
+    return field;
   }
 }
 
-class DefaultNumericFieldEmbodimentProperties with CommonProperties {
-  DefaultNumericFieldEmbodimentProperties.fromMap(
+class FontSizeNumericFielEmbodimentProperties with CommonProperties {
+  FontSizeNumericFielEmbodimentProperties.fromMap(
       Map<String, dynamic>? embodimentMap) {
     super.initializeFromMap(embodimentMap);
   }
 }
 
-class _DefaultEmbodimentState extends State<DefaultNumericFieldEmbodiment> {
-  late TextEditingController _controller;
-  late FocusNode _focusNode;
-  bool _hasFocus = false;
-  late RegExp _pattern;
-  late TextInputFormatter _inputFmt;
+class FontSizeNumericFieldEmbodiment extends StatelessWidget {
+  const FontSizeNumericFieldEmbodiment(
+      {super.key,
+      required this.numfield,
+      required this.props,
+      required this.parentWidgetType});
 
-  @override
-  void initState() {
-    super.initState();
+  final pg.NumericField numfield;
+  final FontSizeNumericFielEmbodimentProperties props;
+  final String parentWidgetType;
 
-    _pattern = RegExp(r'^[+-]?[0-9]*\.?[0-9]*$');
-
-    _inputFmt = TextInputFormatter.withFunction(
-      (TextEditingValue oldValue, TextEditingValue newValue) {
-        return _pattern.hasMatch(newValue.text) ? newValue : oldValue;
-      },
-    );
-
-    _controller = TextEditingController(text: widget.numfield.numericEntry);
-    _focusNode = FocusNode();
-    _focusNode.addListener(onFocusChange);
-    _focusNode.addListener(() {
-      setState(() => _hasFocus = _focusNode.hasPrimaryFocus);
-    });
-
-    //FocusManager.instance.addListener(onFocusChange);
-  }
-
-  void onFocusChange() {
-    setState(
-      () {
-        _hasFocus = _focusNode.hasPrimaryFocus;
-      },
-    );
-    if (_hasFocus) {
-      _controller.selection =
-          TextSelection(baseOffset: 0, extentOffset: _controller.text.length);
-    } else {
-      storeValue(_controller.text);
-    }
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    _focusNode.dispose();
-    super.dispose();
-  }
-
-  void storeValue(String value) {
-    // Do nothing if text hasn't changed
-    if (value == widget.numfield.numericEntry) {
-      return;
-    }
-    setState(
-      () {
-        widget.numfield.numericEntry = value;
-      },
-    );
-    pg.logger.t('Default numeric field saved value $value');
-  }
+  static const _fontChoices = [
+    '8',
+    '9',
+    '10',
+    '11',
+    '12',
+    '14',
+    '16',
+    '20',
+    '24',
+    '28',
+    '32',
+    '35',
+    '40',
+    '44',
+    '54',
+    '60',
+    '68',
+    '72',
+    '80',
+    '88',
+    '96'
+  ];
 
   @override
   Widget build(BuildContext context) {
-    InputDecoration? decor;
+    var field = NumericField(
+      initialValue: numfield.numericEntry,
+      onSubmitted: (value) {
+        numfield.numericEntry = value;
+      },
+      popupChoices: _fontChoices,
+      popupChooserIcon: const Icon(Icons.numbers),
+    );
 
-    if (_hasFocus) {
-      decor = const InputDecoration(border: OutlineInputBorder());
-    }
-
-    var content = Container(
-        color: Colors.white,
-        child: TextField(
-          controller: _controller,
-          decoration: decor,
-          onSubmitted: (value) => storeValue(value),
-          focusNode: _focusNode,
-          inputFormatters: [_inputFmt],
-        ));
-
-    // Add the following Flexible widget to avoid getting an exception during rendering.
-    // See item #2 in the Problem Solving section in README.md file.
-
-    if (widget.parentWidgetType == "Row" ||
-        widget.parentWidgetType == "Column") {
+    if (parentWidgetType == "Row" || parentWidgetType == "Column") {
       return Flexible(
-        child: content,
+        child: field,
       );
     }
 
-    return content;
+    return field;
   }
 }
 
+/*
 class FontSizeNumericFieldEmbodiment extends StatefulWidget {
   const FontSizeNumericFieldEmbodiment(
       {super.key,
@@ -297,6 +279,7 @@ class _FontSizeEmbodimentState extends State<FontSizeNumericFieldEmbodiment> {
     return content;
   }
 }
+*/
 
 class ColorNumericFieldEmbodimentProperties with CommonProperties {
   ColorNumericFieldEmbodimentProperties.fromMap(

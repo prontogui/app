@@ -66,19 +66,21 @@ void altmain2(List<String> args) async {
 
   var p = NumericField();
 
+/*
   var props =
       ColorNumericFieldEmbodimentProperties.fromMap({'embodiment': 'color'});
 
   var e = ColorNumericFieldEmbodiment(
       numfield: p, props: props, parentWidgetType: 'MaterialApp');
+*/
 
-/*
+// /*
   var props = FontSizeNumericFielEmbodimentProperties.fromMap(
       {'embodiment': 'font-size'});
 
   var e = FontSizeNumericFieldEmbodiment(
       numfield: p, props: props, parentWidgetType: 'MaterialApp');
-*/
+// */
 
   // Run the app and start rendering the UI.
   runApp(
