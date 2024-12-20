@@ -330,7 +330,7 @@ class _ColorEmbodimentState extends State<ColorNumericFieldEmbodiment> {
   late FocusNode _focusNode;
   final _allowedInputPattern = RegExp(r'^\s*(#)?[0-9a-fA-F]{0,8}\s*$');
   bool _hasFocus = false;
-  late Color pickedColor;
+  Color? pickedColor;
 
   String prepareInitialValue() {
     var value = widget.numfield.numericEntry;
@@ -435,7 +435,8 @@ class _ColorEmbodimentState extends State<ColorNumericFieldEmbodiment> {
     pg.logger.t('Color numeric field saved value $value');
   }
 
-  void updateColorField(Color color) {
+  void updateColorField() {
+    var color = pickedColor != null ? pickedColor! : currentColor;
     var colorValue =
         colorToHex(color, enableAlpha: true, includeHashSign: true);
     setState(() {
@@ -449,65 +450,77 @@ class _ColorEmbodimentState extends State<ColorNumericFieldEmbodiment> {
     var theme = Theme.of(context);
 
     var content = Popup(
-      followerAnchor: Alignment.topCenter,
-      flip: true,
-      child: (context, controller) => Container(
-          color: theme.colorScheme.surfaceContainer,
-          child: TextField(
-            controller: _controller,
-            onSubmitted: (value) => storeColorValue(currentColorValue),
-            inputFormatters: [_inputFmt],
-            focusNode: _focusNode,
-            style: theme.textTheme.bodyLarge, // Same used for DropdownMenu
-            decoration: InputDecoration(
-              border: const OutlineInputBorder(),
-              prefixIcon: const Icon(Icons.rectangle),
-              prefixIconColor: currentColor,
-              suffixIcon: IconButton(
-                icon: const Icon(Icons.palette),
-                onPressed: controller.show,
-              ),
-            ).applyDefaults(theme.inputDecorationTheme),
-          )),
-      follower: (context, controller) => PopupFollower(
-        onDismiss: () {
-          controller.hide();
-          updateColorField(pickedColor);
-          //       widget.onColorPicked(chosenColor);
-        },
-        child: Container(
-          width: 400,
-          height: 475,
-          color: theme.colorScheme.surfaceContainer,
-          child: ColorPicker(
-            pickerColor: currentColor,
-            onColorChanged: (color) {
-              pickedColor = color;
+        followerAnchor: Alignment.topCenter,
+        flip: true,
+        child: (context, controller) => Container(
+            color: theme.colorScheme.surfaceContainer,
+            child: TextField(
+              controller: _controller,
+              onSubmitted: (value) => storeColorValue(currentColorValue),
+              inputFormatters: [_inputFmt],
+              focusNode: _focusNode,
+              style: theme.textTheme.bodyLarge, // Same used for DropdownMenu
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.rectangle),
+                prefixIconColor: currentColor,
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.palette),
+                  onPressed: controller.show,
+                ),
+              ).applyDefaults(theme.inputDecorationTheme),
+            )),
+        follower: (context, controller) => PopupFollower(
+            onDismiss: () {
+              controller.hide();
+              updateColorField();
+              //       widget.onColorPicked(chosenColor);
             },
-            portraitOnly: true,
-          ),
-          // Use Material color picker:
-          //
-          // child: MaterialPicker(
-          //   pickerColor: pickerColor,
-          //   onColorChanged: changeColor,
-          //   showLabel: true, // only on portrait mode
-          // ),
-          //
-          // Use Block color picker:
-          //
-          // child: BlockPicker(
-          //   pickerColor: currentColor,
-          //   onColorChanged: changeColor,
-          // ),
-          //
-          // child: MultipleChoiceBlockPicker(
-          //   pickerColors: currentColors,
-          //   onColorsChanged: changeColors,
-          // ),
-        ),
-      ),
-    );
+            child: CallbackShortcuts(
+              bindings: <ShortcutActivator, VoidCallback>{
+                const SingleActivator(LogicalKeyboardKey.enter): () {
+                  controller.hide();
+                  updateColorField();
+                },
+                const SingleActivator(LogicalKeyboardKey.escape): () {
+                  controller.hide();
+                },
+              },
+              child: Focus(
+                autofocus: true,
+                child: Container(
+                  width: 400,
+                  height: 475,
+                  color: theme.colorScheme.surfaceContainer,
+                  child: ColorPicker(
+                    pickerColor: currentColor,
+                    onColorChanged: (color) {
+                      pickedColor = color;
+                    },
+                    portraitOnly: true,
+                  ),
+                  // Use Material color picker:
+                  //
+                  // child: MaterialPicker(
+                  //   pickerColor: pickerColor,
+                  //   onColorChanged: changeColor,
+                  //   showLabel: true, // only on portrait mode
+                  // ),
+                  //
+                  // Use Block color picker:
+                  //
+                  // child: BlockPicker(
+                  //   pickerColor: currentColor,
+                  //   onColorChanged: changeColor,
+                  // ),
+                  //
+                  // child: MultipleChoiceBlockPicker(
+                  //   pickerColors: currentColors,
+                  //   onColorsChanged: changeColors,
+                  // ),
+                ),
+              ),
+            )));
 
     // Add the following Flexible widget to avoid getting an exception during rendering.
     // See item #2 in the Problem Solving section in README.md file.
