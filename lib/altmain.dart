@@ -1,12 +1,15 @@
 // Copyright 2024 ProntoGUI, LLC.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+import 'package:app/src/embodiment/choice_embodiment.dart';
+import 'package:app/src/embodiment/common_properties.dart';
 import 'package:flutter/material.dart';
 import 'package:dartlib/dartlib.dart';
 import 'src/inherited_primitive_model.dart';
 import 'src/embodifier.dart';
 import 'src/app.dart';
 import 'src/embodiment/numericfield_embodiment.dart';
+import 'src/widgets/choice_field.dart';
 
 /// The main entry point for the ProntoGUI application.  This function sets up
 /// several objects responsible for core functionality of the application and
@@ -74,16 +77,41 @@ void altmain2(List<String> args) async {
       numfield: p, props: props, parentWidgetType: 'MaterialApp');
 */
 
-// /*
+  /*
   var props = FontSizeNumericFielEmbodimentProperties.fromMap(
       {'embodiment': 'font-size'});
 
   var e = FontSizeNumericFieldEmbodiment(
       numfield: p, props: props, parentWidgetType: 'MaterialApp');
-// */
+   */
+
+  /*
+  var choice = Choice(
+      choice: 'Apple', choices: ['Orange', 'Apple', 'Banana', 'Peach', 'Pear']);
+  var e = DefaultChoiceEmbodiment(choice: choice);
+  var row = Row(
+    children: [e, const BackButton()],
+  );
+ */
+
+// /*
+  var w = ChoiceField(
+      onSubmitted: (value) {},
+      initialValue: 'Apple',
+      choices: const [
+        'Orange',
+        'Apple',
+        'Banana',
+        'Peach',
+        'Pear',
+        'Mango',
+        'Apricot',
+        'Cherry'
+      ]);
+//      */
 
   // Run the app and start rendering the UI.
   runApp(
-    App.altdev2(devWidget: e),
+    App.altdev2(devWidget: w),
   );
 }

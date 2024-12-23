@@ -165,6 +165,6 @@ class FrameEmbodimentProperties extends CommonProperties {
             'top-to-bottom', _flowDirectionChoices),
         border =
             getEnumStringProp(embodimentMap, 'border', 'none', _borderChoices) {
-    super.initializeFromMap(embodimentMap);
+    super.fromMap(embodimentMap);
   }
 }

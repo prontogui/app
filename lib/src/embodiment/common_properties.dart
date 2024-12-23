@@ -8,7 +8,7 @@ mixin class CommonProperties {
   late double width;
   late double height;
 
-  void initializeFromMap(Map<String, dynamic>? embodimentMap) {
+  void fromMap(Map<String, dynamic>? embodimentMap) {
     width = getNumericPropOrDefault(embodimentMap, 'width',
         double.negativeInfinity, double.infinity, double.nan);
     height = getNumericPropOrDefault(embodimentMap, 'height',

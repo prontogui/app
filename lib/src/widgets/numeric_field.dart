@@ -76,6 +76,9 @@ class _NumericFieldState extends State<NumericField> {
   }
 
   void updateField() {
+    if (_selectedItem == -1) {
+      return;
+    }
     var value = widget.popupChoices![_selectedItem];
     setState(() => _controller.text = value);
     storeValue(value);
@@ -98,14 +101,12 @@ class _NumericFieldState extends State<NumericField> {
     _controller = TextEditingController(text: prepareInitialValue());
     _focusNode = FocusNode();
     _focusNode.addListener(onFocusChange);
-    _focusNode.addListener(() {
-      setState(() => _hasFocus = _focusNode.hasPrimaryFocus);
-    });
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _focusNode.removeListener(onFocusChange);
     _focusNode.dispose();
     super.dispose();
   }
@@ -217,16 +218,23 @@ class _NumericFieldState extends State<NumericField> {
 
     //var isSelected = index == _selectedItem;
 
-    return ListTile(
-      title: item,
-      //selected: isSelected,
-      isThreeLine: false,
-      //selectedTileColor: Colors.red, //isSelected ? selectedColor : null,
-      onTap: () {
-        controller.hide();
-        _selectedItem = index;
-        updateField();
-      },
-    );
+    void saveValueAndHidePopup() {
+      controller.hide();
+      _selectedItem = index;
+      updateField();
+    }
+
+    return CallbackShortcuts(
+        bindings: <ShortcutActivator, VoidCallback>{
+          const SingleActivator(LogicalKeyboardKey.enter):
+              saveValueAndHidePopup,
+        },
+        child: ListTile(
+          title: item,
+          //selected: isSelected,
+          isThreeLine: false,
+          //selectedTileColor: Colors.red, //isSelected ? selectedColor : null,
+          onTap: saveValueAndHidePopup,
+        ));
   }
 }

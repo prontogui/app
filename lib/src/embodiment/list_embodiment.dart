@@ -234,6 +234,6 @@ class ListEmbodimentProperties with CommonProperties {
   ListEmbodimentProperties.fromMap(Map<String, dynamic>? embodimentMap)
       : embodiment = getEnumStringProp(
             embodimentMap, 'embodiment', 'normal-list', _validEmbodiments) {
-    super.initializeFromMap(embodimentMap);
+    super.fromMap(embodimentMap);
   }
 }

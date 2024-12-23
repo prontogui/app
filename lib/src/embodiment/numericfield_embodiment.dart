@@ -5,7 +5,6 @@
 import 'embodiment_interface.dart';
 import 'package:dartlib/dartlib.dart' as pg;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'common_properties.dart';
 import '../widgets/color_field.dart';
 import '../widgets/numeric_field.dart';
@@ -46,7 +45,7 @@ EmbodimentPackageManifest getManifest() {
 class DefaultNumericFieldEmbodimentProperties with CommonProperties {
   DefaultNumericFieldEmbodimentProperties.fromMap(
       Map<String, dynamic>? embodimentMap) {
-    super.initializeFromMap(embodimentMap);
+    super.fromMap(embodimentMap);
   }
 }
 
@@ -82,7 +81,7 @@ class DefaultNumericFieldEmbodiment extends StatelessWidget {
 class FontSizeNumericFielEmbodimentProperties with CommonProperties {
   FontSizeNumericFielEmbodimentProperties.fromMap(
       Map<String, dynamic>? embodimentMap) {
-    super.initializeFromMap(embodimentMap);
+    super.fromMap(embodimentMap);
   }
 }
 
@@ -284,7 +283,7 @@ class _FontSizeEmbodimentState extends State<FontSizeNumericFieldEmbodiment> {
 class ColorNumericFieldEmbodimentProperties with CommonProperties {
   ColorNumericFieldEmbodimentProperties.fromMap(
       Map<String, dynamic>? embodimentMap) {
-    super.initializeFromMap(embodimentMap);
+    super.fromMap(embodimentMap);
   }
 }
 
