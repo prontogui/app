@@ -3,6 +3,10 @@ import 'package:flutter/services.dart';
 import 'popup.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 
+/// Field for entering a string choice from a list of choices.  User can click a
+/// button to pulldown the list of choices to choose from
+///
+/// Note:  this keeps the same look as other field widgets.
 class ChoiceField extends StatefulWidget {
   const ChoiceField(
       {super.key,
@@ -35,7 +39,7 @@ class _ChoiceFieldState extends State<ChoiceField> {
   late OverlayPortalController _popupController;
   late AutoScrollController _scrollController;
 
-  //int _selectedItem = -1;
+  // The currently selected item or -1 if entered value is not a valid item.
   final _selectedItem = ValueNotifier(-1);
 
   // Cached list of popup choices represented as widgets
@@ -47,6 +51,7 @@ class _ChoiceFieldState extends State<ChoiceField> {
   // The last value submitted back via onSubmitted handler
   String? _submittedValue;
 
+  // Returns the initial choice text to present.
   String prepareInitialValue() {
     if (widget.initialValue != null) {
       if (widget.choices.contains(widget.initialValue)) {
@@ -59,6 +64,19 @@ class _ChoiceFieldState extends State<ChoiceField> {
     return '';
   }
 
+  /// Returns the initial selected item index for the initial value or -1
+  /// if no initial value provided or is not found in choices.
+  int prepareInitialSelectedItem() {
+    if (widget.initialValue == null) {
+      return -1;
+    }
+    return widget.choices.indexWhere(
+      (element) => element.startsWith(widget.initialValue!),
+    );
+  }
+
+  /// Returns the most recently submitted (valid) choice value, otherwise, the
+  /// initial value.
   String prepareSubmittedValue() {
     if (_submittedValue != null) {
       return _submittedValue!;
@@ -72,7 +90,9 @@ class _ChoiceFieldState extends State<ChoiceField> {
         _hasFocus = _focusNode.hasPrimaryFocus;
       },
     );
+
     if (_hasFocus) {
+      // Select the entire contents of text field
       _controller.selection =
           TextSelection(baseOffset: 0, extentOffset: _controller.text.length);
     } else {
@@ -86,7 +106,8 @@ class _ChoiceFieldState extends State<ChoiceField> {
     }
   }
 
-  void storeValue(String value) {
+  /// Submits or saves the choice value to the provided handler for this widget.
+  void submitValue(String value) {
     // Do nothing if text hasn't changed
     if (_submittedValue != null && value == _submittedValue) {
       return;
@@ -95,12 +116,14 @@ class _ChoiceFieldState extends State<ChoiceField> {
     widget.onSubmitted(value);
   }
 
-  void saveSelectedItem() {
+  /// Submits or saves the selected item in pulldown list to the provided handler
+  /// for this widget.
+  void submitSelectedItem() {
     if (_selectedItem.value == -1) {
       return;
     }
     var value = widget.choices[_selectedItem.value];
-    storeValue(value);
+    submitValue(value);
   }
 
   void updateField() {
@@ -109,13 +132,13 @@ class _ChoiceFieldState extends State<ChoiceField> {
     }
     var value = widget.choices[_selectedItem.value];
     setState(() => _controller.text = value);
-    storeValue(value);
+    submitValue(value);
   }
 
   @override
   void initState() {
     super.initState();
-
+    _selectedItem.value = prepareInitialSelectedItem();
     _controller = TextEditingController(text: prepareInitialValue());
     _focusNode = FocusNode();
     _focusNode.addListener(onFocusChange);
@@ -124,6 +147,7 @@ class _ChoiceFieldState extends State<ChoiceField> {
         _popupController.show();
         setState(
           () {
+            // Update the selectedItem to a valid choice or -1 if field is incomplete
             if (newValue.text.isEmpty) {
               _selectedItem.value = -1;
             } else {
@@ -132,6 +156,7 @@ class _ChoiceFieldState extends State<ChoiceField> {
               );
             }
 
+            // Scroll the list accordingly (if its showing)
             if (_selectedItem.value == -1) {
               _scrollController.scrollToIndex(0,
                   preferPosition: AutoScrollPosition.begin);
@@ -159,18 +184,22 @@ class _ChoiceFieldState extends State<ChoiceField> {
 
   @override
   void didUpdateWidget(covariant oldWidget) {
+    _selectedItem.value = prepareInitialSelectedItem();
     _controller.text = prepareInitialValue();
     _submittedValue = null;
     _popupChoicesWidgets = null;
     super.didUpdateWidget(oldWidget);
   }
 
+  /// Returns the Icon to use for button to pull down list.
   Icon get chooserIcon {
     return widget.popupChooserIcon != null
         ? widget.popupChooserIcon!
-        : const Icon(Icons.more);
+        : const Icon(Icons.arrow_drop_down);
   }
 
+  /// Returns a list of widgets to display for the choices.  This is built lazily
+  /// and cached for subsequent calls.
   List<Widget> get popupChoicesWidgets {
     _popupChoicesWidgets ??= widget.choices
         .map(
@@ -202,7 +231,7 @@ class _ChoiceFieldState extends State<ChoiceField> {
                 ).applyDefaults(theme.inputDecorationTheme),
                 onSubmitted: (value) {
                   _popupController.hide();
-                  saveSelectedItem();
+                  submitSelectedItem();
                 },
                 focusNode: _focusNode,
                 style: theme.textTheme.bodyLarge,
@@ -217,11 +246,13 @@ class _ChoiceFieldState extends State<ChoiceField> {
             child: buildPopupContent(context, controller, theme)));
   }
 
+  /// Build the content to show in the popup view.
   Widget buildPopupContent(BuildContext context,
       OverlayPortalController controller, ThemeData theme) {
     var selectedColor = Colors.grey; // = theme.colorScheme.surfaceContainerLow;
 
     return ListenableBuilder(
+      // Rebuilds whenever selected item changes
       listenable: _selectedItem,
       builder: (context, child) {
         return CallbackShortcuts(
@@ -235,7 +266,6 @@ class _ChoiceFieldState extends State<ChoiceField> {
               },
             },
             child: Focus(
-                // autofocus: true,
                 child: Container(
                     width: 200,
                     height: 200,
@@ -251,6 +281,7 @@ class _ChoiceFieldState extends State<ChoiceField> {
     );
   }
 
+  /// Generates a widget for a single item in the popup list.
   Widget? builderPopupItem(BuildContext context, int index,
       OverlayPortalController controller, Color selectedColor) {
     if (index >= popupChoicesWidgets.length) {
