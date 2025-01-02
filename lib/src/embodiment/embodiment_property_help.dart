@@ -56,12 +56,12 @@ Color? getColorProp(Map<String, dynamic>? embodimentMap, String propertyName) {
 
   // Named color with optional swatch index?
 
-  // Color specified as ARGB (e.g. "argb:0xFFFFFFFF")?
-  if (colorSpec.startsWith("argb:0x") && colorSpec.length == 15) {
-    var a = int.tryParse(colorSpec.substring(7, 9), radix: 16);
-    var r = int.tryParse(colorSpec.substring(9, 11), radix: 16);
-    var g = int.tryParse(colorSpec.substring(11, 13), radix: 16);
-    var b = int.tryParse(colorSpec.substring(13), radix: 16);
+  // Color specified as ARGB (e.g. "0xFFFFFFFF")?
+  if (colorSpec.startsWith("0x") && colorSpec.length == 10) {
+    var a = int.tryParse(colorSpec.substring(2, 4), radix: 16);
+    var r = int.tryParse(colorSpec.substring(4, 6), radix: 16);
+    var g = int.tryParse(colorSpec.substring(6, 8), radix: 16);
+    var b = int.tryParse(colorSpec.substring(8), radix: 16);
     if (a == null || r == null || g == null || b == null) {
       return null;
     }
@@ -112,6 +112,31 @@ FontWeight? getFontWeight(Map<String, dynamic>? embodimentMap) {
   }
 
   throw Exception('invalid property value for fontWeight');
+}
+
+FontStyle? getFontStyle(Map<String, dynamic>? embodimentMap) {
+  if (embodimentMap == null) {
+    return null;
+  }
+  var value = embodimentMap['fontStyle'];
+  if (value == null) {
+    return null;
+  }
+  if (value.runtimeType != String) {
+    throw Exception('embodiment property value for fontStyle is not a string');
+  }
+
+  var fontStyleSpec = (value as String).toLowerCase();
+
+  switch (fontStyleSpec) {
+    case '':
+    case 'normal':
+      return FontStyle.normal;
+    case 'italic':
+      return FontStyle.italic;
+  }
+
+  throw Exception('invalid property value for fontStyle');
 }
 
 double? getNumericProp(Map<String, dynamic>? embodimentMap, String propertyName,

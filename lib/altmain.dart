@@ -3,8 +3,9 @@
 // found in the LICENSE file.
 import 'package:app/src/embodiment/choice_embodiment.dart';
 import 'package:app/src/embodiment/common_properties.dart';
+import 'package:app/src/embodiment/text_embodiment.dart';
 import 'package:flutter/material.dart';
-import 'package:dartlib/dartlib.dart';
+import 'package:dartlib/dartlib.dart' as dl;
 import 'src/inherited_primitive_model.dart';
 import 'src/embodifier.dart';
 import 'src/app.dart';
@@ -15,16 +16,33 @@ import 'src/widgets/choice_field.dart';
 /// several objects responsible for core functionality of the application and
 /// hands off operation to the App widget.
 void altmain1(List<String> args) async {
-  loggingLevel = LoggingLevel.info;
+  dl.loggingLevel = dl.LoggingLevel.info;
 
-  logger.i('Welcome to ProntoGUI version ?.?.?');
-  logger.i('Running alternate-main 1 program for development purposes.');
+  dl.logger.i('Welcome to ProntoGUI version ?.?.?');
+  dl.logger.i('Running alternate-main 1 program for development purposes.');
 
   // Create the model that holds the primitives to be displayed.
-  final model = PrimitiveModel();
+  final model = dl.PrimitiveModel();
 
-  var p = NumericField(embodiment: 'color', numericEntry: 'Red');
-  model.topPrimitives = [p];
+  var p1 = dl.Text(
+      embodiment:
+          'fontFamily:BonaNovaSC, fontSize:30, fontStyle:italic, fontWeight:bold, backgroundColor:0xFF750DF1, color:0xFFFFFFFF',
+      content: 'This is a line of text.');
+
+  var p2 = dl.Text(
+      embodiment: 'fontFamily:KodeMono,fontSize:20',
+      content: 'This is a line of text.');
+
+  var p3 = dl.Text(
+      embodiment: 'fontFamily:PTSerif,fontSize:20',
+      content: 'This is a line of text.');
+
+  var p4 = dl.Text(
+      embodiment: 'fontFamily:Roboto,fontSize:20',
+      content: 'This is a line of text.');
+
+  //var p = dl.NumericField(embodiment: 'color', numericEntry: 'Red');
+  model.topPrimitives = [p1, p2, p3, p4];
 
   // Create the object responsible for embodying the model as Widgets and for
   // rebuilding the UI when the model changes.
@@ -62,12 +80,12 @@ void altmain1(List<String> args) async {
 /// several objects responsible for core functionality of the application and
 /// hands off operation to the App widget.
 void altmain2(List<String> args) async {
-  loggingLevel = LoggingLevel.trace;
+  dl.loggingLevel = dl.LoggingLevel.trace;
 
-  logger.i('Welcome to ProntoGUI version ?.?.?');
-  logger.i('Running alternate-main 2 program for development purposes.');
+  dl.logger.i('Welcome to ProntoGUI version ?.?.?');
+  dl.logger.i('Running alternate-main 2 program for development purposes.');
 
-  var p = NumericField();
+  var p = dl.NumericField();
 
 /*
   var props =

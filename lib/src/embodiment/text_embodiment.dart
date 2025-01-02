@@ -4,6 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:dartlib/dartlib.dart' as pg;
+import 'package:google_fonts/google_fonts.dart';
 import 'embodiment_property_help.dart';
 import 'embodiment_interface.dart';
 
@@ -44,11 +45,13 @@ class TextEmbodimentProperties {
   FontWeight? fontWeight;
   double paddingRight;
   double paddingLeft;
-
-  //String fontStyle;
+  FontStyle? fontStyle;
 
   static final Set<String> _fontFamilyChoices = {
     '',
+    'BonaNovaSC',
+    'KodeMono',
+    'PTSerif',
     'Roboto',
   };
 
@@ -59,6 +62,7 @@ class TextEmbodimentProperties {
       fontSize: fontSize,
       fontFamily: fontFamily,
       fontWeight: fontWeight,
+      fontStyle: fontStyle,
     );
   }
 
@@ -90,5 +94,6 @@ class TextEmbodimentProperties {
             -double.infinity, double.infinity, 20.0),
         paddingRight = getNumericPropOrDefault(embodimentMap, "paddingRight",
             -double.infinity, double.infinity, 20.0),
-        fontWeight = getFontWeight(embodimentMap);
+        fontWeight = getFontWeight(embodimentMap),
+        fontStyle = getFontStyle(embodimentMap);
 }
