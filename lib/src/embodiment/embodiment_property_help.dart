@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:app/src/widgets/numeric_field.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 String getEnumStringProp(Map<String, dynamic>? embodimentMap,
     String propertyName, String defaultValue, Set<String> validEnums) {
@@ -22,6 +22,17 @@ String getEnumStringProp(Map<String, dynamic>? embodimentMap,
     throw Exception('invalid setting for embodiment property');
   }
   return stringValue;
+}
+
+T? getEnumProp<T extends Enum>(Map<String, dynamic>? embodimentMap,
+    String propertyName, T? defaultValue, List<T> enumValues) {
+  var validEnumStrings = enumValues.map((e) => e.name).toSet();
+  var enumString =
+      getEnumStringProp(embodimentMap, propertyName, '', validEnumStrings);
+  if (enumString.isEmpty) {
+    return defaultValue;
+  }
+  return enumValues.byName(enumString);
 }
 
 String getStringProp(Map<String, dynamic>? embodimentMap, String propertyName,

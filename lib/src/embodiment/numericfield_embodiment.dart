@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:app/src/embodiment/embodiment_property_help.dart';
+
 import 'embodiment_interface.dart';
 import 'package:dartlib/dartlib.dart' as pg;
 import 'package:flutter/material.dart';
@@ -43,9 +45,26 @@ EmbodimentPackageManifest getManifest() {
 }
 
 class DefaultNumericFieldEmbodimentProperties with CommonProperties {
+  int? displayDecimalPlaces;
+  double? minValue;
+  double? maxValue;
+  NegativeDisplayFormat? displayNegativeFormat;
+  bool? displayThousandths;
+
   DefaultNumericFieldEmbodimentProperties.fromMap(
       Map<String, dynamic>? embodimentMap) {
     super.fromMap(embodimentMap);
+
+    displayDecimalPlaces =
+        getIntProp(embodimentMap, 'displayDecimalPlaces', -20, 20);
+    minValue = getNumericProp(
+        embodimentMap, 'minValue', double.negativeInfinity, double.infinity);
+    maxValue = getNumericProp(
+        embodimentMap, 'maxValue', double.negativeInfinity, double.infinity);
+    displayNegativeFormat = getEnumProp<NegativeDisplayFormat>(embodimentMap,
+        'displayNegativeFormat', null, NegativeDisplayFormat.values);
+    displayThousandths =
+        getBoolPropOrDefault(embodimentMap, 'displayThousandths', false);
   }
 }
 
@@ -64,6 +83,11 @@ class DefaultNumericFieldEmbodiment extends StatelessWidget {
   Widget build(BuildContext context) {
     var field = NumericField(
         initialValue: numfield.numericEntry,
+        displayDecimalPlaces: props.displayDecimalPlaces,
+        displayThousandths: props.displayThousandths,
+        displayNegativeFormat: props.displayNegativeFormat,
+        minValue: props.minValue,
+        maxValue: props.maxValue,
         onSubmitted: (value) {
           numfield.numericEntry = value;
         });
@@ -127,6 +151,9 @@ class FontSizeNumericFieldEmbodiment extends StatelessWidget {
       onSubmitted: (value) {
         numfield.numericEntry = value;
       },
+      displayDecimalPlaces: 1,
+      minValue: 0.1,
+      maxValue: 1000,
       popupChoices: _fontChoices,
       popupChooserIcon: const Icon(Icons.numbers),
     );

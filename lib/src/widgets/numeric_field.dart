@@ -368,7 +368,7 @@ String formatNumericValue(String value,
     dp = decimalPlaces;
   }
 
-  var floatValue = double.parse(value);
+  var floatValue = value.isNotEmpty ? double.parse(value) : 0.0;
   var absValue = floatValue.abs();
   var absNumericValue = absValue.toStringAsFixed(dp);
 
