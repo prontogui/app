@@ -18,7 +18,7 @@ import 'altmain.dart';
 /// several objects responsible for core functionality of the application and
 /// hands off operation to the App widget.
 void main(List<String> args) async {
-  return altmain1(args);
+  return altmain2(args);
 
   // Be sure to add this line if `PackageInfo.fromPlatform()` is called before runApp()
   WidgetsFlutterBinding.ensureInitialized();

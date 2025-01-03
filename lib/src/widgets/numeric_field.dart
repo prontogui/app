@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'popup.dart';
+import 'dart:math';
+
+enum NegativeDisplayFormat { absolute, minusSignPrefix, parens }
 
 class NumericField extends StatefulWidget {
   const NumericField(
       {super.key,
       required this.onSubmitted,
       this.initialValue,
+      this.displayDecimalPlaces,
+      this.displayNegativeFormat,
+      this.displayThousandths,
       this.popupChoices,
       this.popupChooserIcon});
 
@@ -19,6 +25,18 @@ class NumericField extends StatefulWidget {
   /// Entries to show in the popup chooser (optional).  If this is null then
   /// popup chooser will be hidden.
   final List<String>? popupChoices;
+
+  /// The number of decimal places to show for the displayed value.  0 - 20 will
+  /// display 0 through 20 fractional digits accordingly.  -1 to -20 will display
+  /// optional 1 - 20 fractional digits accordingly based on the fractional digits
+  /// availabled in the value.
+  final int? displayDecimalPlaces;
+
+  /// How negative numbers will be formatted for display.
+  final NegativeDisplayFormat? displayNegativeFormat;
+
+  /// Display thousandths separators.
+  final bool? displayThousandths;
 
   /// The icon to display for the popup chooser button (optional).  It defaults
   /// to an ellipses.
@@ -41,7 +59,8 @@ class _NumericFieldState extends State<NumericField> {
   // This field currently has focus.
   bool _hasFocus = false;
 
-  // The last value submitted back via onSubmitted handler
+  // The last value submitted back via onSubmitted handler.  Null means that no
+  // value has been submitted yet.
   String? _submittedValue;
 
   String prepareInitialValue() {
@@ -52,17 +71,39 @@ class _NumericFieldState extends State<NumericField> {
     return '0';
   }
 
+  String get editingValue {
+    if (_submittedValue != null) {
+      return _submittedValue!;
+    }
+    return prepareInitialValue();
+  }
+
+  String get displayValue {
+    return formatNumericValue(editingValue, widget.displayDecimalPlaces,
+        widget.displayNegativeFormat, widget.displayThousandths);
+  }
+
   void onFocusChange() {
     setState(
       () {
         _hasFocus = _focusNode.hasPrimaryFocus;
       },
     );
+
+    // If getting focus...
     if (_hasFocus) {
+      // Show the edited value
+      _controller.text = editingValue;
       _controller.selection =
           TextSelection(baseOffset: 0, extentOffset: _controller.text.length);
     } else {
+      // Store the edited value
       storeValue(_controller.text);
+
+      // Show the display value
+      _controller.text = displayValue;
+      _controller.selection =
+          const TextSelection(baseOffset: -1, extentOffset: -1);
     }
   }
 
@@ -113,6 +154,7 @@ class _NumericFieldState extends State<NumericField> {
 
   @override
   void didUpdateWidget(covariant oldWidget) {
+    _hasFocus = false;
     _controller.text = prepareInitialValue();
     _submittedValue = null;
     _popupChoicesWidgets = null;
@@ -202,13 +244,14 @@ class _NumericFieldState extends State<NumericField> {
                           color: theme.colorScheme.surfaceContainer,
                           child: Material(
                               child: ListView.builder(
-                            itemBuilder: (context, index) => builderPopupItem(
+                            itemBuilder: (context, index) => _builderPopupItem(
                                 context, index, controller, selectedColor),
                           )))))));
     }
   }
 
-  Widget? builderPopupItem(BuildContext context, int index,
+  /// Builds a single item to display in the popup choices.
+  Widget? _builderPopupItem(BuildContext context, int index,
       OverlayPortalController controller, Color selectedColor) {
     if (index >= popupChoicesWidgets.length) {
       return null;
@@ -237,4 +280,91 @@ class _NumericFieldState extends State<NumericField> {
           onTap: saveValueAndHidePopup,
         ));
   }
+}
+
+/// Interprets the widget settings and formats a numeric value accordingly.
+String formatNumericValue(String value,
+    [int? decimalPlaces,
+    NegativeDisplayFormat? negativeFormat,
+    bool? thousandthsSeparators]) {
+  late int dp;
+
+  // Default value of negativeFormat specification
+  negativeFormat ??= NegativeDisplayFormat.minusSignPrefix;
+
+  if (decimalPlaces == null) {
+    dp = getPrecisionOfNumericValue(value);
+  } else if (decimalPlaces < 0) {
+    var precision = getPrecisionOfNumericValue(value);
+    dp = min(precision, -decimalPlaces);
+  } else {
+    dp = decimalPlaces;
+  }
+
+  var floatValue = double.parse(value);
+  var absValue = floatValue.abs();
+  var absNumericValue = absValue.toStringAsFixed(dp);
+
+  if (thousandthsSeparators != null && thousandthsSeparators) {
+    absNumericValue = addThousandthsSeparators(absNumericValue);
+  }
+
+  if (floatValue >= 0) {
+    return absNumericValue;
+  } else {
+    switch (negativeFormat) {
+      case NegativeDisplayFormat.absolute:
+        return absNumericValue;
+      case NegativeDisplayFormat.minusSignPrefix:
+        return '-$absNumericValue';
+      case NegativeDisplayFormat.parens:
+        return '($absNumericValue)';
+    }
+  }
+}
+
+/// Returns the precision that is present in a numeric value.
+int getPrecisionOfNumericValue(String value) {
+  var dploc = value.indexOf('.');
+  if (dploc == -1) {
+    return 0;
+  }
+
+  bool isDigit(String s, int idx) => (s.codeUnitAt(idx) ^ 0x30) <= 9;
+
+  int precision = 0;
+  for (var i = dploc + 1; i < value.length && isDigit(value, i); i++) {
+    precision++;
+  }
+  return precision;
+}
+
+/// Returns a numeric value by adding thousandths separators to [value].
+String addThousandthsSeparators(String value) {
+  // Prep for internationalization later
+  const separator = ',';
+  const decimalPoint = '.';
+
+  // Break numeric value apart into whole and fraction
+  var pieces = value.split(decimalPoint);
+  var wholePart = pieces[0];
+  var fractionPart = pieces.length > 1 ? '$decimalPoint${pieces[1]}' : '';
+
+  // Build a new whole portion that has separators
+  String newWholePart = '';
+
+  // For each character in wholePart working backward
+  for (var count = 0, next = wholePart.length - 1;
+      count < wholePart.length;
+      count++, next--) {
+    // Prepend a separator?
+    if (count > 1 && (count % 3 == 0)) {
+      newWholePart = '${wholePart[next]}$separator$newWholePart';
+    } else {
+      newWholePart = '${wholePart[next]}$newWholePart';
+    }
+  }
+
+  // Recombine new whole part and existing faction part
+  return '$newWholePart$fractionPart';
 }

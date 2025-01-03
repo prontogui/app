@@ -4,6 +4,7 @@
 import 'package:app/src/embodiment/choice_embodiment.dart';
 import 'package:app/src/embodiment/common_properties.dart';
 import 'package:app/src/embodiment/text_embodiment.dart';
+import 'package:app/src/widgets/numeric_field.dart';
 import 'package:flutter/material.dart';
 import 'package:dartlib/dartlib.dart' as dl;
 import 'src/inherited_primitive_model.dart';
@@ -85,8 +86,6 @@ void altmain2(List<String> args) async {
   dl.logger.i('Welcome to ProntoGUI version ?.?.?');
   dl.logger.i('Running alternate-main 2 program for development purposes.');
 
-  var p = dl.NumericField();
-
 /*
   var props =
       ColorNumericFieldEmbodimentProperties.fromMap({'embodiment': 'color'});
@@ -112,7 +111,7 @@ void altmain2(List<String> args) async {
   );
  */
 
-// /*
+/*
   var w = ChoiceField(
       onSubmitted: (value) {},
       initialValue: 'Apple',
@@ -126,10 +125,17 @@ void altmain2(List<String> args) async {
         'Apricot',
         'Cherry'
       ]);
-//      */
+ */
+
+  var p = NumericField(
+      initialValue: '0.0',
+      displayDecimalPlaces: 3,
+      displayNegativeFormat: NegativeDisplayFormat.parens,
+      displayThousandths: true,
+      onSubmitted: (value) => print('submitted:  $value'));
 
   // Run the app and start rendering the UI.
   runApp(
-    App.altdev2(devWidget: w),
+    App.altdev2(devWidget: p),
   );
 }
