@@ -13,8 +13,12 @@ class NumericField extends StatefulWidget {
       this.displayDecimalPlaces,
       this.displayNegativeFormat,
       this.displayThousandths,
+      this.minValue,
+      this.maxValue,
       this.popupChoices,
-      this.popupChooserIcon});
+      this.popupChooserIcon})
+      : assert(minValue == null || maxValue == null || maxValue > minValue,
+            'maxValue must be greater than minValue');
 
   /// Handler for new values submitted after entering them.
   final void Function(String value) onSubmitted;
@@ -37,6 +41,20 @@ class NumericField extends StatefulWidget {
 
   /// Display thousandths separators.
   final bool? displayThousandths;
+
+  /// Minimum constraint for submitted values. A value is rejected upon submission,
+  /// and [minValue] is submitted instead, if the entered value is less than [minValue].
+  /// Setting this [minValue] to null disables this constraint.
+  ///
+  /// Note:  [minValue] must be less than [maxValue] or an exception is thrown.
+  final double? minValue;
+
+  /// Maximum constraint for submitted values. A value is rejected upon submission,
+  /// and [maxValue] is submitted instead, if the entered value is greater than [maxValue].
+  /// Setting this [maxValue] to null disables this constraint.
+  ///
+  /// Note:  [maxValue] must be greater than [minValue] or an exception is thrown.
+  final double? maxValue;
 
   /// The icon to display for the popup chooser button (optional).  It defaults
   /// to an ellipses.
@@ -62,6 +80,27 @@ class _NumericFieldState extends State<NumericField> {
   // The last value submitted back via onSubmitted handler.  Null means that no
   // value has been submitted yet.
   String? _submittedValue;
+
+  // Builds a regex for the allowed input pattern, taking into consideration
+  // any constraints.
+  RegExp buildAllowedInputPattern() {
+    var minValue = widget.minValue;
+    var maxValue = widget.maxValue;
+    late String pattern;
+
+    if (minValue != null && minValue >= 0.0) {
+      // Pattern for positive-only numbers
+      pattern = r'^[+]?[0-9]*\.?[0-9]*$';
+    } else if (maxValue != null && maxValue < 0.0) {
+      // Pattern for negative-only numbers
+      pattern = r'^-[0-9]*\.?[0-9]*$';
+    } else {
+      // Pattern for all numbers
+      pattern = r'^[+-]?[0-9]*\.?[0-9]*$';
+    }
+
+    return RegExp(pattern);
+  }
 
   String prepareInitialValue() {
     var value = widget.initialValue ?? '';
@@ -98,7 +137,7 @@ class _NumericFieldState extends State<NumericField> {
           TextSelection(baseOffset: 0, extentOffset: _controller.text.length);
     } else {
       // Store the edited value
-      storeValue(_controller.text);
+      submitValue(_controller.text);
 
       // Show the display value
       _controller.text = displayValue;
@@ -107,13 +146,40 @@ class _NumericFieldState extends State<NumericField> {
     }
   }
 
-  void storeValue(String value) {
+  /// Checks [value] against the min and max constraints.  Clips the value if
+  /// necessary, otherwise returns [value].
+  String checkAgainstConstraints(String value) {
+    var minValue = widget.minValue;
+    var maxValue = widget.maxValue;
+
+    // Need to check against a constraint?
+    if (minValue != null || maxValue != null) {
+      var valueD = double.parse(value);
+
+      // Less than min constraint?
+      if (minValue != null && valueD < minValue) {
+        return minValue.toString();
+
+        // Greater than max constraint?
+      } else if (maxValue != null && valueD > maxValue) {
+        return maxValue.toString();
+      }
+    }
+
+    // Default to original value
+    return value;
+  }
+
+  /// Submits a value back to the handler provided to this widget.
+  void submitValue(String value) {
+    var submitValue = checkAgainstConstraints(value);
+
     // Do nothing if text hasn't changed
-    if (_submittedValue != null && value == _submittedValue) {
+    if (_submittedValue != null && submitValue == _submittedValue) {
       return;
     }
-    _submittedValue = value;
-    widget.onSubmitted(value);
+    _submittedValue = submitValue;
+    widget.onSubmitted(submitValue);
   }
 
   void updateField() {
@@ -122,14 +188,14 @@ class _NumericFieldState extends State<NumericField> {
     }
     var value = widget.popupChoices![_selectedItem];
     setState(() => _controller.text = value);
-    storeValue(value);
+    submitValue(value);
   }
 
   @override
   void initState() {
     super.initState();
 
-    _allowedInputPattern = RegExp(r'^[+-]?[0-9]*\.?[0-9]*$');
+    _allowedInputPattern = buildAllowedInputPattern();
 
     _inputFmt = TextInputFormatter.withFunction(
       (TextEditingValue oldValue, TextEditingValue newValue) {
@@ -154,6 +220,7 @@ class _NumericFieldState extends State<NumericField> {
 
   @override
   void didUpdateWidget(covariant oldWidget) {
+    _allowedInputPattern = buildAllowedInputPattern();
     _hasFocus = false;
     _controller.text = prepareInitialValue();
     _submittedValue = null;
@@ -191,7 +258,7 @@ class _NumericFieldState extends State<NumericField> {
             decoration: InputDecoration(
               border: _hasFocus ? const OutlineInputBorder() : null,
             ),
-            onSubmitted: (value) => storeValue(value),
+            onSubmitted: (value) => submitValue(value),
             focusNode: _focusNode,
             inputFormatters: [_inputFmt],
           ));
@@ -215,7 +282,7 @@ class _NumericFieldState extends State<NumericField> {
                           )
                         : null,
                   ).applyDefaults(theme.inputDecorationTheme),
-                  onSubmitted: (value) => storeValue(value),
+                  onSubmitted: (value) => submitValue(value),
                   focusNode: _focusNode,
                   style: theme.textTheme.bodyLarge,
                   inputFormatters: [_inputFmt],
