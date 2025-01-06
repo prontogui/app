@@ -128,12 +128,13 @@ void altmain2(List<String> args) async {
  */
 
   var p = NumericField(
-      //initialValue: '0.0',
-      displayDecimalPlaces: 3,
+      initialValue: '0.012345678',
+      displayDecimalPlaces: 15,
       displayNegativeFormat: NegativeDisplayFormat.minusSignPrefix,
       displayThousandths: true,
-      minValue: 0,
-      maxValue: 100,
+      //minValue: 10,
+      //maxValue: 100,
+      popupChoices: const ['1.0', '2.0', '3.14159'],
       onSubmitted: (value) => print('submitted:  $value'));
 
   // Run the app and start rendering the UI.

@@ -5,6 +5,15 @@ import 'popup.dart';
 
 /// An entry field for specifying a color value and for choosing a value using
 /// a popup picker.
+///
+/// This widget accepts [initialValue] which is a string representation of the
+/// color to select.  When the user is finished editing the color value or
+/// selecting one from the popup list, the new value is submitted back
+/// via the provided handler [onSubmitted].
+///
+/// Color values are formatted as '#AARRGGBB' where it begins with a pound and
+/// ARGB characters are hexadecimal digits for the Alpha, Red, Green, and Blue
+/// component values.
 class ColorField extends StatefulWidget {
   const ColorField({
     super.key,
@@ -24,6 +33,7 @@ class ColorField extends StatefulWidget {
   }
 }
 
+/// The state representation of [ColorField].
 class _ColorFieldState extends State<ColorField> {
   late TextEditingController _controller;
   late TextInputFormatter _inputFmt;
@@ -40,6 +50,9 @@ class _ColorFieldState extends State<ColorField> {
   // The last value submitted back via onSubmitted handler
   String? _submittedValue;
 
+  /// Prepares the initial value (if provided to widget) to display while making
+  /// sure it is valid.  If no initialValue was provided then it defaults
+  /// to #00000000 (black).
   String prepareInitialValue() {
     var value = widget.initialValue ?? '';
     if (_allowedInputPattern.hasMatch(value)) {
