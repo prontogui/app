@@ -128,7 +128,7 @@ void altmain2(List<String> args) async {
  */
 
   var p = NumericField(
-      initialValue: '0.0',
+      //initialValue: '0.0',
       displayDecimalPlaces: 3,
       displayNegativeFormat: NegativeDisplayFormat.minusSignPrefix,
       displayThousandths: true,

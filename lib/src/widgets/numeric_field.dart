@@ -5,6 +5,15 @@ import 'dart:math';
 
 enum NegativeDisplayFormat { absolute, minusSignPrefix, parens }
 
+/// A widget that provides a numeric input field.
+///
+/// The `NumericField` widget allows users to input numeric values and has
+/// several configurable options to govern how the values are displayed,
+/// minimum and maximum value constraints, and a popup list of predefined
+/// numeric choices.  An initial value can be provided and when values are
+/// entered, they are 'submitted' back to the caller using a supplied function.
+///
+
 class NumericField extends StatefulWidget {
   const NumericField(
       {super.key,
@@ -103,9 +112,11 @@ class _NumericFieldState extends State<NumericField> {
   }
 
   String prepareInitialValue() {
-    var value = widget.initialValue ?? '';
-    if (_allowedInputPattern.hasMatch(value)) {
-      return value;
+    var value = widget.initialValue;
+    if (value != null && value.isNotEmpty) {
+      if (_allowedInputPattern.hasMatch(value)) {
+        return value;
+      }
     }
     return '0';
   }
@@ -171,7 +182,15 @@ class _NumericFieldState extends State<NumericField> {
   }
 
   /// Submits a value back to the handler provided to this widget.
+  ///
+  /// [value] must be a valid numeric string (as defined by allowed input pattern)
+  /// or it can be empty.
   void submitValue(String value) {
+    // Make sure value isn't empty
+    if (value.isEmpty) {
+      value = '0';
+    }
+
     var submitValue = checkAgainstConstraints(value);
 
     // Do nothing if text hasn't changed
@@ -182,6 +201,8 @@ class _NumericFieldState extends State<NumericField> {
     widget.onSubmitted(submitValue);
   }
 
+  /// Updates the edited value in the text field with the current selection in
+  /// the popup choices.
   void updateField() {
     if (_selectedItem == -1) {
       return;
@@ -205,7 +226,7 @@ class _NumericFieldState extends State<NumericField> {
       },
     );
 
-    _controller = TextEditingController(text: prepareInitialValue());
+    _controller = TextEditingController(text: displayValue);
     _focusNode = FocusNode();
     _focusNode.addListener(onFocusChange);
   }
@@ -350,6 +371,8 @@ class _NumericFieldState extends State<NumericField> {
 }
 
 /// Interprets the widget settings and formats a numeric value accordingly.
+///
+/// [value] must be a valid numeric string (as defined by allowed input pattern).
 String formatNumericValue(String value,
     [int? decimalPlaces,
     NegativeDisplayFormat? negativeFormat,
@@ -368,7 +391,7 @@ String formatNumericValue(String value,
     dp = decimalPlaces;
   }
 
-  var floatValue = value.isNotEmpty ? double.parse(value) : 0.0;
+  var floatValue = double.parse(value);
   var absValue = floatValue.abs();
   var absNumericValue = absValue.toStringAsFixed(dp);
 
@@ -391,6 +414,8 @@ String formatNumericValue(String value,
 }
 
 /// Returns the precision that is present in a numeric value.
+///
+/// [value] must be a valid numeric string (as defined by allowed input pattern).
 int getPrecisionOfNumericValue(String value) {
   var dploc = value.indexOf('.');
   if (dploc == -1) {
@@ -407,6 +432,8 @@ int getPrecisionOfNumericValue(String value) {
 }
 
 /// Returns a numeric value by adding thousandths separators to [value].
+///
+/// [value] must be a valid numeric string (as defined by allowed input pattern).
 String addThousandthsSeparators(String value) {
   // Prep for internationalization later
   const separator = ',';
