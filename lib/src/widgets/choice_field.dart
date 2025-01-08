@@ -229,6 +229,7 @@ class _ChoiceFieldState extends State<ChoiceField> {
     _focusNode.removeListener(onFocusChange);
     _focusNode.dispose();
     _scrollController.dispose();
+    _hasFocus = false;
     super.dispose();
   }
 

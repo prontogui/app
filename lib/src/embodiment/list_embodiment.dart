@@ -223,17 +223,7 @@ class _ListEmbodimentState extends State<ListEmbodiment> {
 }
 
 class ListEmbodimentProperties with CommonProperties {
-  String embodiment;
-
-  static final Set<String> _validEmbodiments = {
-    'card-list',
-    'normal-list',
-    'property-list'
-  };
-
-  ListEmbodimentProperties.fromMap(Map<String, dynamic>? embodimentMap)
-      : embodiment = getEnumStringProp(
-            embodimentMap, 'embodiment', 'normal-list', _validEmbodiments) {
+  ListEmbodimentProperties.fromMap(Map<String, dynamic>? embodimentMap) {
     super.fromMap(embodimentMap);
   }
 }

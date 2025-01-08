@@ -120,6 +120,7 @@ class _ColorFieldState extends State<ColorField> {
   void didUpdateWidget(covariant oldWidget) {
     _controller.text = prepareInitialValue();
     _submittedValue = null;
+    _hasFocus = false;
     super.didUpdateWidget(oldWidget);
   }
 

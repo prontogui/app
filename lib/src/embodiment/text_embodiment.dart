@@ -47,14 +47,6 @@ class TextEmbodimentProperties {
   double paddingLeft;
   FontStyle? fontStyle;
 
-  static final Set<String> _fontFamilyChoices = {
-    '',
-    'BonaNovaSC',
-    'KodeMono',
-    'PTSerif',
-    'Roboto',
-  };
-
   TextStyle buildTextStyle() {
     return TextStyle(
       backgroundColor: backgroundColor,
@@ -88,8 +80,7 @@ class TextEmbodimentProperties {
       : backgroundColor = getColorProp(embodimentMap, 'backgroundColor'),
         color = getColorProp(embodimentMap, 'color'),
         fontSize = getNumericProp(embodimentMap, 'fontSize', 0.1, 100.0),
-        fontFamily = getEnumStringProp(
-            embodimentMap, 'fontFamily', '', _fontFamilyChoices),
+        fontFamily = getStringProp(embodimentMap, 'fontFamily', ''),
         paddingLeft = getNumericPropOrDefault(embodimentMap, "paddingLeft",
             -double.infinity, double.infinity, 20.0),
         paddingRight = getNumericPropOrDefault(embodimentMap, "paddingRight",

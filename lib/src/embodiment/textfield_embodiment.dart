@@ -18,6 +18,8 @@ EmbodimentPackageManifest getManifest() {
   ]);
 }
 
+// TODO:  refactor this code and separate the functionality into TextField widget,
+// like done with NumericField, ColorField, etc.
 class TextFieldEmbodiment extends StatefulWidget {
   const TextFieldEmbodiment(
       {super.key, required this.textfield, required this.parentWidgetType});
@@ -39,18 +41,28 @@ class _TextFieldEmbodimentState extends State<TextFieldEmbodiment> {
     super.initState();
     _controller = TextEditingController(text: widget.textfield.textEntry);
     _focusNode = FocusNode();
-    _focusNode.addListener(() {
-      setState(() => _hasFocus = _focusNode.hasFocus);
-      // Save text changes upon losing focus
-      if (!_hasFocus) {
-        saveText(_controller.text);
-      }
-    });
+    _focusNode.addListener(onFocusChange);
+  }
+
+  void onFocusChange() {
+    setState(() => _hasFocus = _focusNode.hasFocus);
+    // Save text changes upon losing focus
+    if (!_hasFocus) {
+      saveText(_controller.text);
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant oldWidget) {
+    _hasFocus = false;
+    _controller = TextEditingController(text: widget.textfield.textEntry);
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _focusNode.removeListener(onFocusChange);
     _focusNode.dispose();
     super.dispose();
   }

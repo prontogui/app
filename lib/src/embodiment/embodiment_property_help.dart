@@ -88,12 +88,12 @@ Color? getColorProp(Map<String, dynamic>? embodimentMap, String propertyName) {
 
   // Named color with optional swatch index?
 
-  // Color specified as ARGB (e.g. "0xFFFFFFFF")?
-  if (colorSpec.startsWith("0x") && colorSpec.length == 10) {
-    var a = int.tryParse(colorSpec.substring(2, 4), radix: 16);
-    var r = int.tryParse(colorSpec.substring(4, 6), radix: 16);
-    var g = int.tryParse(colorSpec.substring(6, 8), radix: 16);
-    var b = int.tryParse(colorSpec.substring(8), radix: 16);
+  // Color specified as ARGB (e.g. "#FFFFFFFF")?
+  if (colorSpec.startsWith("#") && colorSpec.length == 9) {
+    var a = int.tryParse(colorSpec.substring(1, 3), radix: 16);
+    var r = int.tryParse(colorSpec.substring(3, 5), radix: 16);
+    var g = int.tryParse(colorSpec.substring(5, 7), radix: 16);
+    var b = int.tryParse(colorSpec.substring(7), radix: 16);
     if (a == null || r == null || g == null || b == null) {
       return null;
     }
