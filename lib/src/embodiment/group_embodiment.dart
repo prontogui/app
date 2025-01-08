@@ -22,8 +22,8 @@ class GroupEmbodiment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (group.groupItems.isEmpty) {
-      return const SizedBox();
+    if (group.groupItems.isEmpty || !group.visible) {
+      return const SizedBox.shrink();
     }
 
     // Groups with only 1 item will degenerate to a SizedBox with just the item.  This
