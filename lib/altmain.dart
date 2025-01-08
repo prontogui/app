@@ -27,7 +27,7 @@ void altmain1(List<String> args) async {
 
   var p1 = dl.Text(
       embodiment:
-          'fontFamily:BonaNovaSC, fontSize:30, fontStyle:italic, fontWeight:bold, backgroundColor:0xFF750DF1, color:0xFFFFFFFF',
+          'fontFamily:BonaNovaSC, fontSize:30, fontStyle:italic, fontWeight:bold, backgroundColor:#FF750DF1, color:#FFFFFFFF',
       content: 'This is a line of text.');
 
   var p2 = dl.Text(
