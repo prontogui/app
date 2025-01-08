@@ -1,6 +1,7 @@
+import 'package:app/src/embodiment/embodiment_property_help.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:app/src/embodiment/embodiment_property_help.dart';
+import 'dart:convert';
 
 void main() {
   group('getEnumStringProp', () {
@@ -138,6 +139,57 @@ void main() {
 
     test('returns boolean value when property value is valid', () {
       expect(getBoolPropOrDefault({'prop': 'true'}, 'prop', false), true);
+    });
+  });
+
+  group('getStringArrayProp', () {
+    test('returns a valid array', () {
+      var embodiment = '''
+{"someProp" : ["orange", "banana", "pear", "10"]}
+''';
+      var map = jsonDecode(embodiment) as Map<String, dynamic>;
+      var array = getStringArrayProp(map, 'someProp');
+      expect(array, isNotNull);
+      expect(array!.length, equals(4));
+      expect(array[0], equals('orange'));
+      expect(array[1], equals('banana'));
+      expect(array[2], equals('pear'));
+      expect(array[3], equals('10'));
+    });
+    test('returns null if map is null', () {
+      var array = getStringArrayProp(null, 'someProp');
+      expect(array, isNull);
+    });
+    test('returns null if property not found in map', () {
+      var embodiment = '''
+{"someProp" : ["orange", "banana", "pear", "10"]}
+''';
+      var map = jsonDecode(embodiment) as Map<String, dynamic>;
+      var array = getStringArrayProp(map, 'otherProp');
+      expect(array, isNull);
+    });
+    test('throws exception if property is a string', () {
+      var embodiment = '''
+{"someProp" : "value"}
+''';
+      var map = jsonDecode(embodiment) as Map<String, dynamic>;
+      expect(() => getStringArrayProp(map, 'someProp'), throwsException);
+    });
+    test('throws exception if property is a structure', () {
+      var embodiment = '''
+{"someProp" : {"innerProp":"value"}}
+''';
+      var map = jsonDecode(embodiment) as Map<String, dynamic>;
+      expect(() => getStringArrayProp(map, 'someProp'), throwsException);
+    });
+
+    test('throws exception if array property contains items other than strings',
+        () {
+      var embodiment = '''
+{"someProp" : ["orange", "banana", 99]}
+''';
+      var map = jsonDecode(embodiment) as Map<String, dynamic>;
+      expect(() => getStringArrayProp(map, 'someProp'), throwsException);
     });
   });
 }

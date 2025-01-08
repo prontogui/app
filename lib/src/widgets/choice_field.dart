@@ -12,20 +12,27 @@ class ChoiceField extends StatefulWidget {
       {super.key,
       required this.onSubmitted,
       required this.choices,
+      this.choiceLabels,
       this.initialValue,
       this.popupChooserIcon});
 
-  /// Handler for new values submitted after entering them.
+  /// Handler for new values submitted after entering them.  [value] is a valid
+  /// choice from [choices] field.
   final void Function(String value) onSubmitted;
 
   /// Vaid choices that will appear in the popup chooser.
   final List<String> choices;
 
+  /// Optional labels to display for each choice.  Each element corresponds to
+  /// the associated element in [choices].  These labels are ignored if length of
+  /// [choiceLabels] does not match [choices].
+  final List<String>? choiceLabels;
+
   /// The initial value (optional).
   final String? initialValue;
 
   /// The icon to display for the popup chooser button (optional).  It defaults
-  /// to an ellipses.
+  /// to an down arrow.
   final Icon? popupChooserIcon;
 
   @override
@@ -51,15 +58,58 @@ class _ChoiceFieldState extends State<ChoiceField> {
   // The last value submitted back via onSubmitted handler
   String? _submittedValue;
 
+  // Whether we are working with labels as choices.
+  bool get usingLabels {
+    var choiceLabels = widget.choiceLabels;
+    return choiceLabels != null && choiceLabels.length == widget.choices.length;
+  }
+
+  // The "nominal" choices.  Althought these come directly from widget.choices, this field
+  // makes the code a little cleaner looking.
+  List<String> get nominalChoices {
+    return widget.choices;
+  }
+
+  // The "effective" choices to work with.  These are either nominal choices from
+  // widget.choices or widget.choiceLabels, depending on whether the labels are provided and
+  // they correspond 1:1 with nominal choices.
+  List<String> get workingChoices {
+    if (usingLabels) {
+      return widget.choiceLabels!;
+    } else {
+      return nominalChoices;
+    }
+  }
+
+  // Convert an nominal choice value to a working choice.
+  String nominalToWorkingChoice(String choice) {
+    // Short circuit...
+    if (!usingLabels) {
+      return choice;
+    }
+    int index = nominalChoices.indexOf(choice);
+    return widget.choiceLabels![index];
+  }
+
+  // Convert a working choice to a nominal choice.
+  String workingChoiceToNominal(String workingChoice) {
+    // Short circuit...
+    if (!usingLabels) {
+      return workingChoice;
+    }
+    int index = workingChoices.indexOf(workingChoice);
+    return nominalChoices[index];
+  }
+
   // Returns the initial choice text to present.
   String prepareInitialValue() {
     if (widget.initialValue != null) {
-      if (widget.choices.contains(widget.initialValue)) {
-        return widget.initialValue!;
+      if (nominalChoices.contains(widget.initialValue)) {
+        return nominalToWorkingChoice(widget.initialValue!);
       }
     }
-    if (widget.choices.isNotEmpty) {
-      return widget.choices[0];
+    if (workingChoices.isNotEmpty) {
+      return workingChoices[0];
     }
     return '';
   }
@@ -70,7 +120,7 @@ class _ChoiceFieldState extends State<ChoiceField> {
     if (widget.initialValue == null) {
       return -1;
     }
-    return widget.choices.indexWhere(
+    return nominalChoices.indexWhere(
       (element) => element.startsWith(widget.initialValue!),
     );
   }
@@ -98,7 +148,7 @@ class _ChoiceFieldState extends State<ChoiceField> {
     } else {
       // If user left the field with an invalid/incomplete choice then revert
       // back to last saved value.
-      if (!widget.choices.contains(_controller.text)) {
+      if (!workingChoices.contains(_controller.text)) {
         setState(() {
           _controller.text = prepareSubmittedValue();
         });
@@ -113,7 +163,7 @@ class _ChoiceFieldState extends State<ChoiceField> {
       return;
     }
     _submittedValue = value;
-    widget.onSubmitted(value);
+    widget.onSubmitted(workingChoiceToNominal(value));
   }
 
   /// Submits or saves the selected item in pulldown list to the provided handler
@@ -122,7 +172,7 @@ class _ChoiceFieldState extends State<ChoiceField> {
     if (_selectedItem.value == -1) {
       return;
     }
-    var value = widget.choices[_selectedItem.value];
+    var value = workingChoices[_selectedItem.value];
     submitValue(value);
   }
 
@@ -130,7 +180,7 @@ class _ChoiceFieldState extends State<ChoiceField> {
     if (_selectedItem.value == -1) {
       return;
     }
-    var value = widget.choices[_selectedItem.value];
+    var value = workingChoices[_selectedItem.value];
     setState(() => _controller.text = value);
     submitValue(value);
   }
@@ -151,7 +201,7 @@ class _ChoiceFieldState extends State<ChoiceField> {
             if (newValue.text.isEmpty) {
               _selectedItem.value = -1;
             } else {
-              _selectedItem.value = widget.choices.indexWhere(
+              _selectedItem.value = workingChoices.indexWhere(
                 (element) => element.startsWith(newValue.text),
               );
             }
@@ -201,7 +251,7 @@ class _ChoiceFieldState extends State<ChoiceField> {
   /// Returns a list of widgets to display for the choices.  This is built lazily
   /// and cached for subsequent calls.
   List<Widget> get popupChoicesWidgets {
-    _popupChoicesWidgets ??= widget.choices
+    _popupChoicesWidgets ??= workingChoices
         .map(
           (e) => Text(e),
         )
@@ -273,7 +323,7 @@ class _ChoiceFieldState extends State<ChoiceField> {
                     child: Material(
                         child: ListView.builder(
                       controller: _scrollController,
-                      itemCount: widget.choices.length,
+                      itemCount: workingChoices.length,
                       itemBuilder: (context, index) => builderPopupItem(
                           context, index, controller, selectedColor),
                     )))));

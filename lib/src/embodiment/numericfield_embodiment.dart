@@ -50,6 +50,7 @@ class DefaultNumericFieldEmbodimentProperties with CommonProperties {
   double? maxValue;
   NegativeDisplayFormat? displayNegativeFormat;
   bool? displayThousandths;
+  List<String>? popupChoices;
 
   DefaultNumericFieldEmbodimentProperties.fromMap(
       Map<String, dynamic>? embodimentMap) {
@@ -65,6 +66,7 @@ class DefaultNumericFieldEmbodimentProperties with CommonProperties {
         'displayNegativeFormat', null, NegativeDisplayFormat.values);
     displayThousandths =
         getBoolPropOrDefault(embodimentMap, 'displayThousandths', false);
+    popupChoices = getStringArrayProp(embodimentMap, 'popupChoices');
   }
 }
 
@@ -88,6 +90,7 @@ class DefaultNumericFieldEmbodiment extends StatelessWidget {
         displayNegativeFormat: props.displayNegativeFormat,
         minValue: props.minValue,
         maxValue: props.maxValue,
+        popupChoices: props.popupChoices,
         onSubmitted: (value) {
           numfield.numericEntry = value;
         });

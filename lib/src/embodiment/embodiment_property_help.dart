@@ -50,6 +50,27 @@ String getStringProp(Map<String, dynamic>? embodimentMap, String propertyName,
   return value as String;
 }
 
+List<String>? getStringArrayProp(
+    Map<String, dynamic>? embodimentMap, String propertyName) {
+  if (embodimentMap == null) {
+    return null;
+  }
+  var value = embodimentMap[propertyName];
+  if (value == null) {
+    return null;
+  }
+
+  if (value.runtimeType != List) {
+    throw Exception('embodiment property value is not an array');
+  }
+
+  try {
+    return List<String>.from(value);
+  } catch (e) {
+    throw Exception('embodiment property value is not a valid string array');
+  }
+}
+
 Color? getColorProp(Map<String, dynamic>? embodimentMap, String propertyName) {
   if (embodimentMap == null) {
     return null;

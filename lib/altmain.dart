@@ -42,8 +42,19 @@ void altmain1(List<String> args) async {
       embodiment: 'fontFamily:Roboto,fontSize:20',
       content: 'This is a line of text.');
 
+  var choice1 = dl.Choice(
+    choice: 'Apple',
+    choices: ['Orange', 'Apple', 'Banana', 'Peach', 'Pear'],
+  );
+
+  var choice2 = dl.Choice(
+      embodiment: 'button',
+      choice: 'a',
+      choices: ['o', 'a', 'b', 'p', 'r'],
+      choiceLabels: ['Orange', 'Apple', 'Banana', 'Peach', 'Pear']);
+
   //var p = dl.NumericField(embodiment: 'color', numericEntry: 'Red');
-  model.topPrimitives = [p1, p2, p3, p4];
+  model.topPrimitives = [p1, p2, p3, p4, choice1, choice2];
 
   // Create the object responsible for embodying the model as Widgets and for
   // rebuilding the UI when the model changes.
