@@ -118,6 +118,11 @@ class _ListEmbodimentState extends State<ListEmbodiment> {
       );
     }
 
+    // Is group hidden?
+    if (!groupItem.visible) {
+      return const SizedBox.shrink();
+    }
+
     var leading = embodifyGroupItem(context, groupItem, 0);
     var title = embodifyGroupItem(context, groupItem, 1);
     var subtitle = embodifyGroupItem(context, groupItem, 2);
@@ -143,6 +148,11 @@ class _ListEmbodimentState extends State<ListEmbodiment> {
       return const SizedBox(
         child: Text("?"),
       );
+    }
+
+    // Is group hidden?
+    if (!groupItem.visible) {
+      return const SizedBox.shrink();
     }
 
     var propLabel = embodifyGroupItem(context, groupItem, 0);
