@@ -97,15 +97,16 @@ class _ListEmbodimentState extends State<ListEmbodiment> {
 
   Widget? builderForSingleItem(BuildContext context, int index) {
     var item = widget.list.listItems[index];
-
-    return ListTile(
+    var content = ListTile(
       title: embodifySingleItem(context, item),
       selected: index == widget.list.selected,
       isThreeLine: false,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 2.0),
       onTap: () {
         setCurrentSelected(index);
       },
     );
+    return sizeListItem(content);
   }
 
   Widget? builderForCardItem(BuildContext context, int index) {
@@ -128,7 +129,7 @@ class _ListEmbodimentState extends State<ListEmbodiment> {
     var subtitle = embodifyGroupItem(context, groupItem, 2);
     var trailing = embodifyGroupItem(context, groupItem, 3);
 
-    return ListTile(
+    var content = ListTile(
       leading: leading,
       title: title,
       subtitle: subtitle,
@@ -138,6 +139,8 @@ class _ListEmbodimentState extends State<ListEmbodiment> {
         setCurrentSelected(index);
       },
     );
+
+    return sizeListItem(content);
   }
 
   Widget? builderForPropertyItem(BuildContext context, int index) {
@@ -166,6 +169,28 @@ class _ListEmbodimentState extends State<ListEmbodiment> {
             child: Align(alignment: Alignment.centerRight, child: propValue)),
       ],
     );
+  }
+
+  // Encloses a list item with a sized box when item height or width is specified,
+  // or if atleast a width must be specified for horizontal list.
+  Widget sizeListItem(Widget content) {
+    var width = widget.props.itemWidth;
+    var height = widget.props.itemHeight;
+
+    if (widget.props.horizontal && width == null) {
+      // Reasonable default when horizontal and width not specified
+      width = 100;
+    }
+
+    if (width != null || height != null) {
+      content = SizedBox(
+        width: width,
+        height: height,
+        child: content,
+      );
+    }
+
+    return content;
   }
 
   NullableIndexedWidgetBuilder? mapToBuilderFunction() {
@@ -199,10 +224,15 @@ class _ListEmbodimentState extends State<ListEmbodiment> {
     embodifier ??= InheritedEmbodifier.of(context);
     // var props = widget.embodimentProps;
 
-    Widget content = ListView.builder(
-        itemCount: widget.list.listItems.length, itemBuilder: builder);
-
     var props = widget.props;
+
+    var scrollDirection = props.horizontal ? Axis.horizontal : Axis.vertical;
+
+    Widget content = ListView.builder(
+      itemCount: widget.list.listItems.length,
+      itemBuilder: builder,
+      scrollDirection: scrollDirection,
+    );
 
     if (!props.width.isNaN && !props.height.isNaN) {
       content = SizedBox(
@@ -222,7 +252,9 @@ class _ListEmbodimentState extends State<ListEmbodiment> {
       );
     }
 
-    if (widget.parentWidgetType == "Column" && content is! SizedBox) {
+    var pwt = props.horizontal ? "Row" : "Column";
+
+    if (widget.parentWidgetType == pwt && content is! SizedBox) {
       content = Flexible(
         child: content,
       );
@@ -233,7 +265,15 @@ class _ListEmbodimentState extends State<ListEmbodiment> {
 }
 
 class ListEmbodimentProperties with CommonProperties {
+  late final bool horizontal;
+  late final double? itemWidth;
+  late final double? itemHeight;
+
   ListEmbodimentProperties.fromMap(Map<String, dynamic>? embodimentMap) {
     super.fromMap(embodimentMap);
+
+    horizontal = getBoolPropOrDefault(embodimentMap, 'horizontal', false);
+    itemWidth = getNumericProp(embodimentMap, 'itemWidth');
+    itemHeight = getNumericProp(embodimentMap, 'itemHeight');
   }
 }

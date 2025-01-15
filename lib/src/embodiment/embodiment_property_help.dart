@@ -172,7 +172,8 @@ FontStyle? getFontStyle(Map<String, dynamic>? embodimentMap) {
 }
 
 double? getNumericProp(Map<String, dynamic>? embodimentMap, String propertyName,
-    double minValue, double maxValue) {
+    [double minValue = double.negativeInfinity,
+    double maxValue = double.infinity]) {
   if (embodimentMap == null) {
     return null;
   }

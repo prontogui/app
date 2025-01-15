@@ -25,6 +25,7 @@ void altmain1(List<String> args) async {
   // Create the model that holds the primitives to be displayed.
   final model = dl.PrimitiveModel();
 
+/*
   var p1 = dl.Text(
       embodiment:
           'fontFamily:BonaNovaSC, fontSize:30, fontStyle:italic, fontWeight:bold, backgroundColor:#FF750DF1, color:#FFFFFFFF',
@@ -55,6 +56,16 @@ void altmain1(List<String> args) async {
 
   //var p = dl.NumericField(embodiment: 'color', numericEntry: 'Red');
   model.topPrimitives = [p1, p2, p3, p4, choice1, choice2];
+*/
+  var t1 = dl.Text(content: 'Frame');
+  var t2 = dl.Text(content: 'Frame');
+  var t3 = dl.Text(content: 'Frame');
+
+  var p = dl.ListP(
+      listItems: [t1, t2, t3],
+      embodiment: 'height:75, horizontal:true, itemWidth:80');
+
+  model.topPrimitives = [p];
 
   // Create the object responsible for embodying the model as Widgets and for
   // rebuilding the UI when the model changes.

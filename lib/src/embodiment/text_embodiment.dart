@@ -82,9 +82,9 @@ class TextEmbodimentProperties {
         fontSize = getNumericProp(embodimentMap, 'fontSize', 0.1, 100.0),
         fontFamily = getStringProp(embodimentMap, 'fontFamily', ''),
         paddingLeft = getNumericPropOrDefault(embodimentMap, "paddingLeft",
-            -double.infinity, double.infinity, 20.0),
+            -double.infinity, double.infinity, 0.0),
         paddingRight = getNumericPropOrDefault(embodimentMap, "paddingRight",
-            -double.infinity, double.infinity, 20.0),
+            -double.infinity, double.infinity, 0.0),
         fontWeight = getFontWeight(embodimentMap),
         fontStyle = getFontStyle(embodimentMap);
 }
