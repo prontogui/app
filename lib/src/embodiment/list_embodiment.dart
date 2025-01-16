@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'embodiment_interface.dart';
 import 'common_properties.dart';
 import 'embodiment_property_help.dart';
+import 'tabbed_list_embodiment.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('List', [
@@ -35,10 +36,18 @@ EmbodimentPackageManifest getManifest() {
           parentWidgetType: args.parentWidgetType,
           style: ListStyle.property);
     }),
+    EmbodimentManifestEntry('tabbed-list', (args) {
+      return TabbedListEmbodiment(
+        key: args.key,
+        list: args.primitive as pg.ListP,
+        props: TabbedListEmbodimentProperties.fromMap(args.embodimentMap),
+        parentWidgetType: args.parentWidgetType,
+      );
+    }),
   ]);
 }
 
-enum ListStyle { card, property, normal }
+enum ListStyle { card, property, normal, tabbed }
 
 class ListEmbodiment extends StatefulWidget {
   const ListEmbodiment(
@@ -194,6 +203,7 @@ class _ListEmbodimentState extends State<ListEmbodiment> {
   }
 
   NullableIndexedWidgetBuilder? mapToBuilderFunction() {
+    assert(widget.style != ListStyle.tabbed);
     switch (widget.style) {
       case ListStyle.normal:
         return builderForSingleItem;
@@ -201,11 +211,16 @@ class _ListEmbodimentState extends State<ListEmbodiment> {
         return builderForCardItem;
       case ListStyle.property:
         return builderForPropertyItem;
+      case ListStyle.tabbed:
+        assert(false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    // Grab the embodifier for other functions in the class to use.
+    embodifier ??= InheritedEmbodifier.of(context);
+
     // Determine the right ListView builder based on the List primitive TemplateItem.
     var builder = mapToBuilderFunction();
 
@@ -219,10 +234,6 @@ class _ListEmbodimentState extends State<ListEmbodiment> {
             )),
       );
     }
-
-    // Grab the embodifier for other functions in the class to use.
-    embodifier ??= InheritedEmbodifier.of(context);
-    // var props = widget.embodimentProps;
 
     var props = widget.props;
 
@@ -252,10 +263,14 @@ class _ListEmbodimentState extends State<ListEmbodiment> {
       );
     }
 
-    var pwt = props.horizontal ? "Row" : "Column";
+    return encloseInFlexibleIfNeeded(content);
+  }
+
+  Widget encloseInFlexibleIfNeeded(Widget content) {
+    var pwt = widget.props.horizontal ? "Row" : "Column";
 
     if (widget.parentWidgetType == pwt && content is! SizedBox) {
-      content = Flexible(
+      return Flexible(
         child: content,
       );
     }
@@ -268,6 +283,7 @@ class ListEmbodimentProperties with CommonProperties {
   late final bool horizontal;
   late final double? itemWidth;
   late final double? itemHeight;
+  late final double? tabHeight;
 
   ListEmbodimentProperties.fromMap(Map<String, dynamic>? embodimentMap) {
     super.fromMap(embodimentMap);
@@ -275,5 +291,6 @@ class ListEmbodimentProperties with CommonProperties {
     horizontal = getBoolPropOrDefault(embodimentMap, 'horizontal', false);
     itemWidth = getNumericProp(embodimentMap, 'itemWidth');
     itemHeight = getNumericProp(embodimentMap, 'itemHeight');
+    tabHeight = getNumericProp(embodimentMap, 'tabHeight');
   }
 }

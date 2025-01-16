@@ -59,7 +59,6 @@ class FrameEmbodiment extends StatelessWidget {
 
   // Note:  when getting around to implementing a manual layout method, take a look
   // at PositionedDirectional class and Positioned widget.
-
   @override
   Widget build(BuildContext context) {
     var content = buildRegularContent(context);

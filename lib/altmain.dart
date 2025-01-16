@@ -57,6 +57,8 @@ void altmain1(List<String> args) async {
   //var p = dl.NumericField(embodiment: 'color', numericEntry: 'Red');
   model.topPrimitives = [p1, p2, p3, p4, choice1, choice2];
 */
+
+/*
   var t1 = dl.Text(content: 'Frame');
   var t2 = dl.Text(content: 'Frame');
   var t3 = dl.Text(content: 'Frame');
@@ -66,6 +68,25 @@ void altmain1(List<String> args) async {
       embodiment: 'height:75, horizontal:true, itemWidth:80');
 
   model.topPrimitives = [p];
+*/
+
+  //var grp1 = dl.Group(groupItems: [dl.Text(content: 'Setting 1'), dl.Check()]);
+  var f1 = dl.Frame(
+      title: 'Tab 1',
+      icon: dl.Icon(iconID: 'beach_access'),
+      frameItems: [dl.Text(content: 'Setting 1'), dl.Check()]);
+  var f2 = dl.Frame(
+      title: 'Tab 2',
+      icon: dl.Icon(iconID: 'accessible'),
+      frameItems: [
+        dl.Icon(iconID: 'accessible', embodiment: 'color:#CCFF0000, size:50')
+      ]);
+  var f3 = dl.Frame(title: 'Tab 3', icon: dl.Icon(iconID: 'dining'));
+
+  var l = dl.ListP(
+      embodiment: 'embodiment:tabbed-list, animationPeriod:200',
+      listItems: [f1, f2, f3]);
+  model.topPrimitives = [l];
 
   // Create the object responsible for embodying the model as Widgets and for
   // rebuilding the UI when the model changes.

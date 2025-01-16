@@ -6,6 +6,7 @@ import 'command_embodiment.dart' as command;
 import 'exportfile_embodiment.dart' as export_file;
 import 'frame_embodiment.dart' as frame;
 import 'group_embodiment.dart' as group;
+import 'icon_embodiment.dart' as icon;
 import 'importfile_embodiment.dart' as import_file;
 import 'list_embodiment.dart' as list;
 import 'table_embodiment.dart' as table;
@@ -55,6 +56,7 @@ class EmbodimentFactory {
     manifests.add(frame.getManifest());
     manifests.add(import_file.getManifest());
     manifests.add(group.getManifest());
+    manifests.add(icon.getManifest());
     manifests.add(list.getManifest());
     manifests.add(table.getManifest());
     manifests.add(text.getManifest());
