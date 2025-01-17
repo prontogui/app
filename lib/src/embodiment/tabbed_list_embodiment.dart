@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:app/src/embodiment/embodiment_help.dart';
 import 'package:dartlib/dartlib.dart' as pg;
 import '../embodifier.dart';
 import 'package:flutter/material.dart';
@@ -36,16 +37,6 @@ class TabbedListEmbodiment extends StatelessWidget {
     }
 
     return embodifier.buildPrimitive(context, item, parentWidgetType);
-  }
-
-  Widget encloseInFlexibleIfNeeded(Widget content) {
-    if (parentWidgetType == 'Column' && content is! SizedBox) {
-      return Flexible(
-        child: content,
-      );
-    }
-
-    return content;
   }
 
   @override
@@ -107,7 +98,8 @@ class TabbedListEmbodiment extends StatelessWidget {
             Expanded(child: TabBarView(children: tabViews))
           ],
         ));
-    return encloseInFlexibleIfNeeded(content);
+    return encloseWithSizingAndBounding(content, props, parentWidgetType,
+        verticalUnbounded: true);
   }
 }
 

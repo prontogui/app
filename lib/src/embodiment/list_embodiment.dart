@@ -9,6 +9,7 @@ import 'embodiment_interface.dart';
 import 'common_properties.dart';
 import 'embodiment_property_help.dart';
 import 'tabbed_list_embodiment.dart';
+import 'embodiment_help.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('List', [
@@ -83,6 +84,7 @@ class _ListEmbodimentState extends State<ListEmbodiment> {
         item is! pg.Command &&
         item is! pg.Check &&
         item is! pg.Choice &&
+        item is! pg.TextField &&
         item is! pg.NumericField) {
       // TODO:  show something better for error case.  Perhaps log an error also.
       return const SizedBox(
@@ -213,6 +215,7 @@ class _ListEmbodimentState extends State<ListEmbodiment> {
         return builderForPropertyItem;
       case ListStyle.tabbed:
         assert(false);
+        return null;
     }
   }
 
@@ -245,37 +248,22 @@ class _ListEmbodimentState extends State<ListEmbodiment> {
       scrollDirection: scrollDirection,
     );
 
-    if (!props.width.isNaN && !props.height.isNaN) {
-      content = SizedBox(
-        width: props.width,
-        height: props.height,
-        child: content,
-      );
-    } else if (!props.width.isNaN) {
-      content = SizedBox(
-        width: props.width,
-        child: content,
-      );
-    } else if (!props.height.isNaN) {
-      content = SizedBox(
-        height: props.height,
-        child: content,
-      );
-    }
+    var horizontal = props.horizontal;
 
-    return encloseInFlexibleIfNeeded(content);
-  }
+    // Note regarding unbounded nature of ListView widget:
+    //
+    // This Flutter error, "Vertical viewport was given unbounded width," means
+    // that a scrollable widget like a ListView is placed inside a layout that
+    // doesn't provide any horizontal constraints, allowing it to expand infinitely
+    // wide, which is causing the layout system to fail.
+    //
+    // This means that vertically scrolling list are unbounded in the horizontal direction
+    // and vice versa.
 
-  Widget encloseInFlexibleIfNeeded(Widget content) {
-    var pwt = widget.props.horizontal ? "Row" : "Column";
-
-    if (widget.parentWidgetType == pwt && content is! SizedBox) {
-      return Flexible(
-        child: content,
-      );
-    }
-
-    return content;
+    return encloseWithSizingAndBounding(content, props, widget.parentWidgetType,
+        useExpanded: true,
+        verticalUnbounded: true,
+        horizontalUnbounded: !horizontal);
   }
 }
 
@@ -291,6 +279,5 @@ class ListEmbodimentProperties with CommonProperties {
     horizontal = getBoolPropOrDefault(embodimentMap, 'horizontal', false);
     itemWidth = getNumericProp(embodimentMap, 'itemWidth');
     itemHeight = getNumericProp(embodimentMap, 'itemHeight');
-    tabHeight = getNumericProp(embodimentMap, 'tabHeight');
   }
 }

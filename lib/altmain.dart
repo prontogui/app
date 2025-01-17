@@ -69,7 +69,7 @@ void altmain1(List<String> args) async {
 
   model.topPrimitives = [p];
 */
-
+/*
   //var grp1 = dl.Group(groupItems: [dl.Text(content: 'Setting 1'), dl.Check()]);
   var f1 = dl.Frame(
       title: 'Tab 1',
@@ -87,6 +87,43 @@ void altmain1(List<String> args) async {
       embodiment: 'embodiment:tabbed-list, animationPeriod:200',
       listItems: [f1, f2, f3]);
   model.topPrimitives = [l];
+*/
+  var list = dl.ListP(embodiment: 'embodiment:property-list, height:600');
+  list.listItems = [
+    dl.Group(groupItems: [
+      dl.Text(content: 'Embodiment'),
+      dl.NumericField(numericEntry: '4.56')
+    ])
+  ];
+
+  var innerGroup = dl.Group(
+      groupItems: [dl.Choice(embodiment: 'width:50, height:30'), list]);
+
+  var selector = dl.ListP(listItems: [
+    dl.Text(content: 'Apple'),
+    dl.Text(content: 'Orange'),
+  ], embodiment: 'horizontal:true');
+
+  var innerFrame = dl.Frame(
+      embodiment: 'flowDirection:top-to-bottom, width:300',
+      frameItems: [selector, innerGroup]);
+
+//dl.NumericField(numericEntry: '4.56')
+  var group = dl.Group(groupItems: [innerFrame]);
+  var gui = dl.Frame(
+    embodiment: 'border:outline',
+    frameItems: [
+      dl.Text(content: 'Embodiment'),
+      dl.Choice(embodiment: 'height:40'),
+      dl.ListP(embodiment: 'property-list', listItems: [
+        dl.Group(groupItems: [dl.Text(content: 'Item 1'), dl.NumericField()]),
+        dl.Group(groupItems: [dl.Text(content: 'Item 2'), dl.NumericField()]),
+        dl.Group(groupItems: [dl.Text(content: 'Item 3'), dl.NumericField()]),
+      ])
+    ],
+  );
+
+  model.topPrimitives = [gui]; // [innerFrame];
 
   // Create the object responsible for embodying the model as Widgets and for
   // rebuilding the UI when the model changes.

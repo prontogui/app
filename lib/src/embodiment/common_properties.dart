@@ -5,13 +5,11 @@
 import 'embodiment_property_help.dart';
 
 mixin class CommonProperties {
-  late double width;
-  late double height;
+  late double? width;
+  late double? height;
 
   void fromMap(Map<String, dynamic>? embodimentMap) {
-    width = getNumericPropOrDefault(embodimentMap, 'width',
-        double.negativeInfinity, double.infinity, double.nan);
-    height = getNumericPropOrDefault(embodimentMap, 'height',
-        double.negativeInfinity, double.infinity, double.nan);
+    width = getNumericProp(embodimentMap, 'width', 0, double.infinity);
+    height = getNumericProp(embodimentMap, 'height', 0, double.infinity);
   }
 }

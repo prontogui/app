@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:app/src/embodiment/common_properties.dart';
+import 'package:app/src/embodiment/embodiment_help.dart';
 import 'package:dartlib/dartlib.dart' as pg;
 import 'package:flutter/material.dart';
 import 'embodiment_interface.dart';
@@ -12,6 +14,7 @@ EmbodimentPackageManifest getManifest() {
       return TextFieldEmbodiment(
         key: args.key,
         textfield: args.primitive as pg.TextField,
+        props: TextFieldEmbodimentProperties.fromMap(args.embodimentMap),
         parentWidgetType: args.parentWidgetType,
       );
     }),
@@ -22,9 +25,13 @@ EmbodimentPackageManifest getManifest() {
 // like done with NumericField, ColorField, etc.
 class TextFieldEmbodiment extends StatefulWidget {
   const TextFieldEmbodiment(
-      {super.key, required this.textfield, required this.parentWidgetType});
+      {super.key,
+      required this.textfield,
+      required this.props,
+      required this.parentWidgetType});
 
   final pg.TextField textfield;
+  final TextFieldEmbodimentProperties props;
   final String parentWidgetType;
 
   @override
@@ -76,33 +83,29 @@ class _TextFieldEmbodimentState extends State<TextFieldEmbodiment> {
     widget.textfield.textEntry = value;
   }
 
-  Widget _buildForEditing(BuildContext context) {
+  @override
+  Widget build(BuildContext context) {
     InputDecoration? decor;
 
     if (_hasFocus) {
       decor = const InputDecoration(border: OutlineInputBorder());
     }
 
-    return TextField(
+    var content = TextField(
       controller: _controller,
       decoration: decor,
       onSubmitted: (value) => saveText(value),
       focusNode: _focusNode,
     );
+
+    return encloseWithSizingAndBounding(
+        content, widget.props, widget.parentWidgetType,
+        horizontalUnbounded: true, verticalUnbounded: true, useExpanded: true);
   }
+}
 
-  @override
-  Widget build(BuildContext context) {
-    // Add the following Flexible widget to avoid getting an exception during rendering.
-    // See item #2 in the Problem Solving section in README.md file.
-
-    if (widget.parentWidgetType == "Row" ||
-        widget.parentWidgetType == "Column") {
-      return Flexible(
-        child: _buildForEditing(context),
-      );
-    }
-
-    return _buildForEditing(context);
+class TextFieldEmbodimentProperties extends CommonProperties {
+  TextFieldEmbodimentProperties.fromMap(Map<String, dynamic>? embodimentMap) {
+    super.fromMap(embodimentMap);
   }
 }

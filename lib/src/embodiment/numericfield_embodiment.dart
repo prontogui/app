@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:app/src/embodiment/embodiment_help.dart';
 import 'package:app/src/embodiment/embodiment_property_help.dart';
 
 import 'embodiment_interface.dart';
@@ -149,7 +150,7 @@ class FontSizeNumericFieldEmbodiment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var field = NumericField(
+    var content = NumericField(
       initialValue: numfield.numericEntry,
       onSubmitted: (value) {
         numfield.numericEntry = value;
@@ -161,13 +162,8 @@ class FontSizeNumericFieldEmbodiment extends StatelessWidget {
       popupChooserIcon: const Icon(Icons.numbers),
     );
 
-    if (parentWidgetType == "Row" || parentWidgetType == "Column") {
-      return Flexible(
-        child: field,
-      );
-    }
-
-    return field;
+    return encloseWithSizingAndBounding(content, props, parentWidgetType,
+        horizontalUnbounded: true, verticalUnbounded: true, useExpanded: true);
   }
 }
 

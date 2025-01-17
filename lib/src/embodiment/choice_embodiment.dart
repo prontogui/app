@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:app/src/embodiment/common_properties.dart';
+import 'package:app/src/embodiment/embodiment_help.dart';
 import 'package:dartlib/dartlib.dart' as pg;
 import 'package:flutter/material.dart';
 import 'package:app/src/embodiment/embodiment_interface.dart';
@@ -11,7 +13,11 @@ EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('Choice', [
     EmbodimentManifestEntry('default', (args) {
       return DefaultChoiceEmbodiment(
-          key: args.key, choice: args.primitive as pg.Choice);
+        key: args.key,
+        choice: args.primitive as pg.Choice,
+        props: DefaultChoiceEmbodimentProperties.fromMap(args.embodimentMap),
+        parentWidgetType: args.parentWidgetType,
+      );
     }),
     EmbodimentManifestEntry('button', (args) {
       return ButtonChoiceEmbodiment(
@@ -21,14 +27,20 @@ EmbodimentPackageManifest getManifest() {
 }
 
 class DefaultChoiceEmbodiment extends StatelessWidget {
-  const DefaultChoiceEmbodiment({super.key, required this.choice});
+  const DefaultChoiceEmbodiment(
+      {super.key,
+      required this.choice,
+      required this.props,
+      required this.parentWidgetType});
 
   final pg.Choice choice;
+  final CommonProperties props;
+  final String parentWidgetType;
 
   @override
   Widget build(BuildContext context) {
     var choiceLabels = choice.choiceLabels;
-    return ChoiceField(
+    var content = ChoiceField(
       choices: choice.choices,
       choiceLabels: choiceLabels.isNotEmpty ? choiceLabels : null,
       initialValue: choice.choice,
@@ -36,6 +48,16 @@ class DefaultChoiceEmbodiment extends StatelessWidget {
         choice.choice = value;
       },
     );
+
+    return encloseWithSizingAndBounding(content, props, parentWidgetType,
+        horizontalUnbounded: true, verticalUnbounded: true);
+  }
+}
+
+class DefaultChoiceEmbodimentProperties extends CommonProperties {
+  DefaultChoiceEmbodimentProperties.fromMap(
+      Map<String, dynamic>? embodimentMap) {
+    super.fromMap(embodimentMap);
   }
 }
 
