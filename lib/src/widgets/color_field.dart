@@ -178,8 +178,6 @@ class _ColorFieldState extends State<ColorField> {
         child: (context, controller) => Container(
             color: theme.colorScheme.surfaceContainer,
             child: TextField(
-              expands: true,
-              maxLines: null,
               controller: _controller,
               decoration: InputDecoration(
                 border: const OutlineInputBorder(),

@@ -110,12 +110,19 @@ void altmain1(List<String> args) async {
 
 //dl.NumericField(numericEntry: '4.56')
   var group = dl.Group(groupItems: [innerFrame]);
+
+  var l = dl.ListP(embodiment: 'embodiment:property-list', listItems: [
+    dl.Group(groupItems: [dl.Text(content: 'Item 1'), dl.NumericField()]),
+    dl.Group(groupItems: [dl.Text(content: 'Item 2'), dl.NumericField()]),
+    dl.Group(groupItems: [dl.Text(content: 'Item 3'), dl.NumericField()]),
+  ]);
+
   var gui = dl.Frame(
     embodiment: 'border:outline',
     frameItems: [
       dl.Text(content: 'Embodiment'),
-      dl.Choice(embodiment: 'height:40'),
-      dl.ListP(embodiment: 'property-list', listItems: [
+      //  dl.Choice(embodiment: 'height:40'),
+      dl.ListP(embodiment: 'embodiment:property-list', listItems: [
         dl.Group(groupItems: [dl.Text(content: 'Item 1'), dl.NumericField()]),
         dl.Group(groupItems: [dl.Text(content: 'Item 2'), dl.NumericField()]),
         dl.Group(groupItems: [dl.Text(content: 'Item 3'), dl.NumericField()]),
@@ -123,7 +130,7 @@ void altmain1(List<String> args) async {
     ],
   );
 
-  model.topPrimitives = [gui]; // [innerFrame];
+  model.topPrimitives = [l]; // [innerFrame];
 
   // Create the object responsible for embodying the model as Widgets and for
   // rebuilding the UI when the model changes.
