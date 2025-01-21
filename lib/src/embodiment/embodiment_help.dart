@@ -9,7 +9,8 @@ Widget encloseWithSizingAndBounding(
     Widget content, CommonProperties props, String parentWidgetType,
     {bool horizontalUnbounded = false,
     bool verticalUnbounded = false,
-    bool useExpanded = false}) {
+    bool useExpanded = false,
+    bool useShrink = false}) {
   bool horizontallySized = false;
   bool verticallySized = false;
 
@@ -53,6 +54,8 @@ Widget encloseWithSizingAndBounding(
       return Expanded(
         child: content,
       );
+    } else if (useShrink) {
+      return FittedBox(fit: BoxFit.fitHeight, child: content);
     }
     return Flexible(
       child: content,

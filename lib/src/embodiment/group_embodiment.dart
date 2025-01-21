@@ -66,7 +66,7 @@ class GroupEmbodiment extends StatelessWidget {
 
     // NEXT:  why horizontalUnbounded: false, verticalUnbounded: true???
     return encloseWithSizingAndBounding(content, props, parentWidgetType,
-        horizontalUnbounded: false, verticalUnbounded: true);
+        horizontalUnbounded: false, verticalUnbounded: true, useShrink: true);
   }
 }
 

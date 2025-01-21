@@ -130,7 +130,17 @@ void altmain1(List<String> args) async {
     ],
   );
 
-  model.topPrimitives = [l]; // [innerFrame];
+  var f2 = dl.Frame(frameItems: [
+    dl.Text(content: 'Some content'),
+    dl.Group(
+        groupItems: [dl.Text(content: 'Embodiment'), dl.Text(content: 'xxxx')]),
+    dl.ListP(embodiment: 'property-list', listItems: [
+      dl.Group(groupItems: [dl.Text(content: 'Item 1'), dl.NumericField()]),
+      dl.Group(groupItems: [dl.Text(content: 'Item 2'), dl.NumericField()]),
+      dl.Group(groupItems: [dl.Text(content: 'Item 3'), dl.NumericField()]),
+    ]),
+  ]);
+  model.topPrimitives = [f2]; // [innerFrame];
 
   // Create the object responsible for embodying the model as Widgets and for
   // rebuilding the UI when the model changes.
