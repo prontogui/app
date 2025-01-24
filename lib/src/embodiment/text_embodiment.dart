@@ -4,24 +4,23 @@
 
 import 'package:flutter/material.dart';
 import 'package:dartlib/dartlib.dart' as pg;
-import 'package:google_fonts/google_fonts.dart';
 import 'embodiment_property_help.dart';
-import 'embodiment_interface.dart';
+import 'embodiment_manifest.dart';
+import 'embodiment_args.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('Text', [
-    EmbodimentManifestEntry('default', (args) {
-      return TextEmbodiment(
-          key: args.key,
-          text: args.primitive as pg.Text,
-          props: TextEmbodimentProperties.fromMap(args.embodimentMap));
-    }),
+    EmbodimentManifestEntry('default', TextEmbodiment.fromArgs),
   ]);
 }
 
 class TextEmbodiment extends StatelessWidget {
-  const TextEmbodiment({super.key, required this.text, required this.props});
+  TextEmbodiment.fromArgs(this.args, {super.key})
+      : text = args.primitive as pg.Text,
+        props = TextEmbodimentProperties.fromMap(
+            args.primitive.embodimentProperties);
 
+  final EmbodimentArgs args;
   final pg.Text text;
   final TextEmbodimentProperties props;
 

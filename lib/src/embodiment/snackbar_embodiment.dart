@@ -6,10 +6,14 @@ import '../embodifier.dart';
 import 'package:dartlib/dartlib.dart' as pg;
 import 'package:flutter/material.dart';
 import 'embodiment_property_help.dart';
+import 'embodiment_args.dart';
 
 class SnackBarEmbodiment extends StatefulWidget {
-  const SnackBarEmbodiment(
-      {super.key, required this.frame, required this.props});
+  SnackBarEmbodiment.fromArgs(this.args, {super.key})
+      : frame = args.primitive as pg.Frame,
+        props = SnackBarEmbodimentProperties.fromMap(
+            args.primitive.embodimentProperties);
+  final EmbodimentArgs args;
   final pg.Frame frame;
   final SnackBarEmbodimentProperties props;
 
@@ -73,7 +77,7 @@ class _SnackBarEmbodimentState extends State<SnackBarEmbodiment> {
     }
 
     var textEmbodiment =
-        _embodifier.buildPrimitive(context, textPrimitive, "SnackBarAction");
+        _embodifier.buildPrimitive(context, EmbodimentArgs(textPrimitive));
 
     //var textP = textPrimitive as pg.Text;
     //print("Building snackbar:  ${textP.content}");

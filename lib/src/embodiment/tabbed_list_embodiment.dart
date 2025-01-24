@@ -2,25 +2,26 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:app/src/embodiment/embodiment_help.dart';
+import 'embodiment_help.dart';
 import 'package:dartlib/dartlib.dart' as pg;
 import '../embodifier.dart';
 import 'package:flutter/material.dart';
 import 'common_properties.dart';
 import 'embodiment_property_help.dart';
 import 'icon_map.dart';
+import 'embodiment_args.dart';
 
 class TabbedListEmbodiment extends StatelessWidget {
-  const TabbedListEmbodiment({
+  TabbedListEmbodiment.fromArgs(
+    this.args, {
     super.key,
-    required this.list,
-    required this.props,
-    required this.parentWidgetType,
-  });
+  })  : list = args.primitive as pg.ListP,
+        props = TabbedListEmbodimentProperties.fromMap(
+            args.primitive.embodimentProperties);
 
+  final EmbodimentArgs args;
   final pg.ListP list;
   final TabbedListEmbodimentProperties props;
-  final String parentWidgetType;
 
   Widget embodifySingleItem(BuildContext context, Embodifier embodifier,
       pg.Primitive item, String parentWidgetType) {
@@ -36,7 +37,7 @@ class TabbedListEmbodiment extends StatelessWidget {
       );
     }
 
-    return embodifier.buildPrimitive(context, item, parentWidgetType);
+    return embodifier.buildPrimitive(context, EmbodimentArgs(item));
   }
 
   @override
@@ -79,7 +80,7 @@ class TabbedListEmbodiment extends StatelessWidget {
     });
 
     var tabViews = List<Widget>.generate(listItems.length, (i) {
-      return embodifier.buildPrimitive(context, listItems[i], "TabBarView");
+      return embodifier.buildPrimitive(context, EmbodimentArgs(listItems[i]));
     });
 
     var tabHeight = props.tabHeight;

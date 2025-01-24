@@ -6,6 +6,7 @@ import 'package:dartlib/dartlib.dart' as pg;
 import 'embodifier.dart';
 import 'package:flutter/material.dart';
 import 'inherited_primitive_model.dart';
+import 'embodiment/embodiment_args.dart';
 
 class BackgroundView extends StatelessWidget {
   const BackgroundView({super.key});
@@ -34,12 +35,12 @@ class BackgroundView extends StatelessWidget {
       } else if (backgroundItems.length == 1) {
         return Center(
           child: InheritedEmbodifier.of(context)
-              .buildPrimitive(context, backgroundItems[0], "Center"),
+              .buildPrimitive(context, EmbodimentArgs(backgroundItems[0])),
         );
       } else {
         return Column(
           children: InheritedEmbodifier.of(context)
-              .buildPrimitiveList(context, backgroundItems, "Column"),
+              .buildPrimitiveList(context, backgroundItems),
         );
       }
     }

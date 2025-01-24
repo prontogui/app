@@ -2,37 +2,30 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:app/src/embodiment/common_properties.dart';
-import 'package:app/src/embodiment/embodiment_help.dart';
+import 'common_properties.dart';
+import 'embodiment_help.dart';
 import 'package:dartlib/dartlib.dart' as pg;
 import 'package:flutter/material.dart';
-import 'embodiment_interface.dart';
+import 'embodiment_manifest.dart';
+import 'embodiment_args.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('TextField', [
-    EmbodimentManifestEntry('default', (args) {
-      return TextFieldEmbodiment(
-        key: args.key,
-        textfield: args.primitive as pg.TextField,
-        props: TextFieldEmbodimentProperties.fromMap(args.embodimentMap),
-        parentWidgetType: args.parentWidgetType,
-      );
-    }),
+    EmbodimentManifestEntry('default', TextFieldEmbodiment.fromArgs),
   ]);
 }
 
 // TODO:  refactor this code and separate the functionality into TextField widget,
 // like done with NumericField, ColorField, etc.
 class TextFieldEmbodiment extends StatefulWidget {
-  const TextFieldEmbodiment(
-      {super.key,
-      required this.textfield,
-      required this.props,
-      required this.parentWidgetType});
+  TextFieldEmbodiment.fromArgs(this.args, {super.key})
+      : textfield = args.primitive as pg.TextField,
+        props = TextFieldEmbodimentProperties.fromMap(
+            args.primitive.embodimentProperties);
 
+  final EmbodimentArgs args;
   final pg.TextField textfield;
   final TextFieldEmbodimentProperties props;
-  final String parentWidgetType;
 
   @override
   State<TextFieldEmbodiment> createState() => _TextFieldEmbodimentState();

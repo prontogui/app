@@ -2,46 +2,23 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:app/src/embodiment/embodiment_help.dart';
-import 'package:app/src/embodiment/embodiment_property_help.dart';
-
-import 'embodiment_interface.dart';
+import 'embodiment_help.dart';
+import 'embodiment_property_help.dart';
+import 'embodiment_manifest.dart';
 import 'package:dartlib/dartlib.dart' as pg;
 import 'package:flutter/material.dart';
 import 'common_properties.dart';
 import '../widgets/color_field.dart';
 import '../widgets/numeric_field.dart';
 import 'dart:core';
+import 'embodiment_args.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('NumericField', [
-    EmbodimentManifestEntry('default', (args) {
-      return DefaultNumericFieldEmbodiment(
-        key: args.key,
-        numfield: args.primitive as pg.NumericField,
-        props:
-            DefaultNumericFieldEmbodimentProperties.fromMap(args.embodimentMap),
-        parentWidgetType: args.parentWidgetType,
-      );
-    }),
-    EmbodimentManifestEntry('font-size', (args) {
-      return FontSizeNumericFieldEmbodiment(
-        key: args.key,
-        numfield: args.primitive as pg.NumericField,
-        props:
-            FontSizeNumericFielEmbodimentProperties.fromMap(args.embodimentMap),
-        parentWidgetType: args.parentWidgetType,
-      );
-    }),
-    EmbodimentManifestEntry('color', (args) {
-      return ColorNumericFieldEmbodiment(
-        key: args.key,
-        numfield: args.primitive as pg.NumericField,
-        props:
-            ColorNumericFieldEmbodimentProperties.fromMap(args.embodimentMap),
-        parentWidgetType: args.parentWidgetType,
-      );
-    })
+    EmbodimentManifestEntry('default', DefaultNumericFieldEmbodiment.fromArgs),
+    EmbodimentManifestEntry(
+        'font-size', FontSizeNumericFieldEmbodiment.fromArgs),
+    EmbodimentManifestEntry('color', ColorNumericFieldEmbodiment.fromArgs)
   ]);
 }
 
@@ -72,15 +49,14 @@ class DefaultNumericFieldEmbodimentProperties with CommonProperties {
 }
 
 class DefaultNumericFieldEmbodiment extends StatelessWidget {
-  const DefaultNumericFieldEmbodiment(
-      {super.key,
-      required this.numfield,
-      required this.props,
-      required this.parentWidgetType});
+  DefaultNumericFieldEmbodiment.fromArgs(this.args, {super.key})
+      : numfield = args.primitive as pg.NumericField,
+        props = DefaultNumericFieldEmbodimentProperties.fromMap(
+            args.primitive.embodimentProperties);
 
+  final EmbodimentArgs args;
   final pg.NumericField numfield;
   final DefaultNumericFieldEmbodimentProperties props;
-  final String parentWidgetType;
 
   @override
   Widget build(BuildContext context) {
@@ -114,15 +90,14 @@ class FontSizeNumericFielEmbodimentProperties with CommonProperties {
 }
 
 class FontSizeNumericFieldEmbodiment extends StatelessWidget {
-  const FontSizeNumericFieldEmbodiment(
-      {super.key,
-      required this.numfield,
-      required this.props,
-      required this.parentWidgetType});
+  FontSizeNumericFieldEmbodiment.fromArgs(this.args, {super.key})
+      : numfield = args.primitive as pg.NumericField,
+        props = FontSizeNumericFielEmbodimentProperties.fromMap(
+            args.primitive.embodimentProperties);
 
+  final EmbodimentArgs args;
   final pg.NumericField numfield;
   final FontSizeNumericFielEmbodimentProperties props;
-  final String parentWidgetType;
 
   static const _fontChoices = [
     '8',
@@ -175,15 +150,14 @@ class ColorNumericFieldEmbodimentProperties with CommonProperties {
 }
 
 class ColorNumericFieldEmbodiment extends StatelessWidget {
-  const ColorNumericFieldEmbodiment(
-      {super.key,
-      required this.numfield,
-      required this.props,
-      required this.parentWidgetType});
+  ColorNumericFieldEmbodiment.fromArgs(this.args, {super.key})
+      : numfield = args.primitive as pg.NumericField,
+        props = ColorNumericFieldEmbodimentProperties.fromMap(
+            args.primitive.embodimentProperties);
 
+  final EmbodimentArgs args;
   final pg.NumericField numfield;
   final ColorNumericFieldEmbodimentProperties props;
-  final String parentWidgetType;
 
   @override
   Widget build(BuildContext context) {

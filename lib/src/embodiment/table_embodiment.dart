@@ -6,19 +6,20 @@ import 'package:dartlib/dartlib.dart' as pg;
 import '../embodifier.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
-import 'embodiment_interface.dart';
+import 'embodiment_manifest.dart';
+import 'embodiment_args.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('Table', [
-    EmbodimentManifestEntry('default', (args) {
-      return TableEmbodiment(key: args.key, table: args.primitive as pg.Table);
-    }),
+    EmbodimentManifestEntry('default', TableEmbodiment.fromArgs),
   ]);
 }
 
 class TableEmbodiment extends StatelessWidget {
-  const TableEmbodiment({super.key, required this.table});
+  TableEmbodiment.fromArgs(this.args, {super.key})
+      : table = args.primitive as pg.Table;
 
+  final EmbodimentArgs args;
   final pg.Table table;
 
   @override
@@ -68,7 +69,7 @@ class TableEmbodiment extends StatelessWidget {
       for (var cell in row) {
         // TODO:  utilize the template row cells when calling .buildPrimitive
         var cellEmbodiment =
-            embodifier.buildPrimitive(context, cell, "DataRow");
+            embodifier.buildPrimitive(context, EmbodimentArgs(cell));
         cellsD.add(DataCell(cellEmbodiment));
       }
 

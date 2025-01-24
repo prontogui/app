@@ -15,7 +15,8 @@ import 'textfield_embodiment.dart' as text_field;
 import 'timer_embodiment.dart' as timer;
 import 'tristate_embodiment.dart' as tristate;
 import 'numericfield_embodiment.dart' as numeric_field;
-import 'embodiment_interface.dart';
+import 'embodiment_manifest.dart';
+import 'embodiment_args.dart';
 import 'embodiment_property_help.dart';
 
 /// Static class/method for creating embodiments.
@@ -69,11 +70,11 @@ class EmbodimentFactory {
 
   late final Map<String, Map<String, EmbodimentManifestEntry>> _factoryInfo;
 
-  Widget createEmbodiment(Primitive primitive,
-      Map<String, dynamic> embodimentMap, String parentWidgetType) {
-    var embodiment = getStringProp(embodimentMap, 'embodiment', '');
-
-    var primitiveType = primitive.describeType;
+  Widget createEmbodiment(EmbodimentArgs ea) {
+    var primitive = ea.primitive;
+    var embodiment =
+        getStringProp(primitive.embodimentProperties, 'embodiment', '');
+    var primitiveType = ea.primitive.describeType;
     var pinfo = _factoryInfo[primitiveType];
     if (pinfo == null) {
       var msg =
@@ -84,12 +85,6 @@ class EmbodimentFactory {
 
     var einfo = pinfo[embodiment];
     if (einfo == null) {
-/*
-      var msg =
-          'Embodiment named "$embodiment" does not exist for primitive of type $primitiveType with pkey = ${primitive.pkey}.  Using default embodiment.';
-      logger.w(msg);
-*/
-
       einfo = pinfo['default'];
       if (einfo == null) {
         var msg =
@@ -99,12 +94,12 @@ class EmbodimentFactory {
       }
     }
 
+    // Add a key to the arguments if needed
     Key? key;
     if (einfo.keyRequired) {
       key = UniqueKey();
     }
 
-    var args = EmbodimentArgs(primitive, embodimentMap, parentWidgetType, key);
-    return einfo.factoryFunction(args);
+    return einfo.factoryFunction(ea, key: key);
   }
 }

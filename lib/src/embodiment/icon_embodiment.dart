@@ -2,22 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:dartlib/dartlib.dart' as pg;
 import 'icon_map.dart';
 import 'embodiment_property_help.dart';
-import 'embodiment_interface.dart';
+import 'embodiment_manifest.dart';
+import 'embodiment_args.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('Icon', [
-    EmbodimentManifestEntry('default', (args) {
-      return IconEmbodiment(
-          key: args.key,
-          icon: args.primitive as pg.Icon,
-          props: IconEmbodimentProperties.fromMap(args.embodimentMap));
-    }),
+    EmbodimentManifestEntry('default', IconEmbodiment.fromArgs),
   ]);
 }
 
 class IconEmbodiment extends StatelessWidget {
-  const IconEmbodiment({super.key, required this.icon, required this.props});
+  IconEmbodiment.fromArgs(this.args, {super.key})
+      : icon = args.primitive as pg.Icon,
+        props = IconEmbodimentProperties.fromMap(
+            args.primitive.embodimentProperties);
 
+  final EmbodimentArgs args;
   final pg.Icon icon;
   final IconEmbodimentProperties props;
 

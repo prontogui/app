@@ -2,40 +2,30 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:app/src/embodiment/common_properties.dart';
-import 'package:app/src/embodiment/embodiment_help.dart';
+import 'common_properties.dart';
+import 'embodiment_help.dart';
 import 'package:dartlib/dartlib.dart' as pg;
 import 'package:flutter/material.dart';
-import 'package:app/src/embodiment/embodiment_interface.dart';
+import 'embodiment_manifest.dart';
+import 'embodiment_args.dart';
 import '../widgets/choice_field.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('Choice', [
-    EmbodimentManifestEntry('default', (args) {
-      return DefaultChoiceEmbodiment(
-        key: args.key,
-        choice: args.primitive as pg.Choice,
-        props: DefaultChoiceEmbodimentProperties.fromMap(args.embodimentMap),
-        parentWidgetType: args.parentWidgetType,
-      );
-    }),
-    EmbodimentManifestEntry('button', (args) {
-      return ButtonChoiceEmbodiment(
-          key: args.key, choice: args.primitive as pg.Choice);
-    }),
+    EmbodimentManifestEntry('default', DefaultChoiceEmbodiment.fromArgs),
+    EmbodimentManifestEntry('button', ButtonChoiceEmbodiment.fromArgs),
   ]);
 }
 
 class DefaultChoiceEmbodiment extends StatelessWidget {
-  const DefaultChoiceEmbodiment(
-      {super.key,
-      required this.choice,
-      required this.props,
-      required this.parentWidgetType});
+  DefaultChoiceEmbodiment.fromArgs(this.args, {super.key})
+      : choice = args.primitive as pg.Choice,
+        props = DefaultChoiceEmbodimentProperties.fromMap(
+            args.primitive.embodimentProperties);
 
+  final EmbodimentArgs args;
   final pg.Choice choice;
   final CommonProperties props;
-  final String parentWidgetType;
 
   @override
   Widget build(BuildContext context) {
@@ -62,8 +52,10 @@ class DefaultChoiceEmbodimentProperties extends CommonProperties {
 }
 
 class ButtonChoiceEmbodiment extends StatefulWidget {
-  const ButtonChoiceEmbodiment({super.key, required this.choice});
+  ButtonChoiceEmbodiment.fromArgs(this.args, {super.key})
+      : choice = args.primitive as pg.Choice;
 
+  final EmbodimentArgs args;
   final pg.Choice choice;
 
   List<String> get choices {

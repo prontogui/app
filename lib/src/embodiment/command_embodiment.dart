@@ -4,24 +4,23 @@
 
 import 'package:dartlib/dartlib.dart' as pg;
 import 'package:flutter/material.dart';
-import 'package:app/src/embodiment/embodiment_interface.dart';
+import 'embodiment_manifest.dart';
+import 'embodiment_args.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('Command', [
-    EmbodimentManifestEntry('default', (args) {
-      return ElevatedButtonCommandEmbodiment(
-          key: args.key, command: args.primitive as pg.Command);
-    }),
-    EmbodimentManifestEntry('outlined-button', (args) {
-      return OutlinedButtonCommandEmbodiment(
-          key: args.key, command: args.primitive as pg.Command);
-    }),
+    EmbodimentManifestEntry(
+        'default', ElevatedButtonCommandEmbodiment.fromArgs),
+    EmbodimentManifestEntry(
+        'outlined-button', OutlinedButtonCommandEmbodiment.fromArgs),
   ]);
 }
 
 class ElevatedButtonCommandEmbodiment extends StatelessWidget {
-  const ElevatedButtonCommandEmbodiment({super.key, required this.command});
+  ElevatedButtonCommandEmbodiment.fromArgs(this.args, {super.key})
+      : command = args.primitive as pg.Command;
 
+  final EmbodimentArgs args;
   final pg.Command command;
 
   Widget _buildAsHidden(BuildContext context) {
@@ -43,8 +42,10 @@ class ElevatedButtonCommandEmbodiment extends StatelessWidget {
 }
 
 class OutlinedButtonCommandEmbodiment extends StatelessWidget {
-  const OutlinedButtonCommandEmbodiment({super.key, required this.command});
+  OutlinedButtonCommandEmbodiment.fromArgs(this.args, {super.key})
+      : command = args.primitive as pg.Command;
 
+  final EmbodimentArgs args;
   final pg.Command command;
 
   Widget _buildAsHidden(BuildContext context) {

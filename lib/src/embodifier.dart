@@ -7,6 +7,7 @@ import 'package:flutter/widgets.dart';
 import 'embodiment/notifier.dart';
 import 'embodiment/embodiment_factory.dart';
 import 'embodiment/embodiment_property_help.dart';
+import 'embodiment/embodiment_args.dart';
 
 /// This object builds embodiments for the primitive model.
 class Embodifier implements PrimitiveModelWatcher {
@@ -86,47 +87,36 @@ class Embodifier implements PrimitiveModelWatcher {
     }
   }
 
-  /// Builds the particular embodiment for a primitive.
-  ///
-  /// This is meant to be used internally to this class its closures.
-  Widget _buildEmbodiment(
-      BuildContext context, Primitive primitive, String parentWidgetType) {
-    Map<String, dynamic>? embodimentMap;
-
-    embodimentMap ??= primitive.embodimentProperties;
-
-    return _factory.createEmbodiment(
-        primitive, embodimentMap, parentWidgetType);
-  }
-
   /// Builds the particular embodiment for a primitive and injects a listenable builder
   /// if the primitive is a notifification point.
-  Widget buildPrimitive(
-      BuildContext context, Primitive primitive, String parentWidgetType) {
+  Widget buildPrimitive(BuildContext context, EmbodimentArgs args) {
     // Is this embodiment an update point?
-    var notifier = _doesNotify(primitive);
+    var notifier = _doesNotify(args.primitive);
+
     if (notifier != null) {
       // Plug-in a parent node that will rebuild the embodiment when the primitive notifies a change occurred
       return ListenableBuilder(
         listenable: notifier,
         builder: (BuildContext context, Widget? child) {
-          return _buildEmbodiment(context, primitive, parentWidgetType);
+          return _factory.createEmbodiment(args);
         },
         child: null,
       );
     }
 
-    return _buildEmbodiment(context, primitive, parentWidgetType);
+    return _factory.createEmbodiment(args);
   }
 
   /// Builds a list of embodiments corresponding to a list of primitives.
-  List<Widget> buildPrimitiveList(BuildContext context,
-      List<Primitive> primitives, String parentWidgetType) {
+  List<Widget> buildPrimitiveList(
+      BuildContext context, List<Primitive> primitives,
+      [bool parentIsTopView = false]) {
     var widgets = <Widget>[];
 
     for (final primitive in primitives) {
+      var args = EmbodimentArgs(primitive, parentIsTopView: parentIsTopView);
       widgets.add(
-        buildPrimitive(context, primitive, parentWidgetType),
+        buildPrimitive(context, args),
       );
     }
 

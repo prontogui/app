@@ -6,20 +6,20 @@ import 'package:dartlib/dartlib.dart' as pg;
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:io';
-import 'package:app/src/embodiment/embodiment_interface.dart';
+import 'embodiment_manifest.dart';
+import 'embodiment_args.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('ImportFile', [
-    EmbodimentManifestEntry('default', (args) {
-      return ImportFileEmbodiment(
-          key: args.key, importFile: args.primitive as pg.ImportFile);
-    }),
+    EmbodimentManifestEntry('default', ImportFileEmbodiment.fromArgs),
   ]);
 }
 
 class ImportFileEmbodiment extends StatelessWidget {
-  const ImportFileEmbodiment({super.key, required this.importFile});
+  ImportFileEmbodiment.fromArgs(this.args, {super.key})
+      : importFile = args.primitive as pg.ImportFile;
 
+  final EmbodimentArgs args;
   final pg.ImportFile importFile;
 
   @override

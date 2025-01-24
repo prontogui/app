@@ -5,62 +5,45 @@
 import 'package:dartlib/dartlib.dart' as pg;
 import '../embodifier.dart';
 import 'package:flutter/material.dart';
-import 'embodiment_interface.dart';
+import 'embodiment_manifest.dart';
 import 'common_properties.dart';
 import 'embodiment_property_help.dart';
 import 'tabbed_list_embodiment.dart';
 import 'embodiment_help.dart';
+import 'embodiment_args.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('List', [
-    EmbodimentManifestEntry('default', (args) {
-      return ListEmbodiment(
-          key: args.key,
-          list: args.primitive as pg.ListP,
-          props: ListEmbodimentProperties.fromMap(args.embodimentMap),
-          parentWidgetType: args.parentWidgetType,
-          style: ListStyle.normal);
-    }),
-    EmbodimentManifestEntry('card-list', (args) {
-      return ListEmbodiment(
-          key: args.key,
-          list: args.primitive as pg.ListP,
-          props: ListEmbodimentProperties.fromMap(args.embodimentMap),
-          parentWidgetType: args.parentWidgetType,
-          style: ListStyle.card);
-    }),
-    EmbodimentManifestEntry('property-list', (args) {
-      return ListEmbodiment(
-          key: args.key,
-          list: args.primitive as pg.ListP,
-          props: ListEmbodimentProperties.fromMap(args.embodimentMap),
-          parentWidgetType: args.parentWidgetType,
-          style: ListStyle.property);
-    }),
-    EmbodimentManifestEntry('tabbed-list', (args) {
-      return TabbedListEmbodiment(
-        key: args.key,
-        list: args.primitive as pg.ListP,
-        props: TabbedListEmbodimentProperties.fromMap(args.embodimentMap),
-        parentWidgetType: args.parentWidgetType,
-      );
-    }),
+    EmbodimentManifestEntry('default', ListEmbodiment.fromArgsNormalStyle),
+    EmbodimentManifestEntry('card-list', ListEmbodiment.fromArgsCardStyle),
+    EmbodimentManifestEntry(
+        'property-list', ListEmbodiment.fromArgsPropertyStyle),
+    EmbodimentManifestEntry('tabbed-list', TabbedListEmbodiment.fromArgs),
   ]);
 }
 
 enum ListStyle { card, property, normal, tabbed }
 
 class ListEmbodiment extends StatefulWidget {
-  const ListEmbodiment(
-      {super.key,
-      required this.list,
-      required this.props,
-      required this.parentWidgetType,
-      required this.style});
+  ListEmbodiment.fromArgsNormalStyle(this.args, {super.key})
+      : list = args.primitive as pg.ListP,
+        props = ListEmbodimentProperties.fromMap(
+            args.primitive.embodimentProperties),
+        style = ListStyle.normal;
+  ListEmbodiment.fromArgsPropertyStyle(this.args, {super.key})
+      : list = args.primitive as pg.ListP,
+        props = ListEmbodimentProperties.fromMap(
+            args.primitive.embodimentProperties),
+        style = ListStyle.property;
+  ListEmbodiment.fromArgsCardStyle(this.args, {super.key})
+      : list = args.primitive as pg.ListP,
+        props = ListEmbodimentProperties.fromMap(
+            args.primitive.embodimentProperties),
+        style = ListStyle.card;
 
+  final EmbodimentArgs args;
   final pg.ListP list;
   final ListEmbodimentProperties props;
-  final String parentWidgetType;
   final ListStyle style;
 
   @override
@@ -92,7 +75,7 @@ class _ListEmbodimentState extends State<ListEmbodiment> {
       );
     }
 
-    return embodifier!.buildPrimitive(context, item, "ListTile");
+    return embodifier!.buildPrimitive(context, EmbodimentArgs(item));
   }
 
   Widget? embodifyGroupItem(

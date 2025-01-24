@@ -5,19 +5,20 @@
 import 'package:dartlib/dartlib.dart' as pg;
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'embodiment_interface.dart';
+import 'embodiment_manifest.dart';
+import 'embodiment_args.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('Timer', [
-    EmbodimentManifestEntry('default', (args) {
-      return TimerEmbodiment(key: args.key, timer: args.primitive as pg.Timer);
-    }),
+    EmbodimentManifestEntry('default', TimerEmbodiment.fromArgs),
   ]);
 }
 
 class TimerEmbodiment extends StatefulWidget {
-  const TimerEmbodiment({super.key, required this.timer});
+  TimerEmbodiment.fromArgs(this.args, {super.key})
+      : timer = args.primitive as pg.Timer;
 
+  final EmbodimentArgs args;
   final pg.Timer timer;
 
   @override

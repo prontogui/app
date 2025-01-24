@@ -7,32 +7,25 @@ import 'package:app/src/embodiment/embodiment_help.dart';
 import '../embodifier.dart';
 import 'package:dartlib/dartlib.dart' as pg;
 import 'package:flutter/material.dart';
-import 'embodiment_interface.dart';
+import 'embodiment_manifest.dart';
+import 'embodiment_args.dart';
 import 'common_properties.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('Group', [
-    EmbodimentManifestEntry('default', (args) {
-      return GroupEmbodiment(
-        key: args.key,
-        group: args.primitive as pg.Group,
-        parentWidgetType: args.parentWidgetType,
-        props: GroupEmbodimentProperties.fromMap(args.embodimentMap),
-      );
-    }),
+    EmbodimentManifestEntry('default', GroupEmbodiment.fromArgs),
   ]);
 }
 
 class GroupEmbodiment extends StatelessWidget {
-  const GroupEmbodiment(
-      {super.key,
-      required this.group,
-      required this.props,
-      required this.parentWidgetType});
+  GroupEmbodiment.fromArgs(this.args, {super.key})
+      : group = args.primitive as pg.Group,
+        props = GroupEmbodimentProperties.fromMap(
+            args.primitive.embodimentProperties);
 
+  final EmbodimentArgs args;
   final pg.Group group;
   final GroupEmbodimentProperties props;
-  final String parentWidgetType;
 
   @override
   Widget build(BuildContext context) {
@@ -49,9 +42,10 @@ class GroupEmbodiment extends StatelessWidget {
     // don't have to be re-rendered.  For a good example, look at the timer demo in
     // https://github.com/prontogui/goexamples
     if (group.groupItems.length == 1) {
+      // TODO:  is SizedBox necessary or can we use a different widget?
       content = SizedBox(
           child: InheritedEmbodifier.of(context)
-              .buildPrimitive(context, group.groupItems[0], "SizedBox"));
+              .buildPrimitive(context, EmbodimentArgs(group.groupItems[0])));
     } else {
       content = Row(
         children:
@@ -60,7 +54,7 @@ class GroupEmbodiment extends StatelessWidget {
             // An alternative approach is to pass Embodifier into constructor of each
             // embodiment.
             InheritedEmbodifier.of(context)
-                .buildPrimitiveList(context, group.groupItems, "Row"),
+                .buildPrimitiveList(context, group.groupItems),
       );
     }
 

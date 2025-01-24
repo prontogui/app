@@ -7,57 +7,30 @@ import 'package:app/src/embodiment/embodiment_help.dart';
 import '../embodifier.dart';
 import 'package:dartlib/dartlib.dart' as pg;
 import 'package:flutter/material.dart';
-import 'package:app/src/embodiment/embodiment_interface.dart';
+import 'embodiment_manifest.dart';
+import 'embodiment_args.dart';
 import 'common_properties.dart';
 import 'embodiment_property_help.dart';
 import 'snackbar_embodiment.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('Frame', [
-    EmbodimentManifestEntry('default', (args) {
-      return FrameEmbodiment(
-        key: args.key,
-        frame: args.primitive as pg.Frame,
-        props: FrameEmbodimentProperties.fromMap(args.embodimentMap),
-        parentWidgetType: args.parentWidgetType,
-      );
-    }),
-    EmbodimentManifestEntry('full-view', (args) {
-      return FrameEmbodiment(
-        key: args.key,
-        frame: args.primitive as pg.Frame,
-        props: FrameEmbodimentProperties.fromMap(args.embodimentMap),
-        parentWidgetType: args.parentWidgetType,
-      );
-    }),
-    EmbodimentManifestEntry('dialog-view', (args) {
-      return FrameEmbodiment(
-        key: args.key,
-        frame: args.primitive as pg.Frame,
-        props: FrameEmbodimentProperties.fromMap(args.embodimentMap),
-        parentWidgetType: args.parentWidgetType,
-      );
-    }),
-    EmbodimentManifestEntry('snackbar', (args) {
-      return SnackBarEmbodiment(
-        key: args.key,
-        frame: args.primitive as pg.Frame,
-        props: SnackBarEmbodimentProperties.fromMap(args.embodimentMap),
-      );
-    })
+    EmbodimentManifestEntry('default', FrameEmbodiment.fromArgs),
+    EmbodimentManifestEntry('full-view', FrameEmbodiment.fromArgs),
+    EmbodimentManifestEntry('dialog-view', FrameEmbodiment.fromArgs),
+    EmbodimentManifestEntry('snackbar', SnackBarEmbodiment.fromArgs)
   ]);
 }
 
 class FrameEmbodiment extends StatelessWidget {
-  const FrameEmbodiment(
-      {super.key,
-      required this.frame,
-      required this.props,
-      required this.parentWidgetType});
+  FrameEmbodiment.fromArgs(this.args, {super.key})
+      : frame = args.primitive as pg.Frame,
+        props = FrameEmbodimentProperties.fromMap(
+            args.primitive.embodimentProperties);
 
+  final EmbodimentArgs args;
   final pg.Frame frame;
   final FrameEmbodimentProperties props;
-  final String parentWidgetType;
 
   // Note:  when getting around to implementing a manual layout method, take a look
   // at PositionedDirectional class and Positioned widget.
@@ -78,14 +51,14 @@ class FrameEmbodiment extends StatelessWidget {
       case 'left-to-right':
         content = Row(
           children: InheritedEmbodifier.of(context)
-              .buildPrimitiveList(context, frame.frameItems, 'Row'),
+              .buildPrimitiveList(context, frame.frameItems),
         );
         horizontalUnbounded = true;
 
       case 'top-to-bottom':
         content = Column(
           children: InheritedEmbodifier.of(context)
-              .buildPrimitiveList(context, frame.frameItems, 'Column'),
+              .buildPrimitiveList(context, frame.frameItems),
         );
         verticalUnbounded = true;
 
@@ -114,16 +87,10 @@ class FrameEmbodiment extends StatelessWidget {
         useExpanded: true);
 
     // Is it a top-level primitive (i.e., a view)?
-    if (parentWidgetType == '<Top>') {
+    if (args.parentIsTopView) {
       content = Scaffold(
         body: content,
       );
-
-/*
-      content = Scaffold(
-        body: Center(child: content),
-      );
-*/
     }
 
     return content;

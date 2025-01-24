@@ -1,22 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:dartlib/dartlib.dart';
-
-class EmbodimentArgs {
-  EmbodimentArgs(
-      this.primitive, this.embodimentMap, this.parentWidgetType, this.key);
-
-  final Primitive primitive;
-  final Map<String, dynamic> embodimentMap;
-  final String parentWidgetType;
-  final Key? key;
-}
+import 'embodiment_args.dart';
 
 class EmbodimentManifestEntry {
   EmbodimentManifestEntry(this.embodiment, this.factoryFunction,
       {this.keyRequired = false});
 
   final String embodiment;
-  final Widget Function(EmbodimentArgs) factoryFunction;
+  final Widget Function(EmbodimentArgs, {Key? key}) factoryFunction;
   final bool keyRequired;
 }
 
