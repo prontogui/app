@@ -6,19 +6,17 @@ import 'package:dartlib/dartlib.dart' as pg;
 import '../embodifier.dart';
 import 'package:flutter/material.dart';
 import 'embodiment_manifest.dart';
-import 'common_properties.dart';
-import 'embodiment_property_help.dart';
 import 'tabbed_list_embodiment.dart';
 import 'embodiment_help.dart';
 import 'embodiment_args.dart';
+import 'properties.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('List', [
     EmbodimentManifestEntry('default', ListEmbodiment.fromArgsNormalStyle),
-    EmbodimentManifestEntry('card-list', ListEmbodiment.fromArgsCardStyle),
-    EmbodimentManifestEntry(
-        'property-list', ListEmbodiment.fromArgsPropertyStyle),
-    EmbodimentManifestEntry('tabbed-list', TabbedListEmbodiment.fromArgs),
+    EmbodimentManifestEntry('card', ListEmbodiment.fromArgsCardStyle),
+    EmbodimentManifestEntry('property', ListEmbodiment.fromArgsPropertyStyle),
+    EmbodimentManifestEntry('tabbed', TabbedListEmbodiment.fromArgs),
   ]);
 }
 
@@ -27,23 +25,23 @@ enum ListStyle { card, property, normal, tabbed }
 class ListEmbodiment extends StatefulWidget {
   ListEmbodiment.fromArgsNormalStyle(this.args, {super.key})
       : list = args.primitive as pg.ListP,
-        props = ListEmbodimentProperties.fromMap(
-            args.primitive.embodimentProperties),
+        props =
+            ListNormalProperties.fromMap(args.primitive.embodimentProperties),
         style = ListStyle.normal;
   ListEmbodiment.fromArgsPropertyStyle(this.args, {super.key})
       : list = args.primitive as pg.ListP,
-        props = ListEmbodimentProperties.fromMap(
-            args.primitive.embodimentProperties),
+        props =
+            ListNormalProperties.fromMap(args.primitive.embodimentProperties),
         style = ListStyle.property;
   ListEmbodiment.fromArgsCardStyle(this.args, {super.key})
       : list = args.primitive as pg.ListP,
-        props = ListEmbodimentProperties.fromMap(
-            args.primitive.embodimentProperties),
+        props =
+            ListNormalProperties.fromMap(args.primitive.embodimentProperties),
         style = ListStyle.card;
 
   final EmbodimentArgs args;
   final pg.ListP list;
-  final ListEmbodimentProperties props;
+  final ListNormalProperties props;
   final ListStyle style;
 
   @override
@@ -247,20 +245,5 @@ class _ListEmbodimentState extends State<ListEmbodiment> {
         useExpanded: true,
         verticalUnbounded: true,
         horizontalUnbounded: !horizontal);
-  }
-}
-
-class ListEmbodimentProperties with CommonProperties {
-  late final bool horizontal;
-  late final double? itemWidth;
-  late final double? itemHeight;
-  late final double? tabHeight;
-
-  ListEmbodimentProperties.fromMap(Map<String, dynamic>? embodimentMap) {
-    super.fromMap(embodimentMap);
-
-    horizontal = getBoolPropOrDefault(embodimentMap, 'horizontal', false);
-    itemWidth = getNumericProp(embodimentMap, 'itemWidth');
-    itemHeight = getNumericProp(embodimentMap, 'itemHeight');
   }
 }

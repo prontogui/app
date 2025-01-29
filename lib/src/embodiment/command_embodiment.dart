@@ -6,6 +6,7 @@ import 'package:dartlib/dartlib.dart' as pg;
 import 'package:flutter/material.dart';
 import 'embodiment_manifest.dart';
 import 'embodiment_args.dart';
+import 'properties.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('Command', [
@@ -18,10 +19,12 @@ EmbodimentPackageManifest getManifest() {
 
 class ElevatedButtonCommandEmbodiment extends StatelessWidget {
   ElevatedButtonCommandEmbodiment.fromArgs(this.args, {super.key})
-      : command = args.primitive as pg.Command;
+      : command = args.primitive as pg.Command,
+        props = CommonProperties.fromMap(args.primitive.embodimentProperties);
 
   final EmbodimentArgs args;
   final pg.Command command;
+  final CommonProperties props;
 
   Widget _buildAsHidden(BuildContext context) {
     return const SizedBox.shrink();
@@ -43,10 +46,12 @@ class ElevatedButtonCommandEmbodiment extends StatelessWidget {
 
 class OutlinedButtonCommandEmbodiment extends StatelessWidget {
   OutlinedButtonCommandEmbodiment.fromArgs(this.args, {super.key})
-      : command = args.primitive as pg.Command;
+      : command = args.primitive as pg.Command,
+        props = CommonProperties.fromMap(args.primitive.embodimentProperties);
 
   final EmbodimentArgs args;
   final pg.Command command;
+  final CommonProperties props;
 
   Widget _buildAsHidden(BuildContext context) {
     return const SizedBox.shrink();

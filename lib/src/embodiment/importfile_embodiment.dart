@@ -8,6 +8,7 @@ import 'package:file_picker/file_picker.dart';
 import 'dart:io';
 import 'embodiment_manifest.dart';
 import 'embodiment_args.dart';
+import 'properties.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('ImportFile', [
@@ -17,10 +18,12 @@ EmbodimentPackageManifest getManifest() {
 
 class ImportFileEmbodiment extends StatelessWidget {
   ImportFileEmbodiment.fromArgs(this.args, {super.key})
-      : importFile = args.primitive as pg.ImportFile;
+      : importFile = args.primitive as pg.ImportFile,
+        props = CommonProperties.fromMap(args.primitive.embodimentProperties);
 
   final EmbodimentArgs args;
   final pg.ImportFile importFile;
+  final CommonProperties props;
 
   @override
   Widget build(BuildContext context) {

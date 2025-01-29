@@ -5,17 +5,17 @@
 import '../embodifier.dart';
 import 'package:dartlib/dartlib.dart' as pg;
 import 'package:flutter/material.dart';
-import 'embodiment_property_help.dart';
 import 'embodiment_args.dart';
+import 'properties.dart';
 
 class SnackBarEmbodiment extends StatefulWidget {
   SnackBarEmbodiment.fromArgs(this.args, {super.key})
       : frame = args.primitive as pg.Frame,
-        props = SnackBarEmbodimentProperties.fromMap(
+        props = FrameSnackbarProperties.fromMap(
             args.primitive.embodimentProperties);
   final EmbodimentArgs args;
   final pg.Frame frame;
-  final SnackBarEmbodimentProperties props;
+  final FrameSnackbarProperties props;
 
   @override
   State<SnackBarEmbodiment> createState() => _SnackBarEmbodimentState();
@@ -82,13 +82,26 @@ class _SnackBarEmbodimentState extends State<SnackBarEmbodiment> {
     //var textP = textPrimitive as pg.Text;
     //print("Building snackbar:  ${textP.content}");
 
+    Duration duration = widget.props.snackbarDuration != null
+        ? Duration(
+            milliseconds: (widget.props.snackbarDuration! * 1000).toInt())
+        : const Duration(seconds: 3);
+
+    late SnackBarBehavior behavior;
+    switch (widget.props.snackbarBehavior) {
+      case SnackbarBehavior.fixed:
+        behavior = SnackBarBehavior.fixed;
+      case SnackbarBehavior.floating:
+        behavior = SnackBarBehavior.floating;
+    }
+
     // This is a placeholder for the actual SnackBar content.
     return SnackBar(
       content: textEmbodiment,
       action: buildSnackBarAction(),
-      duration: widget.props.duration,
-      behavior: widget.props.behavior,
-      showCloseIcon: widget.props.showCloseIcon,
+      duration: duration,
+      behavior: behavior,
+      showCloseIcon: widget.props.snackbarShowCloseIcon,
     );
   }
 
@@ -137,24 +150,4 @@ class _SnackBarEmbodimentState extends State<SnackBarEmbodiment> {
       }
     }
   }
-}
-
-class SnackBarEmbodimentProperties {
-  Duration duration;
-  bool showCloseIcon;
-  SnackBarBehavior? behavior;
-
-  /// General constructor for testing purposes.  In practice, other constructors
-  /// should be called instead.
-  @visibleForTesting
-  SnackBarEmbodimentProperties(
-      {this.duration = const Duration(seconds: 0), this.showCloseIcon = false});
-
-  SnackBarEmbodimentProperties.fromMap(Map<String, dynamic>? embodimentMap)
-      // Note:  The default duration is 4.0 seconds and ranges between 1 to 60 seconds
-      : duration = Duration(
-            seconds: getIntPropOrDefault(embodimentMap, "duration", 1, 60, 4)),
-        showCloseIcon =
-            getBoolPropOrDefault(embodimentMap, "showCloseIcon", false),
-        behavior = getSnackBarBehavior(embodimentMap, "behavior");
 }

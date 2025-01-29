@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'common_properties.dart';
+import 'properties.dart';
 
 /// Encloses a Widget [content] with a SizingBox if properties specify a width
 /// and/or height.  It also encloses the [content] with an Expanded widget
 /// depending on the parent widget type.  This is necessary to avoid the dreaded
 /// Flutter exceptions related to unbound viewports.
 Widget encloseWithSizingAndBounding(
-    Widget content, CommonProperties props, String parentWidgetType,
+    Widget content, CommonPropertyAccess props, String parentWidgetType,
     {bool horizontalUnbounded = false,
     bool verticalUnbounded = false,
     bool useExpanded = false,

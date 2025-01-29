@@ -2,13 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'common_properties.dart';
 import 'embodiment_help.dart';
 import 'package:dartlib/dartlib.dart' as pg;
 import 'package:flutter/material.dart';
 import 'embodiment_manifest.dart';
 import 'embodiment_args.dart';
 import '../widgets/choice_field.dart';
+import 'properties.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('Choice', [
@@ -20,8 +20,7 @@ EmbodimentPackageManifest getManifest() {
 class DefaultChoiceEmbodiment extends StatelessWidget {
   DefaultChoiceEmbodiment.fromArgs(this.args, {super.key})
       : choice = args.primitive as pg.Choice,
-        props = DefaultChoiceEmbodimentProperties.fromMap(
-            args.primitive.embodimentProperties);
+        props = CommonProperties.fromMap(args.primitive.embodimentProperties);
 
   final EmbodimentArgs args;
   final pg.Choice choice;
@@ -44,19 +43,14 @@ class DefaultChoiceEmbodiment extends StatelessWidget {
   }
 }
 
-class DefaultChoiceEmbodimentProperties extends CommonProperties {
-  DefaultChoiceEmbodimentProperties.fromMap(
-      Map<String, dynamic>? embodimentMap) {
-    super.fromMap(embodimentMap);
-  }
-}
-
 class ButtonChoiceEmbodiment extends StatefulWidget {
   ButtonChoiceEmbodiment.fromArgs(this.args, {super.key})
-      : choice = args.primitive as pg.Choice;
+      : choice = args.primitive as pg.Choice,
+        props = CommonProperties.fromMap(args.primitive.embodimentProperties);
 
   final EmbodimentArgs args;
   final pg.Choice choice;
+  final CommonProperties props;
 
   List<String> get choices {
     return choice.choices;

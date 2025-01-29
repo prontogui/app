@@ -3,11 +3,9 @@
 // found in the LICENSE file.
 
 import 'embodiment_help.dart';
-import 'embodiment_property_help.dart';
 import 'embodiment_manifest.dart';
 import 'package:dartlib/dartlib.dart' as pg;
 import 'package:flutter/material.dart';
-import 'common_properties.dart';
 import '../widgets/color_field.dart';
 import '../widgets/numeric_field.dart';
 import 'dart:core';

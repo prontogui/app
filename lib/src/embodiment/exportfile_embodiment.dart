@@ -8,6 +8,7 @@ import 'package:file_picker/file_picker.dart';
 import 'dart:io';
 import 'embodiment_manifest.dart';
 import 'embodiment_args.dart';
+import 'properties.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('ExportFile', [
@@ -19,10 +20,12 @@ class ExportFileEmbodiment extends StatelessWidget {
   ExportFileEmbodiment.fromArgs(
     this.args, {
     super.key,
-  }) : exportFile = args.primitive as pg.ExportFile;
+  })  : exportFile = args.primitive as pg.ExportFile,
+        props = CommonProperties.fromMap(args.primitive.embodimentProperties);
 
   final EmbodimentArgs args;
   final pg.ExportFile exportFile;
+  final CommonProperties props;
 
   @override
   Widget build(BuildContext context) {

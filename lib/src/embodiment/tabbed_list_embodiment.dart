@@ -6,22 +6,21 @@ import 'embodiment_help.dart';
 import 'package:dartlib/dartlib.dart' as pg;
 import '../embodifier.dart';
 import 'package:flutter/material.dart';
-import 'common_properties.dart';
-import 'embodiment_property_help.dart';
 import 'icon_map.dart';
 import 'embodiment_args.dart';
+import 'properties.dart';
 
 class TabbedListEmbodiment extends StatelessWidget {
   TabbedListEmbodiment.fromArgs(
     this.args, {
     super.key,
   })  : list = args.primitive as pg.ListP,
-        props = TabbedListEmbodimentProperties.fromMap(
-            args.primitive.embodimentProperties);
+        props =
+            ListTabbedProperties.fromMap(args.primitive.embodimentProperties);
 
   final EmbodimentArgs args;
   final pg.ListP list;
-  final TabbedListEmbodimentProperties props;
+  final ListTabbedProperties props;
 
   Widget embodifySingleItem(BuildContext context, Embodifier embodifier,
       pg.Primitive item, String parentWidgetType) {
@@ -84,10 +83,11 @@ class TabbedListEmbodiment extends StatelessWidget {
     });
 
     var tabHeight = props.tabHeight;
+    var animationPeriod = Duration(milliseconds: props.animationPeriod);
 
     var content = DefaultTabController(
         length: tabs.length,
-        animationDuration: props.animationPeriod,
+        animationDuration: animationPeriod,
         child: Column(
           children: [
             SizedBox(
@@ -101,20 +101,5 @@ class TabbedListEmbodiment extends StatelessWidget {
         ));
     return encloseWithSizingAndBounding(content, props, parentWidgetType,
         verticalUnbounded: true);
-  }
-}
-
-class TabbedListEmbodimentProperties with CommonProperties {
-  late final double? tabHeight;
-  Duration? animationPeriod;
-
-  TabbedListEmbodimentProperties.fromMap(Map<String, dynamic>? embodimentMap) {
-    super.fromMap(embodimentMap);
-
-    tabHeight = getNumericProp(embodimentMap, 'tabHeight');
-    var period = getIntProp(embodimentMap, 'animationPeriod', 0, 5000);
-    if (period != null) {
-      animationPeriod = Duration(milliseconds: period);
-    }
   }
 }

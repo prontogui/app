@@ -2,14 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:app/src/embodiment/embodiment_help.dart';
-
 import '../embodifier.dart';
 import 'package:dartlib/dartlib.dart' as pg;
 import 'package:flutter/material.dart';
 import 'embodiment_manifest.dart';
 import 'embodiment_args.dart';
-import 'common_properties.dart';
+import 'properties.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('Group', [
@@ -20,12 +18,11 @@ EmbodimentPackageManifest getManifest() {
 class GroupEmbodiment extends StatelessWidget {
   GroupEmbodiment.fromArgs(this.args, {super.key})
       : group = args.primitive as pg.Group,
-        props = GroupEmbodimentProperties.fromMap(
-            args.primitive.embodimentProperties);
+        props = CommonProperties.fromMap(args.primitive.embodimentProperties);
 
   final EmbodimentArgs args;
   final pg.Group group;
-  final GroupEmbodimentProperties props;
+  final CommonProperties props;
 
   @override
   Widget build(BuildContext context) {
@@ -61,11 +58,5 @@ class GroupEmbodiment extends StatelessWidget {
     // NEXT:  why horizontalUnbounded: false, verticalUnbounded: true???
     return encloseWithSizingAndBounding(content, props, parentWidgetType,
         horizontalUnbounded: false, verticalUnbounded: true, useShrink: true);
-  }
-}
-
-class GroupEmbodimentProperties extends CommonProperties {
-  GroupEmbodimentProperties.fromMap(Map<String, dynamic>? embodimentMap) {
-    super.fromMap(embodimentMap);
   }
 }

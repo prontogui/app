@@ -7,6 +7,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'embodiment_manifest.dart';
 import 'embodiment_args.dart';
+import 'properties.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('Check', [
@@ -16,10 +17,12 @@ EmbodimentPackageManifest getManifest() {
 
 class CheckEmbodiment extends StatefulWidget {
   CheckEmbodiment.fromArgs(this.args, {super.key})
-      : check = args.primitive as pg.Check;
+      : check = args.primitive as pg.Check,
+        props = CommonProperties.fromMap(args.primitive.embodimentProperties);
 
   final EmbodimentArgs args;
   final pg.Check check;
+  final CommonPropertyAccess props;
 
   @override
   State<CheckEmbodiment> createState() {

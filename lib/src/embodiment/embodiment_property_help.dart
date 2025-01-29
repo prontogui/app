@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+
+/*
+
 import 'package:app/src/widgets/numeric_field.dart';
 import 'package:flutter/material.dart';
 
@@ -171,6 +174,7 @@ FontStyle? getFontStyle(Map<String, dynamic>? embodimentMap) {
   throw Exception('invalid property value for fontStyle');
 }
 
+/*
 double? getNumericProp(Map<String, dynamic>? embodimentMap, String propertyName,
     [double minValue = double.negativeInfinity,
     double maxValue = double.infinity]) {
@@ -194,7 +198,31 @@ double? getNumericProp(Map<String, dynamic>? embodimentMap, String propertyName,
 
   return n;
 }
+*/
 
+double? getNumericProp(dynamic value,
+    [double minValue = double.negativeInfinity,
+    double maxValue = double.infinity]) {
+  if (value.runtimeType != String) {
+    throw Exception('embodiment property value is not a string');
+  }
+
+  var numericString = value as String;
+
+  var n = double.tryParse(numericString);
+  if (n == null) {
+    return null;
+  }
+  if (n < minValue) {
+    return minValue;
+  }
+  if (n > maxValue) {
+    return maxValue;
+  }
+  return n;
+}
+
+/*
 int? getIntProp(Map<String, dynamic>? embodimentMap, String propertyName,
     int minValue, int maxValue) {
   if (embodimentMap == null) {
@@ -211,10 +239,36 @@ int? getIntProp(Map<String, dynamic>? embodimentMap, String propertyName,
   var numericString = value as String;
 
   var n = int.tryParse(numericString);
-  if (n == null || n < minValue || n > maxValue) {
+  if (n == null) {
     return null;
   }
+  if (n < minValue) {
+    return minValue;
+  }
+  if (n > maxValue) {
+    return maxValue;
+  }
+  return n;
+}
+*/
 
+int? getIntProp(dynamic value, int minValue, int maxValue) {
+  if (value.runtimeType != String) {
+    throw Exception('embodiment property value is not a string');
+  }
+
+  var numericString = value as String;
+
+  var n = int.tryParse(numericString);
+  if (n == null) {
+    return null;
+  }
+  if (n < minValue) {
+    return minValue;
+  }
+  if (n > maxValue) {
+    return maxValue;
+  }
   return n;
 }
 
@@ -292,3 +346,6 @@ SnackBarBehavior? getSnackBarBehavior(
 
   throw Exception('invalid property value for $propertyName');
 }
+
+
+*/
