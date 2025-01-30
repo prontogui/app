@@ -6,7 +6,8 @@ import 'package:dartlib/dartlib.dart' as pg;
 import 'package:flutter/material.dart';
 import 'embodifier.dart';
 import 'inherited_primitive_model.dart';
-import 'embodiment/embodiment_property_help.dart';
+import 'embodiment/embodiment_args.dart';
+import 'embodiment/properties.dart';
 
 /// The top-level coordinator is responsible for tracking the top-level primitives,
 /// sorting them into background primitives, full-view frames, and diaglog-view
@@ -200,8 +201,10 @@ class _TopLevelCoordinatorState extends State<TopLevelCoordinator>
     return MaterialPageRoute(
         settings: RouteSettings(
             arguments: RouteArgs(index: index, frame: frame, isFullView: true)),
-        builder: (BuildContext context) =>
-            embodifier.buildPrimitive(context, primitive, "<Top>"));
+        builder: (BuildContext context) => embodifier.buildPrimitive(
+              context,
+              EmbodimentArgs(primitive, parentIsTopView: true),
+            ));
   }
 
   /// Shows a new dialog-view frame.  Internally, this new view gets pushed onto the Navigator.
@@ -216,7 +219,8 @@ class _TopLevelCoordinatorState extends State<TopLevelCoordinator>
                 RouteArgs(index: index, frame: frame, isFullView: false)),
         builder: (BuildContext context) {
           return Dialog(
-              child: embodifier.buildPrimitive(context, primitive, "<Top>"));
+              child: embodifier.buildPrimitive(
+                  context, EmbodimentArgs(primitive, parentIsTopView: true)));
         }).whenComplete(() {
       // Update the model to reflect that dialog was dismissed by the user
       frame.showing = false;
@@ -261,8 +265,9 @@ class _TopLevelCoordinatorState extends State<TopLevelCoordinator>
     for (int i = 0; i < primitives.length; i++) {
       if (primitives[i] is pg.Frame) {
         var frame = primitives[i] as pg.Frame;
+
         var embodiment =
-            getStringProp(frame.embodimentProperties, 'embodiment', '');
+            EmbodimentProperty.getFromMap(frame.embodimentProperties);
 
         switch (embodiment) {
           case "full-view":

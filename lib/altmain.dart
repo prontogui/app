@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 import 'package:app/src/embodiment/choice_embodiment.dart';
-import 'package:app/src/embodiment/common_props.dart';
 import 'package:app/src/embodiment/text_embodiment.dart';
 import 'package:app/src/widgets/numeric_field.dart';
 import 'package:flutter/material.dart';

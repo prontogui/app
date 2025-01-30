@@ -2,12 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'common_props.dart';
 import 'embodiment_help.dart';
 import 'package:dartlib/dartlib.dart' as pg;
 import 'package:flutter/material.dart';
 import 'embodiment_manifest.dart';
 import 'embodiment_args.dart';
+import 'properties.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('TextField', [
@@ -20,12 +20,11 @@ EmbodimentPackageManifest getManifest() {
 class TextFieldEmbodiment extends StatefulWidget {
   TextFieldEmbodiment.fromArgs(this.args, {super.key})
       : textfield = args.primitive as pg.TextField,
-        props = TextFieldEmbodimentProperties.fromMap(
-            args.primitive.embodimentProperties);
+        props = CommonProperties.fromMap(args.primitive.embodimentProperties);
 
   final EmbodimentArgs args;
   final pg.TextField textfield;
-  final TextFieldEmbodimentProperties props;
+  final CommonProperties props;
 
   @override
   State<TextFieldEmbodiment> createState() => _TextFieldEmbodimentState();
@@ -94,11 +93,5 @@ class _TextFieldEmbodimentState extends State<TextFieldEmbodiment> {
     return encloseWithSizingAndBounding(
         content, widget.props, widget.parentWidgetType,
         horizontalUnbounded: true, verticalUnbounded: true, useExpanded: true);
-  }
-}
-
-class TextFieldEmbodimentProperties extends CommonProperties {
-  TextFieldEmbodimentProperties.fromMap(Map<String, dynamic>? embodimentMap) {
-    super.fromMap(embodimentMap);
   }
 }

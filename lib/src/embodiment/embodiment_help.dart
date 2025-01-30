@@ -1,6 +1,19 @@
 import 'package:flutter/material.dart';
 import 'properties.dart';
 
+/*
+  Widget incorporatedPadding(Widget child) {
+    if (paddingLeft != 0.0 || paddingRight != 0.0) {
+      return Padding(
+        padding: EdgeInsets.only(left: paddingLeft, right: paddingRight),
+        child: child,
+      );
+    }
+
+    return child;
+  }
+*/
+
 /// Encloses a Widget [content] with a SizingBox if properties specify a width
 /// and/or height.  It also encloses the [content] with an Expanded widget
 /// depending on the parent widget type.  This is necessary to avoid the dreaded

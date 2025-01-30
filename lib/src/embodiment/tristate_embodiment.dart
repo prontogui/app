@@ -7,6 +7,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'embodiment_manifest.dart';
 import 'embodiment_args.dart';
+import 'properties.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('Tristate', [
@@ -16,10 +17,12 @@ EmbodimentPackageManifest getManifest() {
 
 class TristateEmbodiment extends StatefulWidget {
   TristateEmbodiment.fromArgs(this.args, {super.key})
-      : tristate = args.primitive as pg.Tristate;
+      : tristate = args.primitive as pg.Tristate,
+        props = CommonProperties.fromMap(args.primitive.embodimentProperties);
 
   final EmbodimentArgs args;
   final pg.Tristate tristate;
+  final CommonProperties props;
 
   @override
   State<TristateEmbodiment> createState() {

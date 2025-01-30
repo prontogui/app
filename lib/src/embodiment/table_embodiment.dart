@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 import 'embodiment_manifest.dart';
 import 'embodiment_args.dart';
+import 'properties.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('Table', [
@@ -17,10 +18,12 @@ EmbodimentPackageManifest getManifest() {
 
 class TableEmbodiment extends StatelessWidget {
   TableEmbodiment.fromArgs(this.args, {super.key})
-      : table = args.primitive as pg.Table;
+      : table = args.primitive as pg.Table,
+        props = CommonProperties.fromMap(args.primitive.embodimentProperties);
 
   final EmbodimentArgs args;
   final pg.Table table;
+  final CommonProperties props;
 
   @override
   Widget build(BuildContext context) {

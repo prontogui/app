@@ -6,8 +6,8 @@ import 'package:dartlib/dartlib.dart'; // as pg;
 import 'package:flutter/widgets.dart';
 import 'embodiment/notifier.dart';
 import 'embodiment/embodiment_factory.dart';
-import 'embodiment/embodiment_property_help.dart';
 import 'embodiment/embodiment_args.dart';
+import 'embodiment/properties.dart';
 
 /// This object builds embodiments for the primitive model.
 class Embodifier implements PrimitiveModelWatcher {
@@ -41,8 +41,7 @@ class Embodifier implements PrimitiveModelWatcher {
 
   /// Tests whether a frame is a view-type frame.
   bool isView(Frame frame) {
-    var embodiment =
-        getStringProp(frame.embodimentProperties, 'embodiment', '');
+    var embodiment = EmbodimentProperty.getFromMap(frame.embodimentProperties);
 
     return ["full-view", "dialog-view"].contains(embodiment);
   }

@@ -10,6 +10,7 @@ import '../widgets/color_field.dart';
 import '../widgets/numeric_field.dart';
 import 'dart:core';
 import 'embodiment_args.dart';
+import 'properties.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('NumericField', [
@@ -20,49 +21,33 @@ EmbodimentPackageManifest getManifest() {
   ]);
 }
 
-class DefaultNumericFieldEmbodimentProperties with CommonProperties {
-  int? displayDecimalPlaces;
-  double? minValue;
-  double? maxValue;
-  NegativeDisplayFormat? displayNegativeFormat;
-  bool? displayThousandths;
-  List<String>? popupChoices;
-
-  DefaultNumericFieldEmbodimentProperties.fromMap(
-      Map<String, dynamic>? embodimentMap) {
-    super.fromMap(embodimentMap);
-
-    displayDecimalPlaces =
-        getIntProp(embodimentMap, 'displayDecimalPlaces', -20, 20);
-    minValue = getNumericProp(
-        embodimentMap, 'minValue', double.negativeInfinity, double.infinity);
-    maxValue = getNumericProp(
-        embodimentMap, 'maxValue', double.negativeInfinity, double.infinity);
-    displayNegativeFormat = getEnumProp<NegativeDisplayFormat>(embodimentMap,
-        'displayNegativeFormat', null, NegativeDisplayFormat.values);
-    displayThousandths =
-        getBoolPropOrDefault(embodimentMap, 'displayThousandths', false);
-    popupChoices = getStringArrayProp(embodimentMap, 'popupChoices');
-  }
-}
-
 class DefaultNumericFieldEmbodiment extends StatelessWidget {
   DefaultNumericFieldEmbodiment.fromArgs(this.args, {super.key})
       : numfield = args.primitive as pg.NumericField,
-        props = DefaultNumericFieldEmbodimentProperties.fromMap(
+        props = NumericFieldDefaultProperties.fromMap(
             args.primitive.embodimentProperties);
 
   final EmbodimentArgs args;
   final pg.NumericField numfield;
-  final DefaultNumericFieldEmbodimentProperties props;
+  final NumericFieldDefaultProperties props;
 
   @override
   Widget build(BuildContext context) {
+    late NegativeDisplayFormat displayNegativeFormat;
+    switch (props.displayNegativeFormat) {
+      case DisplayNegativeFormat.absolute:
+        displayNegativeFormat = NegativeDisplayFormat.absolute;
+      case DisplayNegativeFormat.minusSignPrefix:
+        displayNegativeFormat = NegativeDisplayFormat.minusSignPrefix;
+      case DisplayNegativeFormat.parens:
+        displayNegativeFormat = NegativeDisplayFormat.parens;
+    }
+
     var field = NumericField(
         initialValue: numfield.numericEntry,
         displayDecimalPlaces: props.displayDecimalPlaces,
         displayThousandths: props.displayThousandths,
-        displayNegativeFormat: props.displayNegativeFormat,
+        displayNegativeFormat: displayNegativeFormat,
         minValue: props.minValue,
         maxValue: props.maxValue,
         popupChoices: props.popupChoices,
@@ -80,22 +65,14 @@ class DefaultNumericFieldEmbodiment extends StatelessWidget {
   }
 }
 
-class FontSizeNumericFielEmbodimentProperties with CommonProperties {
-  FontSizeNumericFielEmbodimentProperties.fromMap(
-      Map<String, dynamic>? embodimentMap) {
-    super.fromMap(embodimentMap);
-  }
-}
-
 class FontSizeNumericFieldEmbodiment extends StatelessWidget {
   FontSizeNumericFieldEmbodiment.fromArgs(this.args, {super.key})
       : numfield = args.primitive as pg.NumericField,
-        props = FontSizeNumericFielEmbodimentProperties.fromMap(
-            args.primitive.embodimentProperties);
+        props = CommonProperties.fromMap(args.primitive.embodimentProperties);
 
   final EmbodimentArgs args;
   final pg.NumericField numfield;
-  final FontSizeNumericFielEmbodimentProperties props;
+  final CommonProperties props;
 
   static const _fontChoices = [
     '8',
@@ -140,22 +117,14 @@ class FontSizeNumericFieldEmbodiment extends StatelessWidget {
   }
 }
 
-class ColorNumericFieldEmbodimentProperties with CommonProperties {
-  ColorNumericFieldEmbodimentProperties.fromMap(
-      Map<String, dynamic>? embodimentMap) {
-    super.fromMap(embodimentMap);
-  }
-}
-
 class ColorNumericFieldEmbodiment extends StatelessWidget {
   ColorNumericFieldEmbodiment.fromArgs(this.args, {super.key})
       : numfield = args.primitive as pg.NumericField,
-        props = ColorNumericFieldEmbodimentProperties.fromMap(
-            args.primitive.embodimentProperties);
+        props = CommonProperties.fromMap(args.primitive.embodimentProperties);
 
   final EmbodimentArgs args;
   final pg.NumericField numfield;
-  final ColorNumericFieldEmbodimentProperties props;
+  final CommonProperties props;
 
   @override
   Widget build(BuildContext context) {

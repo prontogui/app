@@ -4,9 +4,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:dartlib/dartlib.dart' as pg;
-import 'embodiment_property_help.dart';
 import 'embodiment_manifest.dart';
 import 'embodiment_args.dart';
+import 'properties.dart' as p;
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('Text', [
@@ -14,76 +14,82 @@ EmbodimentPackageManifest getManifest() {
   ]);
 }
 
+E2? _convertEnum<E1 extends Enum, E2 extends Enum>(E1 from, List<E2> toEnums) {
+  for (var e in toEnums) {
+    if (e.name == from.name) {
+      return e;
+    }
+  }
+  return null;
+}
+
 class TextEmbodiment extends StatelessWidget {
   TextEmbodiment.fromArgs(this.args, {super.key})
       : text = args.primitive as pg.Text,
-        props = TextEmbodimentProperties.fromMap(
+        props = p.TextDefaultProperties.fromMap(
             args.primitive.embodimentProperties);
 
   final EmbodimentArgs args;
   final pg.Text text;
-  final TextEmbodimentProperties props;
+  final p.TextDefaultProperties props;
 
-  @override
-  Widget build(BuildContext context) {
-    var textChild = Text(
-      text.content,
-      style: props.buildTextStyle(),
-    );
+  TextStyle _buildTextStyle() {
+    late FontWeight fontWeight;
+    switch (props.fontWeight) {
+      case p.FontWeight.normal:
+        fontWeight = FontWeight.normal;
+        break;
+      case p.FontWeight.bold:
+        fontWeight = FontWeight.bold;
+        break;
+      case p.FontWeight.w1:
+        fontWeight = FontWeight.w100;
+        break;
+      case p.FontWeight.w2:
+        fontWeight = FontWeight.w200;
+        break;
+      case p.FontWeight.w3:
+        fontWeight = FontWeight.w300;
+        break;
+      case p.FontWeight.w4:
+        fontWeight = FontWeight.w400;
+        break;
+      case p.FontWeight.w5:
+        fontWeight = FontWeight.w500;
+        break;
+      case p.FontWeight.w6:
+        fontWeight = FontWeight.w600;
+        break;
+      case p.FontWeight.w7:
+        fontWeight = FontWeight.w700;
+        break;
+      case p.FontWeight.w8:
+        fontWeight = FontWeight.w800;
+        break;
+      case p.FontWeight.w9:
+        fontWeight = FontWeight.w900;
+        break;
+    }
 
-    return props.incorporatedPadding(textChild);
-  }
-}
-
-class TextEmbodimentProperties {
-  //String embodiment;
-  Color? color;
-  Color? backgroundColor;
-  String? fontFamily;
-  double? fontSize;
-  FontWeight? fontWeight;
-  double paddingRight;
-  double paddingLeft;
-  FontStyle? fontStyle;
-
-  TextStyle buildTextStyle() {
+    var fontStyle =
+        _convertEnum<p.FontStyle, FontStyle>(props.fontStyle, FontStyle.values);
     return TextStyle(
-      backgroundColor: backgroundColor,
-      color: color,
-      fontSize: fontSize,
-      fontFamily: fontFamily,
+      backgroundColor: props.backgroundColor,
+      color: props.color,
+      fontSize: props.fontSize,
+      fontFamily: props.fontFamily,
       fontWeight: fontWeight,
       fontStyle: fontStyle,
     );
   }
 
-  Widget incorporatedPadding(Widget child) {
-    if (paddingLeft != 0.0 || paddingRight != 0.0) {
-      return Padding(
-        padding: EdgeInsets.only(left: paddingLeft, right: paddingRight),
-        child: child,
-      );
-    }
+  @override
+  Widget build(BuildContext context) {
+    var textChild = Text(
+      text.content,
+      style: _buildTextStyle(),
+    );
 
-    return child;
+    return props.incorporatedPadding(textChild);
   }
-
-  /// General constructor for testing purposes.  In practice, other constructors
-  /// should be called instead.
-  @visibleForTesting
-  TextEmbodimentProperties()
-      : paddingLeft = 0.0,
-        paddingRight = 0.0;
-
-  TextEmbodimentProperties.fromMap(Map<String, dynamic>? embodimentMap)
-      : backgroundColor = getColorProp(embodimentMap, 'backgroundColor'),
-        color = getColorProp(embodimentMap, 'color'),
-        fontSize = getNumericProp(embodimentMap, 'fontSize', 0.1, 100.0),
-        fontFamily = getStringProp(embodimentMap, 'fontFamily', ''),
-        paddingLeft = getNumericPropOrDefault(embodimentMap, "paddingLeft",
-            -double.infinity, double.infinity, 0.0),
-        paddingRight = getNumericPropOrDefault(embodimentMap, "paddingRight",
-            -double.infinity, double.infinity, 0.0),
-        fontWeight = getFontWeight(embodimentMap),
-        fontStyle = getFontStyle(embodimentMap);
 }

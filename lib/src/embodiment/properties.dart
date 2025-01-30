@@ -14,6 +14,7 @@ class PropertyName {
   static const displayDecimalPlaces = 'displayDecimalPlaces';
   static const displayNegativeFormat = 'displayNegativeFormat';
   static const displayThousandths = 'displayThousandths';
+  static const embodiment = 'embodiment';
   static const flowDirection = 'flowDirection';
   static const fontFamily = 'fontFamily';
   static const fontSize = 'fontSize';
@@ -172,6 +173,34 @@ enum SnackbarBehavior { fixed, floating }
 
 Set<String> _namesofSnackbarBehavior = {'fixed', 'floating'};
 
+enum DisplayNegativeFormat { absolute, minusSignPrefix, parens }
+
+Set<String> _namesofDisplayNegativeFormat = {
+  'absolute',
+  'minusSignPrefix',
+  'parens'
+};
+
+enum FontStyle { normal, italic }
+
+Set<String> _namesofFontStyle = {'normal', 'italic'};
+
+enum FontWeight { normal, bold, w1, w2, w3, w4, w5, w6, w7, w8, w9 }
+
+Set<String> _namesofFontWeight = {
+  'normal',
+  'bold',
+  'w1',
+  'w2',
+  'w3',
+  'w4',
+  'w5',
+  'w6',
+  'w7',
+  'w8',
+  'w9'
+};
+
 // Note:  this class is temporary until we have codegen for this file.  Codegen
 // will generate each sub-class in here without a base class, at the expense of
 //
@@ -190,6 +219,8 @@ void _mapCommonProperty(
       propertyMap[name] = getNumericProp(value, 0);
     case PropertyName.borderTop:
       propertyMap[name] = getNumericProp(value, 0);
+    case PropertyName.embodiment:
+      propertyMap[name] = getStringProp(value);
     case PropertyName.height:
       propertyMap[name] = getNumericProp(value, 0);
     case PropertyName.horizontalAlignment:
@@ -235,15 +266,6 @@ void _mapFrameDefaultProperty(
     case PropertyName.flowDirection:
       propertyMap[name] = getEnumProp<FlowDirection>(
           value, FlowDirection.values, _namesofFlowDirection);
-
-    case PropertyName.displayDecimalPlaces:
-      // CONSTRAINTS GO HERE...THESE NEED TO COME FROM SPEC
-      propertyMap[name] = getIntProp(value, -15, 15);
-    case PropertyName.displayThousandths:
-      propertyMap[name] = getBoolProp(value);
-
-    case PropertyName.popupChoices:
-      propertyMap[name] = getStringArrayProp(value);
   }
 }
 
@@ -293,13 +315,42 @@ void _mapListTabbedProperty(
   }
 }
 
-void _mapTextProperty(
+void _mapNumericFieldDefaultProperty(
+    Map<String, dynamic> propertyMap, String name, dynamic value) {
+  switch (name) {
+    case PropertyName.displayDecimalPlaces:
+      propertyMap[name] = getIntProp(value, -15, 15);
+    case PropertyName.displayNegativeFormat:
+      propertyMap[name] = getEnumProp<DisplayNegativeFormat>(
+          value, DisplayNegativeFormat.values, _namesofDisplayNegativeFormat);
+    case PropertyName.displayThousandths:
+      propertyMap[name] = getBoolProp(value);
+    case PropertyName.minValue:
+      propertyMap[name] = getNumericProp(value);
+    case PropertyName.maxValue:
+      propertyMap[name] = getNumericProp(value);
+    case PropertyName.popupChoices:
+      propertyMap[name] = getStringArrayProp(value);
+  }
+}
+
+void _mapTextDefaultProperty(
     Map<String, dynamic> propertyMap, String name, dynamic value) {
   switch (name) {
     case PropertyName.backgroundColor:
       propertyMap[name] = getColorProp(value);
+    case PropertyName.color:
+      propertyMap[name] = getColorProp(value);
     case PropertyName.fontFamily:
       propertyMap[name] = getStringProp(value);
+    case PropertyName.fontSize:
+      propertyMap[name] = getNumericProp(value);
+    case PropertyName.fontStyle:
+      propertyMap[name] =
+          getEnumProp<FontStyle>(value, FontStyle.values, _namesofFontStyle);
+    case PropertyName.fontWeight:
+      propertyMap[name] =
+          getEnumProp<FontWeight>(value, FontWeight.values, _namesofFontWeight);
   }
 }
 
@@ -328,6 +379,7 @@ mixin CommonPropertyAccess on PropertyAccessBase {
   double? get borderRight =>
       _getDoubleT(_propertyMap, PropertyName.borderRight);
   double? get borderTop => _getDoubleT(_propertyMap, PropertyName.borderTop);
+  String? get embodiment => _getStringT(_propertyMap, PropertyName.embodiment);
   double? get height => _getDoubleT(_propertyMap, PropertyName.height);
   HorizontalAlignment get horizontalAlignment => _getEnumT<HorizontalAlignment>(
       _propertyMap, HorizontalAlignment.left, PropertyName.horizontal);
@@ -398,6 +450,32 @@ mixin ListTabbedPropertyAccess on PropertyAccessBase {
   int get animationPeriod =>
       _getIntT(_propertyMap, PropertyName.animationPeriod, 0);
   double? get tabHeight => _getDoubleT(_propertyMap, PropertyName.tabHeight);
+}
+
+mixin NumericFieldDefaultPropertyAccess on PropertyAccessBase {
+  int get displayDecimalPlaces =>
+      _getIntT(_propertyMap, PropertyName.displayDecimalPlaces, -15);
+  DisplayNegativeFormat get displayNegativeFormat => _getEnumT(
+      _propertyMap,
+      DisplayNegativeFormat.minusSignPrefix,
+      PropertyName.displayNegativeFormat);
+  bool get displayThousandths =>
+      _getYesNoT(_propertyMap, PropertyName.displayThousandths, false);
+  double? get maxValue => _getDoubleT(_propertyMap, PropertyName.minValue);
+  double? get minValue => _getDoubleT(_propertyMap, PropertyName.minValue);
+  List<String>? get popupChoices =>
+      _getStringArrayT(_propertyMap, PropertyName.popupChoices);
+}
+mixin TextDefaultPropertyAccess on PropertyAccessBase {
+  Color? get backgroundColor =>
+      _getColorT(_propertyMap, PropertyName.backgroundColor);
+  Color? get color => _getColorT(_propertyMap, PropertyName.color);
+  String? get fontFamily => _getStringT(_propertyMap, PropertyName.fontFamily);
+  double? get fontSize => _getDoubleT(_propertyMap, PropertyName.fontSize);
+  FontStyle get fontStyle => _getEnumT<FontStyle>(
+      _propertyMap, FontStyle.normal, PropertyName.fontStyle);
+  FontWeight get fontWeight => _getEnumT<FontWeight>(
+      _propertyMap, FontWeight.normal, PropertyName.fontWeight);
 }
 
 class CommonProperties extends PropertyAccessBase with CommonPropertyAccess {
@@ -487,6 +565,52 @@ class ListTabbedProperties extends PropertyAccessBase
       _mapCommonProperty(_propertyMap!, kv.key, kv.value);
       _mapListTabbedProperty(_propertyMap!, kv.key, kv.value);
     }
+  }
+}
+
+class NumericFieldDefaultProperties extends PropertyAccessBase
+    with CommonPropertyAccess, NumericFieldDefaultPropertyAccess {
+  NumericFieldDefaultProperties.fromMap(Map<String, dynamic>? embodimentMap) {
+    if (embodimentMap == null || embodimentMap.isEmpty) {
+      _propertyMap = null;
+      return;
+    }
+    _propertyMap = <String, dynamic>{};
+    for (var kv in embodimentMap.entries) {
+      _mapCommonProperty(_propertyMap!, kv.key, kv.value);
+      _mapNumericFieldDefaultProperty(_propertyMap!, kv.key, kv.value);
+    }
+  }
+}
+
+class TextDefaultProperties extends PropertyAccessBase
+    with CommonPropertyAccess, TextDefaultPropertyAccess {
+  TextDefaultProperties.fromMap(Map<String, dynamic>? embodimentMap) {
+    if (embodimentMap == null || embodimentMap.isEmpty) {
+      _propertyMap = null;
+      return;
+    }
+    _propertyMap = <String, dynamic>{};
+    for (var kv in embodimentMap.entries) {
+      _mapCommonProperty(_propertyMap!, kv.key, kv.value);
+      _mapTextDefaultProperty(_propertyMap!, kv.key, kv.value);
+    }
+  }
+}
+
+class EmbodimentProperty {
+  static String getFromMap(Map<String, dynamic>? embodimentMap) {
+    if (embodimentMap == null) {
+      // Return default
+      return '';
+    }
+    var item = embodimentMap[PropertyName.embodiment];
+    if (item == null || item is! String) {
+      // Return default
+      return '';
+    }
+
+    return item;
   }
 }
 
