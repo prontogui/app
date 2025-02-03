@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:dartlib/dartlib.dart' as pg;
 import 'embodiment_manifest.dart';
 import 'embodiment_args.dart';
+import 'embodiment_help.dart';
 import 'properties.dart' as p;
 
 EmbodimentPackageManifest getManifest() {
@@ -85,11 +86,11 @@ class TextEmbodiment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var textChild = Text(
+    var content = Text(
       text.content,
       style: _buildTextStyle(),
     );
 
-    return props.incorporatedPadding(textChild);
+    return encloseWithPBMSAF(content, props, args);
   }
 }

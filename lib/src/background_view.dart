@@ -39,8 +39,9 @@ class BackgroundView extends StatelessWidget {
         );
       } else {
         return Column(
-          children: InheritedEmbodifier.of(context)
-              .buildPrimitiveList(context, backgroundItems),
+          children: InheritedEmbodifier.of(context).buildPrimitiveList(
+              context, backgroundItems,
+              verticalUnbounded: true),
         );
       }
     }

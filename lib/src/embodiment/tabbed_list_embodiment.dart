@@ -99,7 +99,6 @@ class TabbedListEmbodiment extends StatelessWidget {
             Expanded(child: TabBarView(children: tabViews))
           ],
         ));
-    return encloseWithSizingAndBounding(content, props, parentWidgetType,
-        verticalUnbounded: true);
+    return encloseWithPBMSAF(content, props, args, verticalUnbounded: true);
   }
 }

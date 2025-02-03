@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 import 'embodiment_manifest.dart';
 import 'embodiment_args.dart';
+import 'embodiment_help.dart';
 import 'properties.dart';
 
 EmbodimentPackageManifest getManifest() {
@@ -84,11 +85,12 @@ class TableEmbodiment extends StatelessWidget {
     // NOTE:  more thought should be put into generating an appropriate key for the table, due to the
     // dynamic nature of building user interfaces.  For now, we'll use the fingerprint of the header
     // titles to form a key.
-    return PaginatedDataTable(
+    var content = PaginatedDataTable(
         rowsPerPage: 5,
         columns: columnsD,
         source: ds,
         key: Key(headerFingerprint));
+    return encloseWithPBMSAF(content, props, args);
   }
 }
 

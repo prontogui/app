@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:dartlib/dartlib.dart' as pg;
 import 'icon_map.dart';
 import 'embodiment_manifest.dart';
+import 'embodiment_help.dart';
 import 'embodiment_args.dart';
 import 'properties.dart';
 
@@ -23,7 +24,9 @@ class IconEmbodiment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Icon(translateIdToIconData(icon.iconID),
+    var content = Icon(translateIdToIconData(icon.iconID),
         color: props.color, size: props.size);
+
+    return encloseWithPBMSAF(content, props, args);
   }
 }

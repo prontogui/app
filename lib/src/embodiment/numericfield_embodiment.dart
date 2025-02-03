@@ -10,6 +10,7 @@ import '../widgets/color_field.dart';
 import '../widgets/numeric_field.dart';
 import 'dart:core';
 import 'embodiment_args.dart';
+import 'embodiment_help.dart';
 import 'properties.dart';
 
 EmbodimentPackageManifest getManifest() {
@@ -43,7 +44,7 @@ class DefaultNumericFieldEmbodiment extends StatelessWidget {
         displayNegativeFormat = NegativeDisplayFormat.parens;
     }
 
-    var field = NumericField(
+    var content = NumericField(
         initialValue: numfield.numericEntry,
         displayDecimalPlaces: props.displayDecimalPlaces,
         displayThousandths: props.displayThousandths,
@@ -55,13 +56,7 @@ class DefaultNumericFieldEmbodiment extends StatelessWidget {
           numfield.numericEntry = value;
         });
 
-    if (parentWidgetType == "Row" || parentWidgetType == "Column") {
-      return Flexible(
-        child: field,
-      );
-    }
-
-    return field;
+    return encloseWithPBMSAF(content, props, args);
   }
 }
 
@@ -112,8 +107,7 @@ class FontSizeNumericFieldEmbodiment extends StatelessWidget {
       popupChooserIcon: const Icon(Icons.numbers),
     );
 
-    return encloseWithSizingAndBounding(content, props, parentWidgetType,
-        horizontalUnbounded: true, verticalUnbounded: true, useExpanded: true);
+    return encloseWithPBMSAF(content, props, args);
   }
 }
 
@@ -128,18 +122,12 @@ class ColorNumericFieldEmbodiment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var field = ColorField(
+    var content = ColorField(
         initialValue: numfield.numericEntry,
         onSubmitted: (value) {
           numfield.numericEntry = value;
         });
 
-    if (parentWidgetType == "Row" || parentWidgetType == "Column") {
-      return Flexible(
-        child: field,
-      );
-    }
-
-    return field;
+    return encloseWithPBMSAF(content, props, args);
   }
 }

@@ -231,19 +231,7 @@ class _ListEmbodimentState extends State<ListEmbodiment> {
 
     var horizontal = props.horizontal;
 
-    // Note regarding unbounded nature of ListView widget:
-    //
-    // This Flutter error, "Vertical viewport was given unbounded width," means
-    // that a scrollable widget like a ListView is placed inside a layout that
-    // doesn't provide any horizontal constraints, allowing it to expand infinitely
-    // wide, which is causing the layout system to fail.
-    //
-    // This means that vertically scrolling list are unbounded in the horizontal direction
-    // and vice versa.
-
-    return encloseWithSizingAndBounding(content, props, widget.parentWidgetType,
-        useExpanded: true,
-        verticalUnbounded: true,
-        horizontalUnbounded: !horizontal);
+    return encloseWithPBMSAF(content, props, widget.args,
+        verticalUnbounded: true, horizontalUnbounded: !horizontal);
   }
 }

@@ -34,54 +34,35 @@ class FrameEmbodiment extends StatelessWidget {
 
   // Note:  when getting around to implementing a manual layout method, take a look
   // at PositionedDirectional class and Positioned widget.
+
   @override
   Widget build(BuildContext context) {
-    var content = buildRegularContent(context);
-
-    return content;
-  }
-
-  Widget buildRegularContent(BuildContext context) {
     late Widget content;
-    // late bool wrapInExpanded;
+
     bool verticalUnbounded = false;
     bool horizontalUnbounded = false;
 
     switch (props.flowDirection) {
       case FlowDirection.leftToRight:
         content = Row(
-          children: InheritedEmbodifier.of(context)
-              .buildPrimitiveList(context, frame.frameItems),
+          children: InheritedEmbodifier.of(context).buildPrimitiveList(
+              context, frame.frameItems,
+              horizontalUnbounded: true),
         );
         horizontalUnbounded = true;
 
       case FlowDirection.topToBottom:
         content = Column(
-          children: InheritedEmbodifier.of(context)
-              .buildPrimitiveList(context, frame.frameItems),
+          children: InheritedEmbodifier.of(context).buildPrimitiveList(
+              context, frame.frameItems,
+              verticalUnbounded: true),
         );
         verticalUnbounded = true;
     }
 
-/*
-    if (props.border == 'outline') {
-      content = Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.black, width: 3.0),
-        ),
-        child: content,
-      );
-
-      content = Container(
-        padding: const EdgeInsets.all(10.0),
-        child: content,
-      );
-    }
-*/
-    content = encloseWithSizingAndBounding(content, props, parentWidgetType,
+    content = encloseWithPBMSAF(content, props, args,
         horizontalUnbounded: horizontalUnbounded,
-        verticalUnbounded: verticalUnbounded,
-        useExpanded: true);
+        verticalUnbounded: verticalUnbounded);
 
     // Is it a top-level primitive (i.e., a view)?
     if (args.parentIsTopView) {

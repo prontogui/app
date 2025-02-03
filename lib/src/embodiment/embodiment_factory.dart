@@ -17,7 +17,7 @@ import 'tristate_embodiment.dart' as tristate;
 import 'numericfield_embodiment.dart' as numeric_field;
 import 'embodiment_manifest.dart';
 import 'embodiment_args.dart';
-import 'embodiment_property_help.dart';
+import 'properties.dart';
 
 /// Static class/method for creating embodiments.
 class EmbodimentFactory {
@@ -73,7 +73,7 @@ class EmbodimentFactory {
   Widget createEmbodiment(EmbodimentArgs ea) {
     var primitive = ea.primitive;
     var embodiment =
-        getStringProp(primitive.embodimentProperties, 'embodiment', '');
+        EmbodimentProperty.getFromMap(primitive.embodimentProperties);
     var primitiveType = ea.primitive.describeType;
     var pinfo = _factoryInfo[primitiveType];
     if (pinfo == null) {

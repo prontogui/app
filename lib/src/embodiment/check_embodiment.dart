@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:app/src/embodiment/embodiment_help.dart';
 import 'package:dartlib/dartlib.dart' as pg;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -58,7 +59,9 @@ class _CheckEmbodimentState extends State<CheckEmbodiment> {
     );
 
     final label = widget.check.label;
+    bool verticalUnbounded = false;
 
+    late Widget content;
     if (label.isNotEmpty) {
       // Use a RichText / TextSpan combo so user can click on the text to change state.
       var textSpan = TextSpan(
@@ -71,11 +74,15 @@ class _CheckEmbodimentState extends State<CheckEmbodiment> {
 
       var richText = RichText(text: textSpan);
 
-      return Row(
+      content = Row(
         children: [cb, richText],
       );
+      verticalUnbounded = true;
     } else {
-      return cb;
+      content = cb;
     }
+
+    return encloseWithPBMSAF(content, widget.props, widget.args,
+        verticalUnbounded: verticalUnbounded);
   }
 }

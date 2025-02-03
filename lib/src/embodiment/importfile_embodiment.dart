@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:app/src/embodiment/embodiment_help.dart';
 import 'package:dartlib/dartlib.dart' as pg;
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
@@ -27,7 +28,7 @@ class ImportFileEmbodiment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return OutlinedButton(
+    var content = OutlinedButton(
         child: const Text("Select File"),
         onPressed: () async {
           // TODO:  wait asyncrhonously for user to pick file and handle it
@@ -51,5 +52,6 @@ class ImportFileEmbodiment extends StatelessWidget {
 
           // Take Data and write to the file.
         });
+    return encloseWithPBMSAF(content, props, args);
   }
 }

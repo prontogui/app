@@ -7,6 +7,7 @@ import 'package:dartlib/dartlib.dart' as pg;
 import 'package:flutter/material.dart';
 import 'embodiment_manifest.dart';
 import 'embodiment_args.dart';
+import 'embodiment_help.dart';
 import 'properties.dart';
 
 EmbodimentPackageManifest getManifest() {
@@ -90,8 +91,6 @@ class _TextFieldEmbodimentState extends State<TextFieldEmbodiment> {
       focusNode: _focusNode,
     );
 
-    return encloseWithSizingAndBounding(
-        content, widget.props, widget.parentWidgetType,
-        horizontalUnbounded: true, verticalUnbounded: true, useExpanded: true);
+    return encloseWithPBMSAF(content, widget.props, widget.args);
   }
 }

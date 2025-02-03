@@ -1,9 +1,14 @@
 import 'package:dartlib/dartlib.dart';
 
 class EmbodimentArgs {
-  EmbodimentArgs(this.primitive, {this.parentIsTopView = false});
+  EmbodimentArgs(this.primitive,
+      {this.parentIsTopView = false,
+      this.verticalUnbounded = false,
+      this.horizontalUnbounded = false});
 
   final Primitive primitive;
   //final Map<String, dynamic> embodimentMap;
   final bool parentIsTopView;
+  final bool horizontalUnbounded;
+  final bool verticalUnbounded;
 }

@@ -10,6 +10,7 @@ class PropertyName {
   static const borderLeft = 'borderLeft';
   static const borderRight = 'borderRight';
   static const borderTop = 'borderTop';
+  static const bottom = 'bottom';
   static const color = 'color';
   static const displayDecimalPlaces = 'displayDecimalPlaces';
   static const displayNegativeFormat = 'displayNegativeFormat';
@@ -204,7 +205,7 @@ Set<String> _namesofFontWeight = {
 // Note:  this class is temporary until we have codegen for this file.  Codegen
 // will generate each sub-class in here without a base class, at the expense of
 //
-void _mapCommonProperty(
+bool _mapCommonProperty(
     Map<String, dynamic> propertyMap, String name, dynamic value) {
   switch (name) {
     case PropertyName.borderAll:
@@ -219,6 +220,8 @@ void _mapCommonProperty(
       propertyMap[name] = getNumericProp(value, 0);
     case PropertyName.borderTop:
       propertyMap[name] = getNumericProp(value, 0);
+    case PropertyName.bottom:
+      propertyMap[name] = getNumericProp(value);
     case PropertyName.embodiment:
       propertyMap[name] = getStringProp(value);
     case PropertyName.height:
@@ -257,7 +260,10 @@ void _mapCommonProperty(
           value, VerticalAlignment.values, _namesofVerticalAlignment);
     case PropertyName.width:
       propertyMap[name] = getNumericProp(value, 0);
+    default:
+      return false;
   }
+  return true;
 }
 
 void _mapFrameDefaultProperty(
@@ -355,7 +361,8 @@ void _mapTextDefaultProperty(
 }
 
 class PropertyAccessBase {
-  PropertyAccessBase();
+  PropertyAccessBase() : _areCommonProps = false;
+/*
   PropertyAccessBase.commonOnly(Map<String, dynamic>? embodimentMap) {
     if (embodimentMap == null || embodimentMap.isEmpty) {
       _propertyMap = null;
@@ -366,11 +373,60 @@ class PropertyAccessBase {
       _mapCommonProperty(_propertyMap!, kv.key, kv.value);
     }
   }
-
+*/
+  bool _areCommonProps;
   Map<String, dynamic>? _propertyMap;
 }
 
 mixin CommonPropertyAccess on PropertyAccessBase {
+  bool? _isPadding;
+  bool? _isBorder;
+  bool? _isMargin;
+  bool? _isSizing;
+  bool? _isPositioning;
+
+  bool get areCommonPropsSet => _areCommonProps;
+
+  bool get isPadding {
+    _isPadding ??= (paddingAll != null ||
+        paddingLeft != null ||
+        paddingRight != null ||
+        paddingTop != null ||
+        paddingBottom != null);
+
+    return _isPadding!;
+  }
+
+  bool get isBorder {
+    _isBorder ??= (borderAll != null ||
+        borderLeft != null ||
+        borderRight != null ||
+        borderTop != null ||
+        borderBottom != null);
+
+    return _isBorder!;
+  }
+
+  bool get isMargin {
+    _isMargin = _isMargin ??= (marginAll != null ||
+        marginLeft != null ||
+        marginRight != null ||
+        marginTop != null ||
+        marginBottom != null);
+    return _isMargin!;
+  }
+
+  bool get isSizing {
+    _isSizing ??= (width != null || height != null);
+    return _isSizing!;
+  }
+
+  bool get isPositioning {
+    _isPositioning ??=
+        (left != null || right != null || top != null || bottom != null);
+    return _isPositioning!;
+  }
+
   double? get borderAll => _getDoubleT(_propertyMap, PropertyName.borderAll);
   double? get borderBottom =>
       _getDoubleT(_propertyMap, PropertyName.borderBottom);
@@ -379,10 +435,11 @@ mixin CommonPropertyAccess on PropertyAccessBase {
   double? get borderRight =>
       _getDoubleT(_propertyMap, PropertyName.borderRight);
   double? get borderTop => _getDoubleT(_propertyMap, PropertyName.borderTop);
+  double? get bottom => _getDoubleT(_propertyMap, PropertyName.bottom);
   String? get embodiment => _getStringT(_propertyMap, PropertyName.embodiment);
   double? get height => _getDoubleT(_propertyMap, PropertyName.height);
   HorizontalAlignment get horizontalAlignment => _getEnumT<HorizontalAlignment>(
-      _propertyMap, HorizontalAlignment.left, PropertyName.horizontal);
+      _propertyMap, HorizontalAlignment.left, PropertyName.horizontalAlignment);
   double? get left => _getDoubleT(_propertyMap, PropertyName.left);
   double? get marginAll => _getDoubleT(_propertyMap, PropertyName.marginAll);
   double? get marginBottom =>
@@ -486,7 +543,7 @@ class CommonProperties extends PropertyAccessBase with CommonPropertyAccess {
     }
     _propertyMap = <String, dynamic>{};
     for (var kv in embodimentMap.entries) {
-      _mapCommonProperty(_propertyMap!, kv.key, kv.value);
+      _areCommonProps = _mapCommonProperty(_propertyMap!, kv.key, kv.value);
     }
   }
 }
@@ -500,7 +557,7 @@ class FrameDefaultProperties extends PropertyAccessBase
     }
     _propertyMap = <String, dynamic>{};
     for (var kv in embodimentMap.entries) {
-      _mapCommonProperty(_propertyMap!, kv.key, kv.value);
+      _areCommonProps = _mapCommonProperty(_propertyMap!, kv.key, kv.value);
       _mapFrameDefaultProperty(_propertyMap!, kv.key, kv.value);
     }
   }
@@ -515,7 +572,7 @@ class FrameSnackbarProperties extends PropertyAccessBase
     }
     _propertyMap = <String, dynamic>{};
     for (var kv in embodimentMap.entries) {
-      _mapCommonProperty(_propertyMap!, kv.key, kv.value);
+      _areCommonProps = _mapCommonProperty(_propertyMap!, kv.key, kv.value);
       _mapFrameSnackbarProperty(_propertyMap!, kv.key, kv.value);
     }
   }
@@ -530,7 +587,7 @@ class IconDefaultProperties extends PropertyAccessBase
     }
     _propertyMap = <String, dynamic>{};
     for (var kv in embodimentMap.entries) {
-      _mapCommonProperty(_propertyMap!, kv.key, kv.value);
+      _areCommonProps = _mapCommonProperty(_propertyMap!, kv.key, kv.value);
       _mapIconDefaultProperty(_propertyMap!, kv.key, kv.value);
     }
   }
@@ -546,7 +603,7 @@ class ListNormalProperties extends PropertyAccessBase
     }
     _propertyMap = <String, dynamic>{};
     for (var kv in embodimentMap.entries) {
-      _mapCommonProperty(_propertyMap!, kv.key, kv.value);
+      _areCommonProps = _mapCommonProperty(_propertyMap!, kv.key, kv.value);
       _mapListNormalProperty(_propertyMap!, kv.key, kv.value);
     }
   }
@@ -562,7 +619,7 @@ class ListTabbedProperties extends PropertyAccessBase
     }
     _propertyMap = <String, dynamic>{};
     for (var kv in embodimentMap.entries) {
-      _mapCommonProperty(_propertyMap!, kv.key, kv.value);
+      _areCommonProps = _mapCommonProperty(_propertyMap!, kv.key, kv.value);
       _mapListTabbedProperty(_propertyMap!, kv.key, kv.value);
     }
   }
@@ -577,7 +634,7 @@ class NumericFieldDefaultProperties extends PropertyAccessBase
     }
     _propertyMap = <String, dynamic>{};
     for (var kv in embodimentMap.entries) {
-      _mapCommonProperty(_propertyMap!, kv.key, kv.value);
+      _areCommonProps = _mapCommonProperty(_propertyMap!, kv.key, kv.value);
       _mapNumericFieldDefaultProperty(_propertyMap!, kv.key, kv.value);
     }
   }
@@ -592,7 +649,7 @@ class TextDefaultProperties extends PropertyAccessBase
     }
     _propertyMap = <String, dynamic>{};
     for (var kv in embodimentMap.entries) {
-      _mapCommonProperty(_propertyMap!, kv.key, kv.value);
+      _areCommonProps = _mapCommonProperty(_propertyMap!, kv.key, kv.value);
       _mapTextDefaultProperty(_propertyMap!, kv.key, kv.value);
     }
   }

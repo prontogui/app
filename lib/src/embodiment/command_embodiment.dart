@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:app/src/embodiment/embodiment_help.dart';
 import 'package:dartlib/dartlib.dart' as pg;
 import 'package:flutter/material.dart';
 import 'embodiment_manifest.dart';
@@ -37,10 +38,12 @@ class ElevatedButtonCommandEmbodiment extends StatelessWidget {
       return _buildAsHidden(context);
     }
 
-    return ElevatedButton(
+    var content = ElevatedButton(
       onPressed: command.issueNow,
       child: Text(command.label),
     );
+
+    return encloseWithPBMSAF(content, props, args);
   }
 }
 
@@ -64,9 +67,11 @@ class OutlinedButtonCommandEmbodiment extends StatelessWidget {
       return _buildAsHidden(context);
     }
 
-    return OutlinedButton(
+    var content = OutlinedButton(
       onPressed: command.issueNow,
       child: Text(command.label),
     );
+
+    return encloseWithPBMSAF(content, props, args);
   }
 }

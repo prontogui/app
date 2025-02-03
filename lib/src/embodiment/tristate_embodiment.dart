@@ -7,6 +7,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'embodiment_manifest.dart';
 import 'embodiment_args.dart';
+import 'embodiment_help.dart';
 import 'properties.dart';
 
 EmbodimentPackageManifest getManifest() {
@@ -45,7 +46,7 @@ class _TristateEmbodimentState extends State<TristateEmbodiment> {
 
   @override
   Widget build(BuildContext context) {
-    var cb = Checkbox(
+    Widget content = Checkbox(
       value: widget.tristate.stateAsBool,
       onChanged: (bool? value) {
         setCurrentState(value);
@@ -54,6 +55,7 @@ class _TristateEmbodimentState extends State<TristateEmbodiment> {
     );
 
     final label = widget.tristate.label;
+    bool verticalUnbounded = false;
 
     if (label.isNotEmpty) {
       // Use a RichText / TextSpan combo so user can click on the text to change state.
@@ -67,11 +69,13 @@ class _TristateEmbodimentState extends State<TristateEmbodiment> {
 
       var richText = RichText(text: textSpan);
 
-      return Row(
-        children: [cb, richText],
+      content = Row(
+        children: [content, richText],
       );
-    } else {
-      return cb;
+      verticalUnbounded = true;
     }
+
+    return encloseWithPBMSAF(content, widget.props, widget.args,
+        verticalUnbounded: verticalUnbounded);
   }
 }

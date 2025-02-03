@@ -7,6 +7,7 @@ import 'package:dartlib/dartlib.dart' as pg;
 import 'package:flutter/material.dart';
 import 'embodiment_manifest.dart';
 import 'embodiment_args.dart';
+import 'embodiment_help.dart';
 import 'properties.dart';
 
 EmbodimentPackageManifest getManifest() {
@@ -39,7 +40,7 @@ class GroupEmbodiment extends StatelessWidget {
     // don't have to be re-rendered.  For a good example, look at the timer demo in
     // https://github.com/prontogui/goexamples
     if (group.groupItems.length == 1) {
-      // TODO:  is SizedBox necessary or can we use a different widget?
+      // TODO:  is SizedBox necessary or can we use a different widget or no widget??
       content = SizedBox(
           child: InheritedEmbodifier.of(context)
               .buildPrimitive(context, EmbodimentArgs(group.groupItems[0])));
@@ -50,13 +51,12 @@ class GroupEmbodiment extends StatelessWidget {
             // stuff in .of method should work in O(1) time with a "small constant".
             // An alternative approach is to pass Embodifier into constructor of each
             // embodiment.
-            InheritedEmbodifier.of(context)
-                .buildPrimitiveList(context, group.groupItems),
+            InheritedEmbodifier.of(context).buildPrimitiveList(
+                context, group.groupItems,
+                horizontalUnbounded: true),
       );
     }
 
-    // NEXT:  why horizontalUnbounded: false, verticalUnbounded: true???
-    return encloseWithSizingAndBounding(content, props, parentWidgetType,
-        horizontalUnbounded: false, verticalUnbounded: true, useShrink: true);
+    return encloseWithPBMSAF(content, props, args, verticalUnbounded: true);
   }
 }

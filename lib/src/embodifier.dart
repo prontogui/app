@@ -109,11 +109,16 @@ class Embodifier implements PrimitiveModelWatcher {
   /// Builds a list of embodiments corresponding to a list of primitives.
   List<Widget> buildPrimitiveList(
       BuildContext context, List<Primitive> primitives,
-      [bool parentIsTopView = false]) {
+      {bool parentIsTopView = false,
+      bool horizontalUnbounded = false,
+      bool verticalUnbounded = false}) {
     var widgets = <Widget>[];
 
     for (final primitive in primitives) {
-      var args = EmbodimentArgs(primitive, parentIsTopView: parentIsTopView);
+      var args = EmbodimentArgs(primitive,
+          parentIsTopView: parentIsTopView,
+          horizontalUnbounded: horizontalUnbounded,
+          verticalUnbounded: verticalUnbounded);
       widgets.add(
         buildPrimitive(context, args),
       );
