@@ -9,7 +9,6 @@ import 'package:dartlib/dartlib.dart' as pg;
 import 'package:flutter/material.dart';
 import 'embodiment_manifest.dart';
 import 'embodiment_args.dart';
-import 'embodiment_property_help.dart';
 import 'snackbar_embodiment.dart';
 import 'properties.dart';
 
@@ -35,10 +34,8 @@ class FrameEmbodiment extends StatelessWidget {
   // Note:  when getting around to implementing a manual layout method, take a look
   // at PositionedDirectional class and Positioned widget.
 
-  @override
-  Widget build(BuildContext context) {
+  Widget buildFlowLayout(BuildContext context) {
     late Widget content;
-
     bool verticalUnbounded = false;
     bool horizontalUnbounded = false;
 
@@ -63,6 +60,33 @@ class FrameEmbodiment extends StatelessWidget {
     content = encloseWithPBMSAF(content, props, args,
         horizontalUnbounded: horizontalUnbounded,
         verticalUnbounded: verticalUnbounded);
+
+    return content;
+  }
+
+  Widget buildPositionedLayout(BuildContext context) {
+    late Widget content;
+
+    content = Stack(
+        children: InheritedEmbodifier.of(context).buildPrimitiveList(
+            context, frame.frameItems,
+            allowPositioned: true));
+
+    content = encloseWithPBMSAF(content, props, args,
+        horizontalUnbounded: true, verticalUnbounded: true);
+
+    return content;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    late Widget content;
+    switch (props.layoutMethod) {
+      case LayoutMethod.flow:
+        content = buildFlowLayout(context);
+      case LayoutMethod.positioned:
+        content = buildPositionedLayout(context);
+    }
 
     // Is it a top-level primitive (i.e., a view)?
     if (args.parentIsTopView) {

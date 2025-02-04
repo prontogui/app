@@ -30,10 +30,12 @@ void altmain1(List<String> args) async {
       content: 'Hello, World!',
       embodiment:
 //          'width:50, height:30, borderAll:10, horizontalAlignment:expand, verticalAlignment:top');
-          'height:40, borderAll:4, borderTop:0, borderLeft:1, borderRight:1, borderColor:#FFFF0000, horizontalAlignment:expand, verticalAlignment:top');
+          'right: 40, bottom: 40, height:40, width:100, borderAll:4, borderTop:0, borderLeft:1, borderRight:1, borderColor:#FFFF0000');
 
-  var g = dl.Group(
-      groupItems: [text], embodiment: 'width:300, height:300, borderAll:3');
+  var g = dl.Frame(
+      frameItems: [text],
+      embodiment:
+          'layoutMethod:positioned, width:500, height:500, borderAll:3, borderColor:#FF00FF00');
 
   model.topPrimitives = [g]; // [innerFrame];
 

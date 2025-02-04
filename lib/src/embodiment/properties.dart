@@ -202,6 +202,10 @@ Set<String> _namesofFontWeight = {
   'w9'
 };
 
+enum LayoutMethod { flow, positioned }
+
+Set<String> _namesofLayoutMethod = {'flow', 'positioned'};
+
 // Note:  this class is temporary until we have codegen for this file.  Codegen
 // will generate each sub-class in here without a base class, at the expense of
 //
@@ -272,6 +276,9 @@ void _mapFrameDefaultProperty(
     case PropertyName.flowDirection:
       propertyMap[name] = getEnumProp<FlowDirection>(
           value, FlowDirection.values, _namesofFlowDirection);
+    case PropertyName.layoutMethod:
+      propertyMap[name] = getEnumProp<LayoutMethod>(
+          value, LayoutMethod.values, _namesofLayoutMethod);
   }
 }
 
@@ -466,6 +473,8 @@ mixin CommonPropertyAccess on PropertyAccessBase {
 mixin FrameDefaultPropertyAccess on PropertyAccessBase {
   FlowDirection get flowDirection => _getEnumT<FlowDirection>(
       _propertyMap, FlowDirection.leftToRight, PropertyName.flowDirection);
+  LayoutMethod get layoutMethod => _getEnumT<LayoutMethod>(
+      _propertyMap, LayoutMethod.flow, PropertyName.layoutMethod);
 }
 
 mixin FrameSnackbarPropertyAccess on PropertyAccessBase {
@@ -670,27 +679,3 @@ class EmbodimentProperty {
     return item;
   }
 }
-
-/*
-
-  // DEFAULTS GO IN THESE FUNCTIONS
-
-  Color? get backgroundColor =>
-      _getColorT(_propertyMap, PropertyName.backgroundColor);
-
-  int? get displayDecimalPlaces =>
-      _getIntT(_propertyMap, PropertyName.displayDecimalPlaces, -15);
-
-  bool get displayThousandths =>
-      _getYesNoT(_propertyMap, PropertyName.displayThousandths, false);
-
-  FlowDirection get flowDirection => _getEnumT(
-      _propertyMap, FlowDirection.leftToRight, PropertyName.flowDirection);
-
-  String? get fontFamily => _getStringT(_propertyMap, PropertyName.fontFamily);
-
-  List<String>? get popupChoices =>
-      _getStringArrayT(_propertyMap, PropertyName.popupChoices);
-
-  double? get width => _getDoubleT(_propertyMap, PropertyName.width);
-  */
