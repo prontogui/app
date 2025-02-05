@@ -10,7 +10,6 @@ import '../widgets/color_field.dart';
 import '../widgets/numeric_field.dart';
 import 'dart:core';
 import 'embodiment_args.dart';
-import 'embodiment_help.dart';
 import 'properties.dart';
 
 EmbodimentPackageManifest getManifest() {
@@ -56,7 +55,7 @@ class DefaultNumericFieldEmbodiment extends StatelessWidget {
           numfield.numericEntry = value;
         });
 
-    return encloseWithPBMSAF(content, props, args);
+    return encloseWithPBMSAF(content, props, args, horizontalUnbounded: true);
   }
 }
 
@@ -107,7 +106,7 @@ class FontSizeNumericFieldEmbodiment extends StatelessWidget {
       popupChooserIcon: const Icon(Icons.numbers),
     );
 
-    return encloseWithPBMSAF(content, props, args);
+    return encloseWithPBMSAF(content, props, args, horizontalUnbounded: true);
   }
 }
 
@@ -128,6 +127,6 @@ class ColorNumericFieldEmbodiment extends StatelessWidget {
           numfield.numericEntry = value;
         });
 
-    return encloseWithPBMSAF(content, props, args);
+    return encloseWithPBMSAF(content, props, args, horizontalUnbounded: true);
   }
 }

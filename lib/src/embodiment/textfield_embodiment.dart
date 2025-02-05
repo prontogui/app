@@ -91,6 +91,7 @@ class _TextFieldEmbodimentState extends State<TextFieldEmbodiment> {
       focusNode: _focusNode,
     );
 
-    return encloseWithPBMSAF(content, widget.props, widget.args);
+    return encloseWithPBMSAF(content, widget.props, widget.args,
+        horizontalUnbounded: true);
   }
 }

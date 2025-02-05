@@ -466,7 +466,7 @@ mixin CommonPropertyAccess on PropertyAccessBase {
   double? get right => _getDoubleT(_propertyMap, PropertyName.right);
   double? get top => _getDoubleT(_propertyMap, PropertyName.top);
   VerticalAlignment get verticalAlignment => _getEnumT<VerticalAlignment>(
-      _propertyMap, VerticalAlignment.top, PropertyName.verticalAlignment);
+      _propertyMap, VerticalAlignment.middle, PropertyName.verticalAlignment);
   double? get width => _getDoubleT(_propertyMap, PropertyName.width);
 }
 

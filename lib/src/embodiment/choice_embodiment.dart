@@ -38,7 +38,7 @@ class DefaultChoiceEmbodiment extends StatelessWidget {
       },
     );
 
-    return encloseWithPBMSAF(content, props, args);
+    return encloseWithPBMSAF(content, props, args, horizontalUnbounded: true);
   }
 }
 

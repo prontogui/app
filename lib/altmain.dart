@@ -32,11 +32,14 @@ void altmain1(List<String> args) async {
 //          'width:50, height:30, borderAll:10, horizontalAlignment:expand, verticalAlignment:top');
           'right: 40, bottom: 40, height:40, width:100, borderAll:4, borderTop:0, borderLeft:10, borderRight:3, borderColor:#FFFF0000');
 
-  var g = dl.Frame(
-      frameItems: [text],
-      embodiment:
-          'layoutMethod:positioned, width:500, height:500, borderAll:3, borderColor:#FF00FF00');
+  var tf = dl.NumericField(embodiment: 'color');
 
+  var g = dl.Group(
+    groupItems: [tf],
+  );
+  var f = dl.Frame(
+    frameItems: [tf],
+  );
   model.topPrimitives = [g]; // [innerFrame];
 
   // Create the object responsible for embodying the model as Widgets and for

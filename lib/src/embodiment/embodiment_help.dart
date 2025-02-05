@@ -274,6 +274,9 @@ Widget encloseWithPBMSAF(
             height: height,
             bottom: bottom,
             child: content);
+
+        horizontalSized = true;
+        verticalSized = true;
       }
     } else {
       // Otherwise, Apply alignment
@@ -327,17 +330,17 @@ Widget encloseWithPBMSAF(
         );
       }
     }
-
-    // Need Flexible widget to deal with unbounded situation?
-    var flexibleReason1 =
-        (args.horizontalUnbounded && horizontalUnbounded && !horizontalSized);
-    var flexibleReason2 =
-        (args.verticalUnbounded && verticalUnbounded && !verticalSized);
-
-    if (flexibleReason1 || flexibleReason2) {
-      content = Flexible(child: content);
-    }
   } // SKIP PBMSA DROPS TO HERE
+
+  // Need Flexible widget to deal with unbounded situation?
+  var flexibleReason1 =
+      (args.horizontalUnbounded && horizontalUnbounded && !horizontalSized);
+  var flexibleReason2 =
+      (args.verticalUnbounded && verticalUnbounded && !verticalSized);
+
+  if (flexibleReason1 || flexibleReason2) {
+    content = Flexible(child: content);
+  }
 
 /*
   Future possibilities:
