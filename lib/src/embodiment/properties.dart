@@ -527,7 +527,7 @@ mixin NumericFieldDefaultPropertyAccess on PropertyAccessBase {
       PropertyName.displayNegativeFormat);
   bool get displayThousandths =>
       _getYesNoT(_propertyMap, PropertyName.displayThousandths, false);
-  double? get maxValue => _getDoubleT(_propertyMap, PropertyName.minValue);
+  double? get maxValue => _getDoubleT(_propertyMap, PropertyName.maxValue);
   double? get minValue => _getDoubleT(_propertyMap, PropertyName.minValue);
   List<String>? get popupChoices =>
       _getStringArrayT(_propertyMap, PropertyName.popupChoices);
