@@ -472,7 +472,7 @@ mixin CommonPropertyAccess on PropertyAccessBase {
 
 mixin FrameDefaultPropertyAccess on PropertyAccessBase {
   FlowDirection get flowDirection => _getEnumT<FlowDirection>(
-      _propertyMap, FlowDirection.leftToRight, PropertyName.flowDirection);
+      _propertyMap, FlowDirection.topToBottom, PropertyName.flowDirection);
   LayoutMethod get layoutMethod => _getEnumT<LayoutMethod>(
       _propertyMap, LayoutMethod.flow, PropertyName.layoutMethod);
 }

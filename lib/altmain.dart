@@ -33,14 +33,18 @@ void altmain1(List<String> args) async {
           'right: 40, bottom: 40, height:40, width:100, borderAll:4, borderTop:0, borderLeft:10, borderRight:3, borderColor:#FFFF0000');
 
   var tf = dl.NumericField(embodiment: 'color');
+  var ch = dl.Choice(choices: ['Apple', 'Banana', 'Grapes']);
+  var cmd =
+      dl.Command(label: 'Click me!', embodiment: 'horizontalAlignment:expand');
+  var ico = dl.Icon(iconID: 'man_sharp');
 
   var g = dl.Group(
-    groupItems: [tf],
+    groupItems: [tf, ch],
   );
   var f = dl.Frame(
-    frameItems: [tf],
+    frameItems: [tf, ch, cmd, ico],
   );
-  model.topPrimitives = [g]; // [innerFrame];
+  model.topPrimitives = [f]; // [innerFrame];
 
   // Create the object responsible for embodying the model as Widgets and for
   // rebuilding the UI when the model changes.
