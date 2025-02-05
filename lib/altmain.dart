@@ -30,7 +30,7 @@ void altmain1(List<String> args) async {
       content: 'Hello, World!',
       embodiment:
 //          'width:50, height:30, borderAll:10, horizontalAlignment:expand, verticalAlignment:top');
-          'right: 40, bottom: 40, height:40, width:100, borderAll:4, borderTop:0, borderLeft:1, borderRight:1, borderColor:#FFFF0000');
+          'right: 40, bottom: 40, height:40, width:100, borderAll:4, borderTop:0, borderLeft:10, borderRight:3, borderColor:#FFFF0000');
 
   var g = dl.Frame(
       frameItems: [text],

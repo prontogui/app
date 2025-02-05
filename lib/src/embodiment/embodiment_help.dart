@@ -27,24 +27,102 @@ import 'properties.dart';
   return (effL, effR, effT, effB);
 }
 
-Border makeBorder(double l, double r, double t, double b, Color? color) {
-  bool isL = l > 0.0;
-  bool isR = r > 0.0;
-  bool isT = t > 0.0;
-  bool isB = b > 0.0;
+Border _makeBorder(double l, double r, double t, double b, Color? borderColor) {
+  Color color = Colors.black;
+  if (borderColor != null) {
+    color = borderColor;
+  }
+  int selector = 0;
 
-  if (isL) {
-    if (isR) {
-      if (isT) {
-        if (isB) {
-          return Border(
-              left: BorderSide(width: l, color: color),
-              right: BorderSide(width: r, color: borderColor),
-              top: BorderSide(width: t, color: borderColor),
-              bottom: BorderSide(width: b, color: borderColor));
-        }
-      }
-    }
+  if (l > 0.0) {
+    selector += 1000;
+  }
+  if (r > 0.0) {
+    selector += 100;
+  }
+  if (t > 0.0) {
+    selector += 10;
+  }
+  if (b > 0.0) {
+    selector += 1;
+  }
+
+  // This is absolutely nuts but BorderSide doesn't have null arguments.
+
+  switch (selector) {
+    // Case LRTB
+    case 0000:
+      return const Border();
+    case 0001:
+      return Border(bottom: BorderSide(width: b, color: color));
+    case 0010:
+      return Border(
+        top: BorderSide(width: t, color: color),
+      );
+    case 0011:
+      return Border(
+          top: BorderSide(width: t, color: color),
+          bottom: BorderSide(width: b, color: color));
+    case 0100:
+      return Border(
+        right: BorderSide(width: r, color: color),
+      );
+    case 0101:
+      return Border(
+          right: BorderSide(width: r, color: color),
+          bottom: BorderSide(width: b, color: color));
+    case 0110:
+      return Border(
+        right: BorderSide(width: r, color: color),
+        top: BorderSide(width: t, color: color),
+      );
+    case 0111:
+      return Border(
+          right: BorderSide(width: r, color: color),
+          top: BorderSide(width: t, color: color),
+          bottom: BorderSide(width: b, color: color));
+    case 1000:
+      return Border(
+        left: BorderSide(width: l, color: color),
+      );
+    case 1001:
+      return Border(
+          left: BorderSide(width: l, color: color),
+          bottom: BorderSide(width: b, color: color));
+    case 1010:
+      return Border(
+        left: BorderSide(width: l, color: color),
+        top: BorderSide(width: t, color: color),
+      );
+    case 1011:
+      return Border(
+          left: BorderSide(width: l, color: color),
+          top: BorderSide(width: t, color: color),
+          bottom: BorderSide(width: b, color: color));
+    case 1100:
+      return Border(
+        left: BorderSide(width: l, color: color),
+        right: BorderSide(width: r, color: color),
+      );
+    case 1101:
+      return Border(
+          left: BorderSide(width: l, color: color),
+          right: BorderSide(width: r, color: color),
+          bottom: BorderSide(width: b, color: color));
+    case 1110:
+      return Border(
+        left: BorderSide(width: l, color: color),
+        right: BorderSide(width: r, color: color),
+        top: BorderSide(width: t, color: color),
+      );
+    case 1111:
+      return Border(
+          left: BorderSide(width: l, color: color),
+          right: BorderSide(width: r, color: color),
+          top: BorderSide(width: t, color: color),
+          bottom: BorderSide(width: b, color: color));
+    default:
+      return const Border();
   }
 }
 
@@ -79,6 +157,9 @@ Widget encloseWithPBMSAF(
       late BoxBorder border;
       var borderColor = props.borderColor;
 
+      border = _makeBorder(l, r, t, b, borderColor);
+
+/*
       if (borderColor != null) {
 /*
         BorderSide? leftBorder;
@@ -100,11 +181,7 @@ Widget encloseWithPBMSAF(
         }
 */
 
-        border = Border(
-            left: BorderSide(width: l, color: borderColor),
-            right: BorderSide(width: r, color: borderColor),
-            top: BorderSide(width: t, color: borderColor),
-            bottom: BorderSide(width: b, color: borderColor));
+        border = _makeBorder(l, r, t, b, borderColor);
       } else {
         border = Border(
             left: BorderSide(width: l),
@@ -112,6 +189,7 @@ Widget encloseWithPBMSAF(
             top: BorderSide(width: t),
             bottom: BorderSide(width: b));
       }
+*/
 
       content = Container(
           decoration: BoxDecoration(
