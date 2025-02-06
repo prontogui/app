@@ -2,6 +2,7 @@ import 'package:app/src/embodiment/property_help.dart';
 import 'package:flutter/material.dart';
 
 class PropertyName {
+  static const allowEmptyValue = 'allowEmptyValue';
   static const animationPeriod = 'animationPeriod';
   static const backgroundColor = 'backgroundColor';
   static const borderAll = 'borderAll';
@@ -331,6 +332,8 @@ void _mapListTabbedProperty(
 void _mapNumericFieldDefaultProperty(
     Map<String, dynamic> propertyMap, String name, dynamic value) {
   switch (name) {
+    case PropertyName.allowEmptyValue:
+      propertyMap[name] = getBoolProp(value);
     case PropertyName.displayDecimalPlaces:
       propertyMap[name] = getIntProp(value, -15, 15);
     case PropertyName.displayNegativeFormat:
@@ -519,6 +522,8 @@ mixin ListTabbedPropertyAccess on PropertyAccessBase {
 }
 
 mixin NumericFieldDefaultPropertyAccess on PropertyAccessBase {
+  bool get allowEmptyValue =>
+      _getYesNoT(_propertyMap, PropertyName.allowEmptyValue, false);
   int get displayDecimalPlaces =>
       _getIntT(_propertyMap, PropertyName.displayDecimalPlaces, -15);
   DisplayNegativeFormat get displayNegativeFormat => _getEnumT(

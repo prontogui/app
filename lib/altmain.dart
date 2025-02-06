@@ -27,7 +27,7 @@ void altmain1(List<String> args) async {
   final model = dl.PrimitiveModel();
 
   model.topPrimitives = [
-    dl.NumericField(embodiment: 'minValue:0.0')
+    dl.NumericField(embodiment: 'minValue:-45')
   ]; // [innerFrame];
 
   // Create the object responsible for embodying the model as Widgets and for

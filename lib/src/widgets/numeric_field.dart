@@ -62,7 +62,8 @@ class NumericField extends StatefulWidget {
       this.minValue,
       this.maxValue,
       this.popupChoices,
-      this.popupChooserIcon})
+      this.popupChooserIcon,
+      this.allowEmptyValue = false})
       : assert(minValue == null || maxValue == null || maxValue > minValue,
             'maxValue must be greater than minValue'),
         assert(
@@ -111,6 +112,9 @@ class NumericField extends StatefulWidget {
   /// The icon to display for the popup chooser button (optional).  It defaults
   /// to an ellipses.
   final Icon? popupChooserIcon;
+
+  /// Allows the value to be empty (no specific value).
+  final bool allowEmptyValue;
 
   @override
   State<NumericField> createState() => _NumericFieldState();
@@ -161,11 +165,25 @@ class _NumericFieldState extends State<NumericField> {
   String prepareInitialValue() {
     // Use the initial value?
     var value = widget.initialValue;
+/*    
     if (value != null && value.isNotEmpty) {
       if (_allowedInputPattern.hasMatch(value)) {
         // Limit the value to constraints
         return checkAgainstConstraints(value);
       }
+    }
+*/
+
+    if (value != null) {
+      if (_allowedInputPattern.hasMatch(value)) {
+        // Limit the value to constraints
+        return checkAgainstConstraints(value);
+      }
+    }
+
+    // Use an empty value as default?
+    if (widget.allowEmptyValue) {
+      return '';
     }
 
     // Choose a default value that respects the min/max constraints.
@@ -190,6 +208,9 @@ class _NumericFieldState extends State<NumericField> {
 
   /// The numeric value (string) to use for displaying.
   String get displayValue {
+    if (widget.allowEmptyValue && editingValue.trim().isEmpty) {
+      return '';
+    }
     return formatNumericValue(editingValue, widget.displayDecimalPlaces,
         widget.displayNegativeFormat, widget.displayThousandths);
   }
@@ -222,6 +243,24 @@ class _NumericFieldState extends State<NumericField> {
   /// Checks [value] against the min and max constraints.  Clips the value if
   /// necessary, otherwise returns [value].
   String checkAgainstConstraints(String value) {
+    // toString() is insuffient since it adds unnecessary precision. For example,
+    // if double d = 5000, d.toString() produces "5000.0"
+    String doubleToString(double d) {
+      var s = d.toString();
+      if (s.endsWith('.0')) {
+        return s.substring(0, s.length - 2);
+      }
+      return s;
+    }
+
+    // Deal with an empty value
+    if (value.trim().isEmpty) {
+      if (widget.allowEmptyValue) {
+        return '';
+      }
+      value = '0';
+    }
+
     var minValue = widget.minValue;
     var maxValue = widget.maxValue;
 
@@ -231,11 +270,11 @@ class _NumericFieldState extends State<NumericField> {
 
       // Less than min constraint?
       if (minValue != null && valueD < minValue) {
-        return minValue.toString();
+        return doubleToString(minValue);
 
         // Greater than max constraint?
       } else if (maxValue != null && valueD > maxValue) {
-        return maxValue.toString();
+        return doubleToString(maxValue);
       }
     }
 
@@ -248,11 +287,10 @@ class _NumericFieldState extends State<NumericField> {
   /// [value] must be a valid numeric string (as defined by allowed input pattern)
   /// or it can be empty.
   void submitValue(String value) {
-    // Make sure value isn't empty
-    if (value.isEmpty) {
-      value = '0';
+    // Handle edge case where '.' is entered
+    if (value == '.') {
+      value = '';
     }
-
     var submitValue = checkAgainstConstraints(value);
 
     // Do nothing if text hasn't changed

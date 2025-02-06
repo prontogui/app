@@ -51,6 +51,7 @@ class DefaultNumericFieldEmbodiment extends StatelessWidget {
         minValue: props.minValue,
         maxValue: props.maxValue,
         popupChoices: props.popupChoices,
+        allowEmptyValue: props.allowEmptyValue,
         onSubmitted: (value) {
           numfield.numericEntry = value;
         });
