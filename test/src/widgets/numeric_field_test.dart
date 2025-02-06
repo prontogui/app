@@ -93,14 +93,5 @@ void main() {
       expect(addThousandthsSeparators('3.14159'), '3.14159');
       expect(addThousandthsSeparators('1234567890.0123'), '1,234,567,890.0123');
     });
-
-    test('double to string', () {
-      double d = 5.0;
-      var s = d.toString();
-      if (s.endsWith('.0')) {
-        s = s.substring(0, s.length - 2);
-      }
-      print('$s');
-    });
   });
 }

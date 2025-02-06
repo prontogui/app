@@ -49,6 +49,9 @@ const maxDisplayDecimalPlaces = 15;
 /// to the editing area.  The button can be customized using the [popupChooserIcon]
 /// parameter.
 ///
+/// To allow for empty values to displayed and submitted, then set [allowEmptyValue]
+/// to true, otherwise it defaults to strictly numeric values.
+///
 /// Note:  there is no support yet for internationalization of numbers, such as
 /// swapping commas and periods for Germanic locales.
 class NumericField extends StatefulWidget {
@@ -165,14 +168,6 @@ class _NumericFieldState extends State<NumericField> {
   String prepareInitialValue() {
     // Use the initial value?
     var value = widget.initialValue;
-/*    
-    if (value != null && value.isNotEmpty) {
-      if (_allowedInputPattern.hasMatch(value)) {
-        // Limit the value to constraints
-        return checkAgainstConstraints(value);
-      }
-    }
-*/
 
     if (value != null) {
       if (_allowedInputPattern.hasMatch(value)) {

@@ -350,6 +350,14 @@ void _mapNumericFieldDefaultProperty(
   }
 }
 
+void _mapNumericFieldColorProperty(
+    Map<String, dynamic> propertyMap, String name, dynamic value) {
+  switch (name) {
+    case PropertyName.allowEmptyValue:
+      propertyMap[name] = getBoolProp(value);
+  }
+}
+
 void _mapTextDefaultProperty(
     Map<String, dynamic> propertyMap, String name, dynamic value) {
   switch (name) {
@@ -537,6 +545,12 @@ mixin NumericFieldDefaultPropertyAccess on PropertyAccessBase {
   List<String>? get popupChoices =>
       _getStringArrayT(_propertyMap, PropertyName.popupChoices);
 }
+
+mixin NumericFieldColorPropertyAccess on PropertyAccessBase {
+  bool get allowEmptyValue =>
+      _getYesNoT(_propertyMap, PropertyName.allowEmptyValue, false);
+}
+
 mixin TextDefaultPropertyAccess on PropertyAccessBase {
   Color? get backgroundColor =>
       _getColorT(_propertyMap, PropertyName.backgroundColor);
@@ -650,6 +664,21 @@ class NumericFieldDefaultProperties extends PropertyAccessBase
     for (var kv in embodimentMap.entries) {
       _areCommonProps = _mapCommonProperty(_propertyMap!, kv.key, kv.value);
       _mapNumericFieldDefaultProperty(_propertyMap!, kv.key, kv.value);
+    }
+  }
+}
+
+class NumericFieldColorProperties extends PropertyAccessBase
+    with CommonPropertyAccess, NumericFieldDefaultPropertyAccess {
+  NumericFieldColorProperties.fromMap(Map<String, dynamic>? embodimentMap) {
+    if (embodimentMap == null || embodimentMap.isEmpty) {
+      _propertyMap = null;
+      return;
+    }
+    _propertyMap = <String, dynamic>{};
+    for (var kv in embodimentMap.entries) {
+      _areCommonProps = _mapCommonProperty(_propertyMap!, kv.key, kv.value);
+      _mapNumericFieldColorProperty(_propertyMap!, kv.key, kv.value);
     }
   }
 }

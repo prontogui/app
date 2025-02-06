@@ -114,16 +114,18 @@ class FontSizeNumericFieldEmbodiment extends StatelessWidget {
 class ColorNumericFieldEmbodiment extends StatelessWidget {
   ColorNumericFieldEmbodiment.fromArgs(this.args, {super.key})
       : numfield = args.primitive as pg.NumericField,
-        props = CommonProperties.fromMap(args.primitive.embodimentProperties);
+        props = NumericFieldColorProperties.fromMap(
+            args.primitive.embodimentProperties);
 
   final EmbodimentArgs args;
   final pg.NumericField numfield;
-  final CommonProperties props;
+  final NumericFieldColorProperties props;
 
   @override
   Widget build(BuildContext context) {
     var content = ColorField(
         initialValue: numfield.numericEntry,
+        allowEmptyValue: props.allowEmptyValue,
         onSubmitted: (value) {
           numfield.numericEntry = value;
         });

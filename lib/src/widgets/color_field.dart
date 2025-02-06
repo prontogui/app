@@ -11,6 +11,9 @@ import 'popup.dart';
 /// selecting one from the popup list, the new value is submitted back
 /// via the provided handler [onSubmitted].
 ///
+/// To allow for empty values to displayed and submitted, then set [allowEmptyValue]
+/// to true, otherwise it defaults to strictly numeric color values.
+///
 /// Color values are formatted as '#AARRGGBB' where it begins with a pound and
 /// ARGB characters are hexadecimal digits for the Alpha, Red, Green, and Blue
 /// component values.
@@ -19,6 +22,7 @@ class ColorField extends StatefulWidget {
     super.key,
     required this.onSubmitted,
     this.initialValue,
+    this.allowEmptyValue = false,
   });
 
   /// Handler for new color values submitted after entering or picking a color.
@@ -26,6 +30,9 @@ class ColorField extends StatefulWidget {
 
   /// The initial color choice (optional).
   final String? initialValue;
+
+  /// Allows the value to be empty (no specific value).
+  final bool allowEmptyValue;
 
   @override
   State<ColorField> createState() {
@@ -52,9 +59,12 @@ class _ColorFieldState extends State<ColorField> {
 
   /// Prepares the initial value (if provided to widget) to display while making
   /// sure it is valid.  If no initialValue was provided then it defaults
-  /// to #00000000 (black).
+  /// to #FF000000 (black).
   String prepareInitialValue() {
     var value = widget.initialValue ?? '';
+    if (widget.allowEmptyValue && value.isEmpty) {
+      return '';
+    }
     if (_allowedInputPattern.hasMatch(value)) {
       return canonizeHexColorValue(normalizeHexColorValue(value));
     }
@@ -132,12 +142,24 @@ class _ColorFieldState extends State<ColorField> {
   }
 
   /// The current color value as a canonical hex string.
-  String get currentColorValue =>
-      canonizeHexColorValue(normalizeHexColorValue(_controller.text));
+
+  String get currentColorValue {
+    var text = _controller.text;
+    if (widget.allowEmptyValue && text.isEmpty) {
+      return '';
+    }
+    return canonizeHexColorValue(normalizeHexColorValue(_controller.text));
+  }
 
   /// The current color as a Color value.
-  Color get currentColor =>
-      Color(int.parse(currentColorValue.substring(1), radix: 16));
+  Color get currentColor {
+    if (currentColorValue.isEmpty) {
+      return const Color.fromARGB(255, 0, 0, 0);
+    }
+    return Color(int.parse(currentColorValue.substring(1), radix: 16));
+  }
+
+  bool get isCurrentColorValid => currentColorValue.isNotEmpty;
 
   void onFocusChange() {
     _hasFocus = _focusNode.hasPrimaryFocus;
@@ -147,7 +169,7 @@ class _ColorFieldState extends State<ColorField> {
     } else {
       var currentValue = currentColorValue;
       storeColorValue(currentValue);
-      _controller.text = currentValue;
+      setState(() => _controller.text = currentValue);
     }
   }
 
@@ -161,11 +183,13 @@ class _ColorFieldState extends State<ColorField> {
   }
 
   void updateColorField() {
-    var color = _pickedColor != null ? _pickedColor! : currentColor;
-    var colorValue =
-        colorToHex(color, enableAlpha: true, includeHashSign: true);
-    setState(() => _controller.text = colorValue);
-    storeColorValue(colorValue);
+    if (_pickedColor != null) {
+      var colorValue =
+          colorToHex(_pickedColor!, enableAlpha: true, includeHashSign: true);
+      setState(() => _controller.text = colorValue);
+      storeColorValue(colorValue);
+      _pickedColor = null;
+    }
   }
 
   @override
@@ -181,8 +205,11 @@ class _ColorFieldState extends State<ColorField> {
               controller: _controller,
               decoration: InputDecoration(
                 border: const OutlineInputBorder(),
-                prefixIcon: const Icon(Icons.rectangle),
-                prefixIconColor: currentColor,
+                prefixIcon: isCurrentColorValid
+                    ? const Icon(Icons.rectangle)
+                    : const Icon(Icons.format_color_reset),
+                prefixIconColor:
+                    isCurrentColorValid ? currentColor : Colors.black,
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.palette),
                   onPressed: controller.show,
