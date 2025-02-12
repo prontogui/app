@@ -26,9 +26,13 @@ void altmain1(List<String> args) async {
   // Create the model that holds the primitives to be displayed.
   final model = dl.PrimitiveModel();
 
-  model.topPrimitives = [
-    dl.NumericField(embodiment: 'embodiment:color')
-  ]; // [innerFrame];
+  final n1 = dl.Node(subNodes: [
+    dl.Node(subNodes: [dl.Node(subNodes: [])]),
+    dl.Node(subNodes: [])
+  ]);
+  final tree = dl.Tree(root: n1, embodiment: 'width: 300');
+
+  model.topPrimitives = [tree]; // [innerFrame];
 
   // Create the object responsible for embodying the model as Widgets and for
   // rebuilding the UI when the model changes.

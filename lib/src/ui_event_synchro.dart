@@ -18,7 +18,7 @@ class UIEventSynchro extends UpdateSynchro {
         fkeyExported,
         fkeyImported,
         fkeyIssued,
-        fkeySelected,
+        fkeySelection,
         fkeyShowing,
         fkeyState,
         fkeyTextEntry,

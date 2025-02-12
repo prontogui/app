@@ -329,6 +329,11 @@ void _mapListTabbedProperty(
   }
 }
 
+void _mapTreeDefaultProperty(
+    Map<String, dynamic> propertyMap, String name, dynamic value) {
+  switch (name) {}
+}
+
 void _mapNumericFieldDefaultProperty(
     Map<String, dynamic> propertyMap, String name, dynamic value) {
   switch (name) {
@@ -380,18 +385,7 @@ void _mapTextDefaultProperty(
 
 class PropertyAccessBase {
   PropertyAccessBase() : _areCommonProps = false;
-/*
-  PropertyAccessBase.commonOnly(Map<String, dynamic>? embodimentMap) {
-    if (embodimentMap == null || embodimentMap.isEmpty) {
-      _propertyMap = null;
-      return;
-    }
-    _propertyMap = <String, dynamic>{};
-    for (var kv in embodimentMap.entries) {
-      _mapCommonProperty(_propertyMap!, kv.key, kv.value);
-    }
-  }
-*/
+
   bool _areCommonProps;
   Map<String, dynamic>? _propertyMap;
 }
@@ -529,6 +523,8 @@ mixin ListTabbedPropertyAccess on PropertyAccessBase {
   double? get tabHeight => _getDoubleT(_propertyMap, PropertyName.tabHeight);
 }
 
+mixin TreeDefaultPropertyAccess on PropertyAccessBase {}
+
 mixin NumericFieldDefaultPropertyAccess on PropertyAccessBase {
   bool get allowEmptyValue =>
       _getYesNoT(_propertyMap, PropertyName.allowEmptyValue, false);
@@ -649,6 +645,21 @@ class ListTabbedProperties extends PropertyAccessBase
     for (var kv in embodimentMap.entries) {
       _areCommonProps = _mapCommonProperty(_propertyMap!, kv.key, kv.value);
       _mapListTabbedProperty(_propertyMap!, kv.key, kv.value);
+    }
+  }
+}
+
+class TreeDefaultProperties extends PropertyAccessBase
+    with CommonPropertyAccess, TreeDefaultPropertyAccess {
+  TreeDefaultProperties.fromMap(Map<String, dynamic>? embodimentMap) {
+    if (embodimentMap == null || embodimentMap.isEmpty) {
+      _propertyMap = null;
+      return;
+    }
+    _propertyMap = <String, dynamic>{};
+    for (var kv in embodimentMap.entries) {
+      _areCommonProps = _mapCommonProperty(_propertyMap!, kv.key, kv.value);
+      _mapTreeDefaultProperty(_propertyMap!, kv.key, kv.value);
     }
   }
 }

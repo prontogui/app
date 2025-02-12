@@ -55,7 +55,7 @@ class _ListEmbodimentState extends State<ListEmbodiment> {
 
   void setCurrentSelected(int newSelected) {
     setState(() {
-      widget.list.selected = newSelected;
+      widget.list.selection = newSelected;
     });
   }
 
@@ -91,7 +91,7 @@ class _ListEmbodimentState extends State<ListEmbodiment> {
     var item = widget.list.listItems[index];
     var content = ListTile(
       title: embodifySingleItem(context, item),
-      selected: index == widget.list.selected,
+      selected: index == widget.list.selection,
       isThreeLine: false,
       contentPadding: const EdgeInsets.symmetric(horizontal: 2.0),
       onTap: () {
@@ -126,7 +126,7 @@ class _ListEmbodimentState extends State<ListEmbodiment> {
       title: title,
       subtitle: subtitle,
       trailing: trailing,
-      selected: index == widget.list.selected,
+      selected: index == widget.list.selection,
       onTap: () {
         setCurrentSelected(index);
       },
