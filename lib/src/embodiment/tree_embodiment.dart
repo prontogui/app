@@ -5,6 +5,7 @@ import 'embodiment_manifest.dart';
 import 'embodiment_help.dart';
 import 'embodiment_args.dart';
 import 'properties.dart';
+import '../embodifier.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('Tree', [
@@ -35,8 +36,23 @@ class TreeDefaultEmbodiment extends StatelessWidget {
     return itn;
   }
 
+  Widget embodifySingleItem(
+      BuildContext context, Embodifier embodifier, pg.Primitive item) {
+    // Only certain primitives are supported
+    if (item is! pg.Text && item is! pg.Frame && item is! pg.Group) {
+      // TODO:  show something better for error case.  Perhaps log an error also.
+      return const SizedBox(
+        child: Text('?'),
+      );
+    }
+
+    return embodifier.buildPrimitive(context, EmbodimentArgs(item));
+  }
+
   @override
   Widget build(BuildContext context) {
+    var embodifier = InheritedEmbodifier.of(context);
+
     var content = TreeView.indexed(
         indentation: Indentation(style: IndentStyle.roundJoint),
         onTreeReady: (controller) =>
@@ -45,14 +61,16 @@ class TreeDefaultEmbodiment extends StatelessWidget {
         builder: (context, node) {
           // build your node item here
           // return any widget that you need
-          var pgNode = node.data as pg.Node;
-
+          var primitive = node.data as pg.Primitive;
+          return embodifySingleItem(context, embodifier, primitive);
+/*
           return Card.outlined(
             child: ListTile(
               title: Text("Item ${node.level}- ${pgNode.describeType}"),
               subtitle: Text('Level ${node.level}'),
             ),
           );
+          */
         });
 
     return encloseWithPBMSAF(content, props, args, verticalUnbounded: true);

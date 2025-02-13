@@ -12,12 +12,14 @@ import 'properties.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('Group', [
-    EmbodimentManifestEntry('default', GroupEmbodiment.fromArgs),
+    EmbodimentManifestEntry('default', GroupDefaultEmbodiment.fromArgs),
+    EmbodimentManifestEntry('tile', GroupTileEmbodiment.fromArgs),
+    EmbodimentManifestEntry('card', GroupCardEmbodiment.fromArgs),
   ]);
 }
 
-class GroupEmbodiment extends StatelessWidget {
-  GroupEmbodiment.fromArgs(this.args, {super.key})
+class GroupDefaultEmbodiment extends StatelessWidget {
+  GroupDefaultEmbodiment.fromArgs(this.args, {super.key})
       : group = args.primitive as pg.Group,
         props = CommonProperties.fromMap(args.primitive.embodimentProperties);
 
@@ -56,6 +58,131 @@ class GroupEmbodiment extends StatelessWidget {
                 horizontalUnbounded: true),
       );
     }
+
+    return encloseWithPBMSAF(content, props, args, verticalUnbounded: true);
+  }
+}
+
+Widget? _embodifySingleItem(
+    BuildContext context, Embodifier embodifier, pg.Primitive item) {
+  // Only certain primitives are supported
+  if (item is! pg.Text &&
+      item is! pg.Command &&
+      item is! pg.Check &&
+      item is! pg.Choice &&
+      item is! pg.TextField &&
+      item is! pg.NumericField) {
+    // TODO:  show something better for error case.  Perhaps log an error also.
+    return const SizedBox(
+      child: Text("?"),
+    );
+  }
+
+  return embodifier.buildPrimitive(context, EmbodimentArgs(item));
+}
+
+Widget? _embodifyGroupItem(BuildContext context, Embodifier embodifier,
+    pg.Group group, int itemIndex) {
+  if (itemIndex >= group.groupItems.length) {
+    return null;
+  }
+
+  var groupItem = group.groupItems[itemIndex];
+
+  return _embodifySingleItem(context, embodifier, groupItem);
+}
+
+class GroupTileEmbodiment extends StatelessWidget {
+  GroupTileEmbodiment.fromArgs(this.args, {super.key})
+      : group = args.primitive as pg.Group,
+        props = CommonProperties.fromMap(
+          args.primitive.embodimentProperties,
+        );
+
+  final EmbodimentArgs args;
+  final pg.Group group;
+  final CommonProperties props;
+
+  @override
+  Widget build(BuildContext context) {
+    var embodifier = InheritedEmbodifier.of(context);
+
+    // Is group hidden?
+    if (!group.visible) {
+      return const SizedBox.shrink();
+    }
+
+    var leading = _embodifyGroupItem(context, embodifier, group, 0);
+    var title = _embodifyGroupItem(context, embodifier, group, 1);
+    var subtitle = _embodifyGroupItem(context, embodifier, group, 2);
+    var trailing = _embodifyGroupItem(context, embodifier, group, 3);
+    var selected = false;
+    if (args.selectedCallback != null) {
+      selected = args.selectedCallback!(args.id);
+    }
+    void Function()? handleTap;
+    if (args.selectedCallback != null) {
+      handleTap = () {
+        args.selectedCallback!(args.id, selected: true);
+      };
+    }
+    var content = ListTile(
+      leading: leading,
+      title: title,
+      subtitle: subtitle,
+      trailing: trailing,
+      selected: selected,
+      onTap: handleTap,
+    );
+
+    return encloseWithPBMSAF(content, props, args, verticalUnbounded: true);
+  }
+}
+
+class GroupCardEmbodiment extends StatelessWidget {
+  GroupCardEmbodiment.fromArgs(this.args, {super.key})
+      : group = args.primitive as pg.Group,
+        props = CommonProperties.fromMap(
+          args.primitive.embodimentProperties,
+        );
+
+  final EmbodimentArgs args;
+  final pg.Group group;
+  final CommonProperties props;
+
+  @override
+  Widget build(BuildContext context) {
+    var embodifier = InheritedEmbodifier.of(context);
+
+    // Is group hidden?
+    if (!group.visible) {
+      return const SizedBox.shrink();
+    }
+
+    var leading = _embodifyGroupItem(context, embodifier, group, 0);
+    var title = _embodifyGroupItem(context, embodifier, group, 1);
+    var subtitle = _embodifyGroupItem(context, embodifier, group, 2);
+    var trailing = _embodifyGroupItem(context, embodifier, group, 3);
+    var selected = false;
+    if (args.selectedCallback != null) {
+      selected = args.selectedCallback!(args.id);
+    }
+    void Function()? handleTap;
+    if (args.selectedCallback != null) {
+      handleTap = () {
+        args.selectedCallback!(args.id, selected: true);
+      };
+    }
+    var content = Card(
+      child: ListTile(
+        leading: leading,
+        title: title,
+        subtitle: subtitle,
+        trailing: trailing,
+        selected: selected,
+        onTap: handleTap,
+      ),
+    );
 
     return encloseWithPBMSAF(content, props, args, verticalUnbounded: true);
   }

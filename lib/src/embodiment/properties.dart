@@ -306,8 +306,7 @@ void _mapIconDefaultProperty(
   }
 }
 
-// ALSO GENERATES DUPLICATES:  _mapListCardProperty, _mapListPropertyProperty
-void _mapListNormalProperty(
+void _mapListDefaultProperty(
     Map<String, dynamic> propertyMap, String name, dynamic value) {
   switch (name) {
     case PropertyName.horizontal:
@@ -496,11 +495,11 @@ mixin IconDefaultPropertyAccess on PropertyAccessBase {
   double? get size => _getDoubleT(_propertyMap, PropertyName.size);
 }
 
-mixin ListNormalPropertyAccess on PropertyAccessBase {
+mixin ListDefaultPropertyAccess on PropertyAccessBase {
   bool get horizontal =>
       _getYesNoT(_propertyMap, PropertyName.horizontal, false);
-  double? get itemHeight => _getDoubleT(_propertyMap, PropertyName.itemHeight);
-  double? get itemWidth => _getDoubleT(_propertyMap, PropertyName.itemWidth);
+//  double? get itemHeight => _getDoubleT(_propertyMap, PropertyName.itemHeight);
+//  double? get itemWidth => _getDoubleT(_propertyMap, PropertyName.itemWidth);
 }
 
 mixin ListCardPropertyAccess on PropertyAccessBase {
@@ -617,10 +616,9 @@ class IconDefaultProperties extends PropertyAccessBase
   }
 }
 
-// ALSO GENERATES DUPLICATES ListCardProperties, ListPropertyProperties
-class ListNormalProperties extends PropertyAccessBase
-    with CommonPropertyAccess, ListNormalPropertyAccess {
-  ListNormalProperties.fromMap(Map<String, dynamic>? embodimentMap) {
+class ListDefaultProperties extends PropertyAccessBase
+    with CommonPropertyAccess, ListDefaultPropertyAccess {
+  ListDefaultProperties.fromMap(Map<String, dynamic>? embodimentMap) {
     if (embodimentMap == null || embodimentMap.isEmpty) {
       _propertyMap = null;
       return;
@@ -628,7 +626,7 @@ class ListNormalProperties extends PropertyAccessBase
     _propertyMap = <String, dynamic>{};
     for (var kv in embodimentMap.entries) {
       _areCommonProps = _mapCommonProperty(_propertyMap!, kv.key, kv.value);
-      _mapListNormalProperty(_propertyMap!, kv.key, kv.value);
+      _mapListDefaultProperty(_propertyMap!, kv.key, kv.value);
     }
   }
 }

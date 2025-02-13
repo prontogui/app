@@ -8,12 +8,12 @@ import 'properties.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('Icon', [
-    EmbodimentManifestEntry('default', IconEmbodiment.fromArgs),
+    EmbodimentManifestEntry('default', IconDefaultEmbodiment.fromArgs),
   ]);
 }
 
-class IconEmbodiment extends StatelessWidget {
-  IconEmbodiment.fromArgs(this.args, {super.key})
+class IconDefaultEmbodiment extends StatelessWidget {
+  IconDefaultEmbodiment.fromArgs(this.args, {super.key})
       : icon = args.primitive as pg.Icon,
         props =
             IconDefaultProperties.fromMap(args.primitive.embodimentProperties);
