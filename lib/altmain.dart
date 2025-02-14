@@ -34,23 +34,23 @@ void altmain1(List<String> args) async {
   final tree = dl.Tree(root: n1, embodiment: 'width: 300');
 */
 
-/*
   final g1 = dl.Group(groupItems: [
     dl.Text(content: 'Apple'),
     dl.Text(content: '1000'),
-  ]);
+  ], embodiment: 'tile');
   final g2 = dl.Group(groupItems: [
     dl.Text(content: 'Banana'),
     dl.Text(content: '2000'),
-  ]);
+  ], embodiment: 'card');
   final g3 = dl.Group(groupItems: [
     dl.Text(content: 'Cucumber'),
     dl.Text(content: '3000'),
-  ]);
+  ], embodiment: 'card');
   final l = dl.ListP(listItems: [g1, g2, g3]);
 
   model.topPrimitives = [l]; // [innerFrame];
-*/
+
+/*
 
   final g = dl.Group(groupItems: [
     dl.Nothing(),
@@ -58,6 +58,7 @@ void altmain1(List<String> args) async {
     dl.Text(content: '1000'),
   ], embodiment: 'card');
   model.topPrimitives = [g];
+*/
 
   // Create the object responsible for embodying the model as Widgets and for
   // rebuilding the UI when the model changes.

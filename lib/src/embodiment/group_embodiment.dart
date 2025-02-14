@@ -117,13 +117,13 @@ class GroupTileEmbodiment extends StatelessWidget {
     var subtitle = _embodifyGroupItem(context, embodifier, group, 2);
     var trailing = _embodifyGroupItem(context, embodifier, group, 3);
     var selected = false;
-    if (args.selectedCallback != null) {
-      selected = args.selectedCallback!(args.id);
+    if (args.isSelected != null) {
+      selected = args.isSelected!(args.id);
     }
     void Function()? handleTap;
-    if (args.selectedCallback != null) {
+    if (args.onSelection != null) {
       handleTap = () {
-        args.selectedCallback!(args.id, selected: true);
+        args.onSelection!(args.id);
       };
     }
     var content = ListTile(
@@ -164,16 +164,16 @@ class GroupCardEmbodiment extends StatelessWidget {
     var subtitle = _embodifyGroupItem(context, embodifier, group, 2);
     var trailing = _embodifyGroupItem(context, embodifier, group, 3);
     var selected = false;
-    if (args.selectedCallback != null) {
-      selected = args.selectedCallback!(args.id);
+    if (args.isSelected != null) {
+      selected = args.isSelected!(args.id);
     }
     void Function()? handleTap;
-    if (args.selectedCallback != null) {
+    if (args.onSelection != null) {
       handleTap = () {
-        args.selectedCallback!(args.id, selected: true);
+        args.onSelection!(args.id);
       };
     }
-    var content = Card(
+    var content = Card.outlined(
       child: ListTile(
         leading: leading,
         title: title,

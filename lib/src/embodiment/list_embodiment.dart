@@ -71,8 +71,18 @@ class _ListDefaultEmbodimentState extends State<ListDefaultEmbodiment> {
         },
       );
     } else if (item is pg.Group) {
-      // TODO - add handler for selected to args
-      content = embodifier!.buildPrimitive(context, EmbodimentArgs(item));
+      bool isSelected(int id) {
+        return widget.list.selection == id;
+      }
+
+      void onSelection(int id) {
+        setCurrentSelected(id);
+      }
+
+      content = embodifier!.buildPrimitive(
+          context,
+          EmbodimentArgs(item,
+              id: index, isSelected: isSelected, onSelection: onSelection));
     } else {
       content = const SizedBox(
         child: Text("?"),
