@@ -25,8 +25,6 @@ class PropertyName {
   static const height = 'height';
   static const horizontal = 'horizontal';
   static const horizontalAlignment = 'horizontalAlignment';
-  static const itemHeight = 'itemHeight';
-  static const itemWidth = 'itemWidth';
   static const layoutMethod = 'layoutMethod';
   static const left = 'left';
   static const marginAll = 'marginAll';
@@ -311,10 +309,6 @@ void _mapListDefaultProperty(
   switch (name) {
     case PropertyName.horizontal:
       propertyMap[name] = getBoolProp(value);
-    case PropertyName.itemHeight:
-      propertyMap[name] = getNumericProp(value, 0);
-    case PropertyName.itemWidth:
-      propertyMap[name] = getNumericProp(value, 0);
   }
 }
 
@@ -505,15 +499,11 @@ mixin ListDefaultPropertyAccess on PropertyAccessBase {
 mixin ListCardPropertyAccess on PropertyAccessBase {
   bool get horizontal =>
       _getYesNoT(_propertyMap, PropertyName.horizontal, false);
-  double? get itemHeight => _getDoubleT(_propertyMap, PropertyName.itemHeight);
-  double? get itemWidth => _getDoubleT(_propertyMap, PropertyName.itemWidth);
 }
 
 mixin ListPropertyPropertyAccess on PropertyAccessBase {
   bool get horizontal =>
       _getYesNoT(_propertyMap, PropertyName.horizontal, false);
-  double? get itemHeight => _getDoubleT(_propertyMap, PropertyName.itemHeight);
-  double? get itemWidth => _getDoubleT(_propertyMap, PropertyName.itemWidth);
 }
 
 mixin ListTabbedPropertyAccess on PropertyAccessBase {

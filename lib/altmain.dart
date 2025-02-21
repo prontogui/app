@@ -46,7 +46,9 @@ void altmain1(List<String> args) async {
     dl.Text(content: 'Cucumber'),
     dl.Text(content: '3000'),
   ], embodiment: 'card');
-  final l = dl.ListP(listItems: [g1, g2, g3]);
+  final modelItem = dl.Group(groupItems: [dl.Text(), dl.Text()]);
+
+  final l = dl.ListP(listItems: [g1, g2, g3], modelItem: modelItem);
 
   model.topPrimitives = [l]; // [innerFrame];
 

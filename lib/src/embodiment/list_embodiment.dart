@@ -13,8 +13,7 @@ import 'properties.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('List', [
-    EmbodimentManifestEntry(
-        'default', ListDefaultEmbodiment.fromArgsNormalStyle),
+    EmbodimentManifestEntry('default', ListDefaultEmbodiment.fromArgs),
     EmbodimentManifestEntry('tabbed', TabbedListEmbodiment.fromArgs),
   ]);
 }
@@ -22,7 +21,7 @@ EmbodimentPackageManifest getManifest() {
 enum ListStyle { card, property, normal, tabbed }
 
 class ListDefaultEmbodiment extends StatefulWidget {
-  ListDefaultEmbodiment.fromArgsNormalStyle(this.args, {super.key})
+  ListDefaultEmbodiment.fromArgs(this.args, {super.key})
       : list = args.primitive as pg.ListP,
         props =
             ListDefaultProperties.fromMap(args.primitive.embodimentProperties),
