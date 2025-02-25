@@ -127,14 +127,15 @@ Border _makeBorder(double l, double r, double t, double b, Color? borderColor) {
 }
 
 /// Encloses a widget [content] with additioanl widgets to apply Padding, Border,
-/// Margin, fixed Sizing, and Alignment according the the common properties [props].
+/// Margin, fixed Sizing, and Alignment according the the common properties [args.properties].
 /// It also encloses the content with Flexible when there are no horizontal or vertical
 /// constraints, as specified in embodiment arguments [args].
-Widget encloseWithPBMSAF(
-    Widget content, CommonPropertyAccess props, EmbodimentArgs args,
+Widget encloseWithPBMSAF(Widget content, EmbodimentArgs args,
     {bool horizontalUnbounded = false, bool verticalUnbounded = false}) {
   bool horizontalSized = false;
   bool verticalSized = false;
+
+  var props = args.properties as CommonProperties;
 
   // Are any common properties set, or can we skip PBMSA altogether?
   if (props.areCommonPropsSet) {

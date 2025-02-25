@@ -376,14 +376,14 @@ void _mapTextDefaultProperty(
   }
 }
 
-class PropertyAccessBase {
-  PropertyAccessBase() : _areCommonProps = false;
+class Properties {
+  Properties() : _areCommonProps = false;
 
   bool _areCommonProps;
   Map<String, dynamic>? _propertyMap;
 }
 
-mixin CommonPropertyAccess on PropertyAccessBase {
+mixin CommonPropertyAccess on Properties {
   bool? _isPadding;
   bool? _isBorder;
   bool? _isMargin;
@@ -468,14 +468,14 @@ mixin CommonPropertyAccess on PropertyAccessBase {
   double? get width => _getDoubleT(_propertyMap, PropertyName.width);
 }
 
-mixin FrameDefaultPropertyAccess on PropertyAccessBase {
+mixin FrameDefaultPropertyAccess on Properties {
   FlowDirection get flowDirection => _getEnumT<FlowDirection>(
       _propertyMap, FlowDirection.topToBottom, PropertyName.flowDirection);
   LayoutMethod get layoutMethod => _getEnumT<LayoutMethod>(
       _propertyMap, LayoutMethod.flow, PropertyName.layoutMethod);
 }
 
-mixin FrameSnackbarPropertyAccess on PropertyAccessBase {
+mixin FrameSnackbarPropertyAccess on Properties {
   SnackbarBehavior get snackbarBehavior => _getEnumT<SnackbarBehavior>(
       _propertyMap, SnackbarBehavior.fixed, PropertyName.snackbarBehavior);
   double? get snackbarDuration =>
@@ -484,37 +484,37 @@ mixin FrameSnackbarPropertyAccess on PropertyAccessBase {
       _getYesNoT(_propertyMap, PropertyName.snackbarShowCloseIcon, false);
 }
 
-mixin IconDefaultPropertyAccess on PropertyAccessBase {
+mixin IconDefaultPropertyAccess on Properties {
   Color? get color => _getColorT(_propertyMap, PropertyName.color);
   double? get size => _getDoubleT(_propertyMap, PropertyName.size);
 }
 
-mixin ListDefaultPropertyAccess on PropertyAccessBase {
+mixin ListDefaultPropertyAccess on Properties {
   bool get horizontal =>
       _getYesNoT(_propertyMap, PropertyName.horizontal, false);
 //  double? get itemHeight => _getDoubleT(_propertyMap, PropertyName.itemHeight);
 //  double? get itemWidth => _getDoubleT(_propertyMap, PropertyName.itemWidth);
 }
 
-mixin ListCardPropertyAccess on PropertyAccessBase {
+mixin ListCardPropertyAccess on Properties {
   bool get horizontal =>
       _getYesNoT(_propertyMap, PropertyName.horizontal, false);
 }
 
-mixin ListPropertyPropertyAccess on PropertyAccessBase {
+mixin ListPropertyPropertyAccess on Properties {
   bool get horizontal =>
       _getYesNoT(_propertyMap, PropertyName.horizontal, false);
 }
 
-mixin ListTabbedPropertyAccess on PropertyAccessBase {
+mixin ListTabbedPropertyAccess on Properties {
   int get animationPeriod =>
       _getIntT(_propertyMap, PropertyName.animationPeriod, 0);
   double? get tabHeight => _getDoubleT(_propertyMap, PropertyName.tabHeight);
 }
 
-mixin TreeDefaultPropertyAccess on PropertyAccessBase {}
+mixin TreeDefaultPropertyAccess on Properties {}
 
-mixin NumericFieldDefaultPropertyAccess on PropertyAccessBase {
+mixin NumericFieldDefaultPropertyAccess on Properties {
   bool get allowEmptyValue =>
       _getYesNoT(_propertyMap, PropertyName.allowEmptyValue, false);
   int get displayDecimalPlaces =>
@@ -531,12 +531,12 @@ mixin NumericFieldDefaultPropertyAccess on PropertyAccessBase {
       _getStringArrayT(_propertyMap, PropertyName.popupChoices);
 }
 
-mixin NumericFieldColorPropertyAccess on PropertyAccessBase {
+mixin NumericFieldColorPropertyAccess on Properties {
   bool get allowEmptyValue =>
       _getYesNoT(_propertyMap, PropertyName.allowEmptyValue, false);
 }
 
-mixin TextDefaultPropertyAccess on PropertyAccessBase {
+mixin TextDefaultPropertyAccess on Properties {
   Color? get backgroundColor =>
       _getColorT(_propertyMap, PropertyName.backgroundColor);
   Color? get color => _getColorT(_propertyMap, PropertyName.color);
@@ -548,7 +548,7 @@ mixin TextDefaultPropertyAccess on PropertyAccessBase {
       _propertyMap, FontWeight.normal, PropertyName.fontWeight);
 }
 
-class CommonProperties extends PropertyAccessBase with CommonPropertyAccess {
+class CommonProperties extends Properties with CommonPropertyAccess {
   CommonProperties.fromMap(Map<String, dynamic>? embodimentMap) {
     if (embodimentMap == null || embodimentMap.isEmpty) {
       _propertyMap = null;
@@ -561,7 +561,7 @@ class CommonProperties extends PropertyAccessBase with CommonPropertyAccess {
   }
 }
 
-class FrameDefaultProperties extends PropertyAccessBase
+class FrameDefaultProperties extends Properties
     with CommonPropertyAccess, FrameDefaultPropertyAccess {
   FrameDefaultProperties.fromMap(Map<String, dynamic>? embodimentMap) {
     if (embodimentMap == null || embodimentMap.isEmpty) {
@@ -576,7 +576,7 @@ class FrameDefaultProperties extends PropertyAccessBase
   }
 }
 
-class FrameSnackbarProperties extends PropertyAccessBase
+class FrameSnackbarProperties extends Properties
     with CommonPropertyAccess, FrameSnackbarPropertyAccess {
   FrameSnackbarProperties.fromMap(Map<String, dynamic>? embodimentMap) {
     if (embodimentMap == null || embodimentMap.isEmpty) {
@@ -591,7 +591,7 @@ class FrameSnackbarProperties extends PropertyAccessBase
   }
 }
 
-class IconDefaultProperties extends PropertyAccessBase
+class IconDefaultProperties extends Properties
     with CommonPropertyAccess, IconDefaultPropertyAccess {
   IconDefaultProperties.fromMap(Map<String, dynamic>? embodimentMap) {
     if (embodimentMap == null || embodimentMap.isEmpty) {
@@ -606,7 +606,7 @@ class IconDefaultProperties extends PropertyAccessBase
   }
 }
 
-class ListDefaultProperties extends PropertyAccessBase
+class ListDefaultProperties extends Properties
     with CommonPropertyAccess, ListDefaultPropertyAccess {
   ListDefaultProperties.fromMap(Map<String, dynamic>? embodimentMap) {
     if (embodimentMap == null || embodimentMap.isEmpty) {
@@ -622,7 +622,7 @@ class ListDefaultProperties extends PropertyAccessBase
 }
 
 // ALSO GENERATES DUPLICATES ListCardProperties, ListPropertyProperties
-class ListTabbedProperties extends PropertyAccessBase
+class ListTabbedProperties extends Properties
     with CommonPropertyAccess, ListTabbedPropertyAccess {
   ListTabbedProperties.fromMap(Map<String, dynamic>? embodimentMap) {
     if (embodimentMap == null || embodimentMap.isEmpty) {
@@ -637,7 +637,7 @@ class ListTabbedProperties extends PropertyAccessBase
   }
 }
 
-class TreeDefaultProperties extends PropertyAccessBase
+class TreeDefaultProperties extends Properties
     with CommonPropertyAccess, TreeDefaultPropertyAccess {
   TreeDefaultProperties.fromMap(Map<String, dynamic>? embodimentMap) {
     if (embodimentMap == null || embodimentMap.isEmpty) {
@@ -652,7 +652,7 @@ class TreeDefaultProperties extends PropertyAccessBase
   }
 }
 
-class NumericFieldDefaultProperties extends PropertyAccessBase
+class NumericFieldDefaultProperties extends Properties
     with CommonPropertyAccess, NumericFieldDefaultPropertyAccess {
   NumericFieldDefaultProperties.fromMap(Map<String, dynamic>? embodimentMap) {
     if (embodimentMap == null || embodimentMap.isEmpty) {
@@ -667,7 +667,7 @@ class NumericFieldDefaultProperties extends PropertyAccessBase
   }
 }
 
-class NumericFieldColorProperties extends PropertyAccessBase
+class NumericFieldColorProperties extends Properties
     with CommonPropertyAccess, NumericFieldDefaultPropertyAccess {
   NumericFieldColorProperties.fromMap(Map<String, dynamic>? embodimentMap) {
     if (embodimentMap == null || embodimentMap.isEmpty) {
@@ -682,7 +682,7 @@ class NumericFieldColorProperties extends PropertyAccessBase
   }
 }
 
-class TextDefaultProperties extends PropertyAccessBase
+class TextDefaultProperties extends Properties
     with CommonPropertyAccess, TextDefaultPropertyAccess {
   TextDefaultProperties.fromMap(Map<String, dynamic>? embodimentMap) {
     if (embodimentMap == null || embodimentMap.isEmpty) {

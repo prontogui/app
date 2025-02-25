@@ -13,8 +13,10 @@ import 'properties.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('List', [
-    EmbodimentManifestEntry('default', ListDefaultEmbodiment.fromArgs),
-    EmbodimentManifestEntry('tabbed', TabbedListEmbodiment.fromArgs),
+    EmbodimentManifestEntry('default', ListDefaultEmbodiment.fromArgs,
+        ListDefaultProperties.fromMap),
+    EmbodimentManifestEntry(
+        'tabbed', TabbedListEmbodiment.fromArgs, ListTabbedProperties.fromMap),
   ]);
 }
 
@@ -23,13 +25,10 @@ enum ListStyle { card, property, normal, tabbed }
 class ListDefaultEmbodiment extends StatefulWidget {
   ListDefaultEmbodiment.fromArgs(this.args, {super.key})
       : list = args.primitive as pg.ListP,
-        props =
-            ListDefaultProperties.fromMap(args.primitive.embodimentProperties),
         style = ListStyle.normal;
 
   final EmbodimentArgs args;
   final pg.ListP list;
-  final ListDefaultProperties props;
   final ListStyle style;
 
   @override
@@ -40,6 +39,7 @@ class ListDefaultEmbodiment extends StatefulWidget {
 
 class _ListDefaultEmbodimentState extends State<ListDefaultEmbodiment> {
   Embodifier? embodifier;
+  Map<String, dynamic>? modelProperties;
 
   void setCurrentSelected(int newSelected) {
     setState(() {
@@ -58,10 +58,12 @@ class _ListDefaultEmbodimentState extends State<ListDefaultEmbodiment> {
 
   Widget? builder(BuildContext context, int index) {
     var item = widget.list.listItems[index];
+
     late Widget content;
     if (_singleItemTypes.contains(item.describeType)) {
       content = ListTile(
-        title: embodifier!.buildPrimitive(context, EmbodimentArgs(item)),
+        title: embodifier!.buildPrimitive(context, item,
+            modelPrimitive: widget.list.modelItem),
         selected: index == widget.list.selection,
         isThreeLine: false,
         contentPadding: const EdgeInsets.symmetric(horizontal: 2.0),
@@ -78,17 +80,21 @@ class _ListDefaultEmbodimentState extends State<ListDefaultEmbodiment> {
         setCurrentSelected(id);
       }
 
+      var callbacks = EmbodimentCallbacks(index,
+          isSelected: isSelected, onSelection: onSelection);
+
       content = embodifier!.buildPrimitive(
-          context,
-          EmbodimentArgs(item,
-              id: index, isSelected: isSelected, onSelection: onSelection));
+        context,
+        item,
+        modelPrimitive: widget.list.modelItem,
+        callbacks: callbacks,
+      );
     } else {
       content = const SizedBox(
         child: Text("?"),
       );
     }
 
-    // TODO - apply encloseWithPBMSAF here based on subembodiment
     return content;
   }
 
@@ -97,7 +103,10 @@ class _ListDefaultEmbodimentState extends State<ListDefaultEmbodiment> {
     // Grab the embodifier for other functions in the class to use.
     embodifier ??= InheritedEmbodifier.of(context);
 
-    var props = widget.props;
+    // Get the properties of the model item, if any.
+    modelProperties = widget.list.modelItem?.embodimentProperties;
+
+    var props = widget.args.properties as ListDefaultProperties;
 
     var scrollDirection = props.horizontal ? Axis.horizontal : Axis.vertical;
 
@@ -109,7 +118,7 @@ class _ListDefaultEmbodimentState extends State<ListDefaultEmbodiment> {
 
     var horizontal = props.horizontal;
 
-    return encloseWithPBMSAF(content, props, widget.args,
+    return encloseWithPBMSAF(content, widget.args,
         verticalUnbounded: true, horizontalUnbounded: !horizontal);
   }
 }

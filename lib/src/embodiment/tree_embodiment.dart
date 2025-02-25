@@ -9,19 +9,15 @@ import '../embodifier.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('Tree', [
-    EmbodimentManifestEntry('default', TreeDefaultEmbodiment.fromArgs),
+    EmbodimentManifestEntry('default', TreeDefaultEmbodiment.fromArgs,
+        TreeDefaultProperties.fromMap),
   ]);
 }
 
 class TreeDefaultEmbodiment extends StatelessWidget {
-  TreeDefaultEmbodiment.fromArgs(this.args, {super.key})
-      : tree = args.primitive as pg.Tree,
-        props =
-            TreeDefaultProperties.fromMap(args.primitive.embodimentProperties);
+  const TreeDefaultEmbodiment.fromArgs(this.args, {super.key});
 
   final EmbodimentArgs args;
-  final pg.Tree tree;
-  final TreeDefaultProperties props;
 
   // Recursive function to convert a tree of pg.Node to a tree of IndexedTreeNode.
   IndexedTreeNode<pg.Node> convertTree(pg.Node node, IndexedNode? parent) {
@@ -46,12 +42,14 @@ class TreeDefaultEmbodiment extends StatelessWidget {
       );
     }
 
-    return embodifier.buildPrimitive(context, EmbodimentArgs(item));
+    return embodifier.buildPrimitive(context, item);
   }
 
   @override
   Widget build(BuildContext context) {
     var embodifier = InheritedEmbodifier.of(context);
+    var tree = args.primitive as pg.Tree;
+    //var props = args.properties as TreeDefaultProperties;
 
     var content = TreeView.indexed(
         indentation: Indentation(style: IndentStyle.roundJoint),
@@ -73,7 +71,7 @@ class TreeDefaultEmbodiment extends StatelessWidget {
           */
         });
 
-    return encloseWithPBMSAF(content, props, args, verticalUnbounded: true);
+    return encloseWithPBMSAF(content, args, verticalUnbounded: true);
   }
 }
 

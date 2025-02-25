@@ -12,23 +12,24 @@ import 'properties.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('Group', [
-    EmbodimentManifestEntry('default', GroupDefaultEmbodiment.fromArgs),
-    EmbodimentManifestEntry('tile', GroupTileEmbodiment.fromArgs),
-    EmbodimentManifestEntry('card', GroupCardEmbodiment.fromArgs),
+    EmbodimentManifestEntry(
+        'default', GroupDefaultEmbodiment.fromArgs, CommonProperties.fromMap),
+    EmbodimentManifestEntry(
+        'tile', GroupTileEmbodiment.fromArgs, CommonProperties.fromMap),
+    EmbodimentManifestEntry(
+        'card', GroupCardEmbodiment.fromArgs, CommonProperties.fromMap),
   ]);
 }
 
 class GroupDefaultEmbodiment extends StatelessWidget {
-  GroupDefaultEmbodiment.fromArgs(this.args, {super.key})
-      : group = args.primitive as pg.Group,
-        props = CommonProperties.fromMap(args.primitive.embodimentProperties);
+  const GroupDefaultEmbodiment.fromArgs(this.args, {super.key});
 
   final EmbodimentArgs args;
-  final pg.Group group;
-  final CommonProperties props;
 
   @override
   Widget build(BuildContext context) {
+    var group = args.primitive as pg.Group;
+
     if (group.groupItems.isEmpty || !group.visible) {
       return const SizedBox.shrink();
     }
@@ -44,9 +45,17 @@ class GroupDefaultEmbodiment extends StatelessWidget {
     if (group.groupItems.length == 1) {
       // TODO:  is SizedBox necessary or can we use a different widget or no widget??
       content = SizedBox(
-          child: InheritedEmbodifier.of(context)
-              .buildPrimitive(context, EmbodimentArgs(group.groupItems[0])));
+          child: InheritedEmbodifier.of(context).buildPrimitive(
+        context,
+        group.groupItems[0],
+      ));
     } else {
+      List<pg.Primitive>? modelPrimitives;
+      if (args.modelPrimitive != null) {
+        var modelGroup = args.modelPrimitive as pg.Group;
+        modelPrimitives = modelGroup.groupItems;
+      }
+
       content = Row(
         children:
             // This is very elegant but we'll see how it performs.  Documentation says
@@ -55,11 +64,11 @@ class GroupDefaultEmbodiment extends StatelessWidget {
             // embodiment.
             InheritedEmbodifier.of(context).buildPrimitiveList(
                 context, group.groupItems,
-                horizontalUnbounded: true),
+                modelPrimitives: modelPrimitives, horizontalUnbounded: true),
       );
     }
 
-    return encloseWithPBMSAF(content, props, args, verticalUnbounded: true);
+    return encloseWithPBMSAF(content, args, verticalUnbounded: true);
   }
 }
 
@@ -78,7 +87,7 @@ Widget? _embodifySingleItem(
     );
   }
 
-  return embodifier.buildPrimitive(context, EmbodimentArgs(item));
+  return embodifier.buildPrimitive(context, item);
 }
 
 Widget? _embodifyGroupItem(BuildContext context, Embodifier embodifier,
@@ -93,18 +102,13 @@ Widget? _embodifyGroupItem(BuildContext context, Embodifier embodifier,
 }
 
 class GroupTileEmbodiment extends StatelessWidget {
-  GroupTileEmbodiment.fromArgs(this.args, {super.key})
-      : group = args.primitive as pg.Group,
-        props = CommonProperties.fromMap(
-          args.primitive.embodimentProperties,
-        );
+  const GroupTileEmbodiment.fromArgs(this.args, {super.key});
 
   final EmbodimentArgs args;
-  final pg.Group group;
-  final CommonProperties props;
 
   @override
   Widget build(BuildContext context) {
+    var group = args.primitive as pg.Group;
     var embodifier = InheritedEmbodifier.of(context);
 
     // Is group hidden?
@@ -117,15 +121,23 @@ class GroupTileEmbodiment extends StatelessWidget {
     var subtitle = _embodifyGroupItem(context, embodifier, group, 2);
     var trailing = _embodifyGroupItem(context, embodifier, group, 3);
     var selected = false;
-    if (args.isSelected != null) {
-      selected = args.isSelected!(args.id);
-    }
     void Function()? handleTap;
-    if (args.onSelection != null) {
-      handleTap = () {
-        args.onSelection!(args.id);
-      };
+
+    // If callbacks are available...
+    if (args.callbacks != null) {
+      var cb = args.callbacks!;
+
+      // If List selection is available...
+      if (cb.isSelected != null) {
+        selected = cb.isSelected!(cb.id);
+      }
+      if (cb.onSelection != null) {
+        handleTap = () {
+          cb.onSelection!(cb.id);
+        };
+      }
     }
+
     var content = ListTile(
       leading: leading,
       title: title,
@@ -135,23 +147,18 @@ class GroupTileEmbodiment extends StatelessWidget {
       onTap: handleTap,
     );
 
-    return encloseWithPBMSAF(content, props, args, verticalUnbounded: true);
+    return encloseWithPBMSAF(content, args, verticalUnbounded: true);
   }
 }
 
 class GroupCardEmbodiment extends StatelessWidget {
-  GroupCardEmbodiment.fromArgs(this.args, {super.key})
-      : group = args.primitive as pg.Group,
-        props = CommonProperties.fromMap(
-          args.primitive.embodimentProperties,
-        );
+  const GroupCardEmbodiment.fromArgs(this.args, {super.key});
 
   final EmbodimentArgs args;
-  final pg.Group group;
-  final CommonProperties props;
 
   @override
   Widget build(BuildContext context) {
+    var group = args.primitive as pg.Group;
     var embodifier = InheritedEmbodifier.of(context);
 
     // Is group hidden?
@@ -164,15 +171,23 @@ class GroupCardEmbodiment extends StatelessWidget {
     var subtitle = _embodifyGroupItem(context, embodifier, group, 2);
     var trailing = _embodifyGroupItem(context, embodifier, group, 3);
     var selected = false;
-    if (args.isSelected != null) {
-      selected = args.isSelected!(args.id);
-    }
     void Function()? handleTap;
-    if (args.onSelection != null) {
-      handleTap = () {
-        args.onSelection!(args.id);
-      };
+
+    // If callbacks are available...
+    if (args.callbacks != null) {
+      var cb = args.callbacks!;
+
+      // If List selection is available...
+      if (cb.isSelected != null) {
+        selected = cb.isSelected!(cb.id);
+      }
+      if (cb.onSelection != null) {
+        handleTap = () {
+          cb.onSelection!(cb.id);
+        };
+      }
     }
+
     var content = Card.outlined(
       child: ListTile(
         leading: leading,
@@ -184,6 +199,6 @@ class GroupCardEmbodiment extends StatelessWidget {
       ),
     );
 
-    return encloseWithPBMSAF(content, props, args, verticalUnbounded: true);
+    return encloseWithPBMSAF(content, args, verticalUnbounded: true);
   }
 }

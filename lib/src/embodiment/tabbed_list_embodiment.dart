@@ -11,16 +11,12 @@ import 'embodiment_args.dart';
 import 'properties.dart';
 
 class TabbedListEmbodiment extends StatelessWidget {
-  TabbedListEmbodiment.fromArgs(
+  const TabbedListEmbodiment.fromArgs(
     this.args, {
     super.key,
-  })  : list = args.primitive as pg.ListP,
-        props =
-            ListTabbedProperties.fromMap(args.primitive.embodimentProperties);
+  });
 
   final EmbodimentArgs args;
-  final pg.ListP list;
-  final ListTabbedProperties props;
 
   Widget embodifySingleItem(BuildContext context, Embodifier embodifier,
       pg.Primitive item, String parentWidgetType) {
@@ -36,11 +32,14 @@ class TabbedListEmbodiment extends StatelessWidget {
       );
     }
 
-    return embodifier.buildPrimitive(context, EmbodimentArgs(item));
+    return embodifier.buildPrimitive(context, item);
   }
 
   @override
   Widget build(BuildContext context) {
+    var list = args.primitive as pg.ListP;
+    var props = args.properties as ListTabbedProperties;
+
     // Grab the embodifier for other functions in the class to use.
     var embodifier = InheritedEmbodifier.of(context);
 
@@ -79,7 +78,7 @@ class TabbedListEmbodiment extends StatelessWidget {
     });
 
     var tabViews = List<Widget>.generate(listItems.length, (i) {
-      return embodifier.buildPrimitive(context, EmbodimentArgs(listItems[i]));
+      return embodifier.buildPrimitive(context, listItems[i]);
     });
 
     var tabHeight = props.tabHeight;
@@ -99,6 +98,6 @@ class TabbedListEmbodiment extends StatelessWidget {
             Expanded(child: TabBarView(children: tabViews))
           ],
         ));
-    return encloseWithPBMSAF(content, props, args, verticalUnbounded: true);
+    return encloseWithPBMSAF(content, args, verticalUnbounded: true);
   }
 }

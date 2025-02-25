@@ -106,6 +106,8 @@ class EmbodimentFactory {
       key = UniqueKey();
     }
 
+    // If no properties in args yet then get cached properties...
+
     return einfo.factoryFunction(ea, key: key);
   }
 }

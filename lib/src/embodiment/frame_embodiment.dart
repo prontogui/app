@@ -14,27 +14,28 @@ import 'properties.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('Frame', [
-    EmbodimentManifestEntry('default', FrameEmbodiment.fromArgs),
-    EmbodimentManifestEntry('full-view', FrameEmbodiment.fromArgs),
-    EmbodimentManifestEntry('dialog-view', FrameEmbodiment.fromArgs),
-    EmbodimentManifestEntry('snackbar', SnackBarEmbodiment.fromArgs)
+    EmbodimentManifestEntry(
+        'default', FrameEmbodiment.fromArgs, FrameDefaultProperties.fromMap),
+    EmbodimentManifestEntry(
+        'full-view', FrameEmbodiment.fromArgs, FrameDefaultProperties.fromMap),
+    EmbodimentManifestEntry('dialog-view', FrameEmbodiment.fromArgs,
+        FrameDefaultProperties.fromMap),
+    EmbodimentManifestEntry(
+        'snackbar', SnackBarEmbodiment.fromArgs, FrameDefaultProperties.fromMap)
   ]);
 }
 
 class FrameEmbodiment extends StatelessWidget {
   FrameEmbodiment.fromArgs(this.args, {super.key})
-      : frame = args.primitive as pg.Frame,
-        props =
-            FrameDefaultProperties.fromMap(args.primitive.embodimentProperties);
+      : frame = args.primitive as pg.Frame;
 
   final EmbodimentArgs args;
   final pg.Frame frame;
-  final FrameDefaultProperties props;
 
   // Note:  when getting around to implementing a manual layout method, take a look
   // at PositionedDirectional class and Positioned widget.
 
-  Widget buildFlowLayout(BuildContext context) {
+  Widget buildFlowLayout(BuildContext context, FrameDefaultProperties props) {
     late Widget content;
     bool verticalUnbounded = false;
     bool horizontalUnbounded = false;
@@ -57,7 +58,7 @@ class FrameEmbodiment extends StatelessWidget {
         verticalUnbounded = true;
     }
 
-    content = encloseWithPBMSAF(content, props, args,
+    content = encloseWithPBMSAF(content, args,
         horizontalUnbounded: horizontalUnbounded,
         verticalUnbounded: verticalUnbounded);
 
@@ -72,7 +73,7 @@ class FrameEmbodiment extends StatelessWidget {
             context, frame.frameItems,
             allowPositioned: true));
 
-    content = encloseWithPBMSAF(content, props, args,
+    content = encloseWithPBMSAF(content, args,
         horizontalUnbounded: true, verticalUnbounded: true);
 
     return content;
@@ -80,10 +81,12 @@ class FrameEmbodiment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var props = args.properties as FrameDefaultProperties;
+
     late Widget content;
     switch (props.layoutMethod) {
       case LayoutMethod.flow:
-        content = buildFlowLayout(context);
+        content = buildFlowLayout(context, props);
       case LayoutMethod.positioned:
         content = buildPositionedLayout(context);
     }

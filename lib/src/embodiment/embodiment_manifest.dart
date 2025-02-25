@@ -1,12 +1,15 @@
+import 'package:app/src/embodiment/properties.dart';
 import 'package:flutter/material.dart';
 import 'embodiment_args.dart';
 
 class EmbodimentManifestEntry {
-  EmbodimentManifestEntry(this.embodiment, this.factoryFunction,
+  EmbodimentManifestEntry(
+      this.embodiment, this.factoryFunction, this.propertyAccess,
       {this.keyRequired = false});
 
   final String embodiment;
   final Widget Function(EmbodimentArgs, {Key? key}) factoryFunction;
+  final Properties Function(Map<String, dynamic>) propertyAccess;
   final bool keyRequired;
 }
 

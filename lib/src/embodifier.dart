@@ -86,9 +86,8 @@ class Embodifier implements PrimitiveModelWatcher {
     }
   }
 
-  /// Builds the particular embodiment for a primitive and injects a listenable builder
-  /// if the primitive is a notifification point.
-  Widget buildPrimitive(BuildContext context, EmbodimentArgs args) {
+  Widget addNotificationPointAndCreateEmbodiment(
+      BuildContext context, Primitive primitive, EmbodimentArgs args) {
     // Is this embodiment an update point?
     var notifier = _doesNotify(args.primitive);
 
@@ -106,24 +105,45 @@ class Embodifier implements PrimitiveModelWatcher {
     return _factory.createEmbodiment(args);
   }
 
+  /// Builds the particular embodiment for a primitive and injects a listenable builder
+  /// if the primitive is a notifification point.
+  Widget buildPrimitive(BuildContext context, Primitive primitive,
+      {Primitive? modelPrimitive,
+      bool parentIsTopView = false,
+      EmbodimentCallbacks? callbacks}) {
+    var args = EmbodimentArgs(primitive,
+        modelPrimitive: modelPrimitive,
+        parentIsTopView: parentIsTopView,
+        callbacks: callbacks);
+
+    return addNotificationPointAndCreateEmbodiment(context, primitive, args);
+  }
+
   /// Builds a list of embodiments corresponding to a list of primitives.
   List<Widget> buildPrimitiveList(
       BuildContext context, List<Primitive> primitives,
-      {bool parentIsTopView = false,
+      {List<Primitive>? modelPrimitives,
+      bool parentIsTopView = false,
       bool horizontalUnbounded = false,
       bool verticalUnbounded = false,
       bool allowPositioned = false}) {
     var widgets = <Widget>[];
 
+    int i = 0;
     for (final primitive in primitives) {
+      var modelPrimitive = modelPrimitives?[i];
       var args = EmbodimentArgs(primitive,
+          modelPrimitive: modelPrimitive,
           parentIsTopView: parentIsTopView,
           horizontalUnbounded: horizontalUnbounded,
           verticalUnbounded: verticalUnbounded,
           usePositioning: allowPositioned);
+
       widgets.add(
-        buildPrimitive(context, args),
+        addNotificationPointAndCreateEmbodiment(context, primitive, args),
       );
+
+      i++;
     }
 
     return widgets;

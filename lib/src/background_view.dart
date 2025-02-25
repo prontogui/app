@@ -35,7 +35,7 @@ class BackgroundView extends StatelessWidget {
       } else if (backgroundItems.length == 1) {
         return Center(
           child: InheritedEmbodifier.of(context)
-              .buildPrimitive(context, EmbodimentArgs(backgroundItems[0])),
+              .buildPrimitive(context, backgroundItems[0]),
         );
       } else {
         return Column(
