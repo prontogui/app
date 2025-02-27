@@ -7,12 +7,12 @@ import 'package:dartlib/dartlib.dart' as pg;
 import 'package:flutter/material.dart';
 import 'embodiment_manifest.dart';
 import 'embodiment_args.dart';
-import 'embodiment_help.dart';
 import 'properties.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('TextField', [
-    EmbodimentManifestEntry('default', TextFieldEmbodiment.fromArgs),
+    EmbodimentManifestEntry(
+        'default', TextFieldEmbodiment.fromArgs, CommonProperties.fromMap),
   ]);
 }
 
@@ -21,7 +21,7 @@ EmbodimentPackageManifest getManifest() {
 class TextFieldEmbodiment extends StatefulWidget {
   TextFieldEmbodiment.fromArgs(this.args, {super.key})
       : textfield = args.primitive as pg.TextField,
-        props = CommonProperties.fromMap(args.primitive.embodimentProperties);
+        props = args.properties as CommonProperties;
 
   final EmbodimentArgs args;
   final pg.TextField textfield;
@@ -91,7 +91,6 @@ class _TextFieldEmbodimentState extends State<TextFieldEmbodiment> {
       focusNode: _focusNode,
     );
 
-    return encloseWithPBMSAF(content, widget.props, widget.args,
-        horizontalUnbounded: true);
+    return encloseWithPBMSAF(content, widget.args, horizontalUnbounded: true);
   }
 }

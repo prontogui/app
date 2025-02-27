@@ -9,27 +9,28 @@ import 'dart:io';
 import 'embodiment_manifest.dart';
 import 'embodiment_args.dart';
 import 'properties.dart';
+import 'embodiment_help.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('ExportFile', [
-    EmbodimentManifestEntry('default', ExportFileEmbodiment.fromArgs),
+    EmbodimentManifestEntry(
+        'default', ExportFileEmbodiment.fromArgs, CommonProperties.fromMap),
   ]);
 }
 
 class ExportFileEmbodiment extends StatelessWidget {
-  ExportFileEmbodiment.fromArgs(
+  const ExportFileEmbodiment.fromArgs(
     this.args, {
     super.key,
-  })  : exportFile = args.primitive as pg.ExportFile,
-        props = CommonProperties.fromMap(args.primitive.embodimentProperties);
+  });
 
   final EmbodimentArgs args;
-  final pg.ExportFile exportFile;
-  final CommonProperties props;
 
   @override
   Widget build(BuildContext context) {
-    return OutlinedButton(
+    var exportFile = args.primitive as pg.ExportFile;
+
+    var content = OutlinedButton(
         child: const Text("Select File"),
         onPressed: () async {
           // TODO:  wait asyncrhonously for user to pick file and handle it
@@ -49,5 +50,6 @@ class ExportFileEmbodiment extends StatelessWidget {
 
           // Take Data and write to the file.
         });
+    return encloseWithPBMSAF(content, args);
   }
 }

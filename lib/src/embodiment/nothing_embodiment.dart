@@ -1,10 +1,12 @@
+import 'package:app/src/embodiment/properties.dart';
 import 'package:flutter/material.dart';
 import 'embodiment_manifest.dart';
 import 'embodiment_args.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('Nothing', [
-    EmbodimentManifestEntry('default', NothingDefaultEmbodiment.fromArgs),
+    EmbodimentManifestEntry('default', NothingDefaultEmbodiment.fromArgs,
+        NothingProperties.fromMap),
   ]);
 }
 

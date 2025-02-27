@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:app/src/embodiment/embodiment_help.dart';
+import 'embodiment_help.dart';
 import 'package:dartlib/dartlib.dart' as pg;
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
@@ -13,21 +13,20 @@ import 'properties.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('ImportFile', [
-    EmbodimentManifestEntry('default', ImportFileEmbodiment.fromArgs),
+    EmbodimentManifestEntry(
+        'default', ImportFileEmbodiment.fromArgs, CommonProperties.fromMap),
   ]);
 }
 
 class ImportFileEmbodiment extends StatelessWidget {
-  ImportFileEmbodiment.fromArgs(this.args, {super.key})
-      : importFile = args.primitive as pg.ImportFile,
-        props = CommonProperties.fromMap(args.primitive.embodimentProperties);
+  const ImportFileEmbodiment.fromArgs(this.args, {super.key});
 
   final EmbodimentArgs args;
-  final pg.ImportFile importFile;
-  final CommonProperties props;
 
   @override
   Widget build(BuildContext context) {
+    var importFile = args.primitive as pg.ImportFile;
+
     var content = OutlinedButton(
         child: const Text("Select File"),
         onPressed: () async {
@@ -52,6 +51,6 @@ class ImportFileEmbodiment extends StatelessWidget {
 
           // Take Data and write to the file.
         });
-    return encloseWithPBMSAF(content, props, args);
+    return encloseWithPBMSAF(content, args);
   }
 }

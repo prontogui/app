@@ -12,22 +12,22 @@ import 'properties.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('Choice', [
-    EmbodimentManifestEntry('default', DefaultChoiceEmbodiment.fromArgs),
-    EmbodimentManifestEntry('button', ButtonChoiceEmbodiment.fromArgs),
+    EmbodimentManifestEntry(
+        'default', DefaultChoiceEmbodiment.fromArgs, CommonProperties.fromMap),
+    EmbodimentManifestEntry(
+        'button', ButtonChoiceEmbodiment.fromArgs, CommonProperties.fromMap),
   ]);
 }
 
 class DefaultChoiceEmbodiment extends StatelessWidget {
-  DefaultChoiceEmbodiment.fromArgs(this.args, {super.key})
-      : choice = args.primitive as pg.Choice,
-        props = CommonProperties.fromMap(args.primitive.embodimentProperties);
+  const DefaultChoiceEmbodiment.fromArgs(this.args, {super.key});
 
   final EmbodimentArgs args;
-  final pg.Choice choice;
-  final CommonProperties props;
 
   @override
   Widget build(BuildContext context) {
+    var choice = args.primitive as pg.Choice;
+
     var choiceLabels = choice.choiceLabels;
     var content = ChoiceField(
       choices: choice.choices,
@@ -38,18 +38,16 @@ class DefaultChoiceEmbodiment extends StatelessWidget {
       },
     );
 
-    return encloseWithPBMSAF(content, props, args, horizontalUnbounded: true);
+    return encloseWithPBMSAF(content, args, horizontalUnbounded: true);
   }
 }
 
 class ButtonChoiceEmbodiment extends StatefulWidget {
   ButtonChoiceEmbodiment.fromArgs(this.args, {super.key})
-      : choice = args.primitive as pg.Choice,
-        props = CommonProperties.fromMap(args.primitive.embodimentProperties);
+      : choice = args.primitive as pg.Choice;
 
   final EmbodimentArgs args;
   final pg.Choice choice;
-  final CommonProperties props;
 
   List<String> get choices {
     return choice.choices;
@@ -131,7 +129,7 @@ class _ButtonChoiceEmbodimentState extends State<ButtonChoiceEmbodiment> {
       ));
     }
 
-    return DropdownButton<String>(
+    var content = DropdownButton<String>(
       items: choicesD,
       value: nominalToWorkingChoice(widget.choice.choice),
       onChanged: (value) {
@@ -139,5 +137,7 @@ class _ButtonChoiceEmbodimentState extends State<ButtonChoiceEmbodiment> {
         setCurrentChoice(value);
       },
     );
+
+    return encloseWithPBMSAF(content, widget.args, horizontalUnbounded: true);
   }
 }

@@ -8,25 +8,24 @@ import 'properties.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('Icon', [
-    EmbodimentManifestEntry('default', IconDefaultEmbodiment.fromArgs),
+    EmbodimentManifestEntry('default', IconDefaultEmbodiment.fromArgs,
+        IconDefaultProperties.fromMap),
   ]);
 }
 
 class IconDefaultEmbodiment extends StatelessWidget {
-  IconDefaultEmbodiment.fromArgs(this.args, {super.key})
-      : icon = args.primitive as pg.Icon,
-        props =
-            IconDefaultProperties.fromMap(args.primitive.embodimentProperties);
+  const IconDefaultEmbodiment.fromArgs(this.args, {super.key});
 
   final EmbodimentArgs args;
-  final pg.Icon icon;
-  final IconDefaultProperties props;
 
   @override
   Widget build(BuildContext context) {
+    var icon = args.primitive as pg.Icon;
+    var props = args.properties as IconDefaultProperties;
+
     var content = Icon(translateIdToIconData(icon.iconID),
         color: props.color, size: props.size);
 
-    return encloseWithPBMSAF(content, props, args);
+    return encloseWithPBMSAF(content, args);
   }
 }

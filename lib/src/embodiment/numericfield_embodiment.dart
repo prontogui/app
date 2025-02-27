@@ -14,25 +14,25 @@ import 'properties.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('NumericField', [
-    EmbodimentManifestEntry('default', DefaultNumericFieldEmbodiment.fromArgs),
-    EmbodimentManifestEntry(
-        'font-size', FontSizeNumericFieldEmbodiment.fromArgs),
-    EmbodimentManifestEntry('color', ColorNumericFieldEmbodiment.fromArgs)
+    EmbodimentManifestEntry('default', DefaultNumericFieldEmbodiment.fromArgs,
+        NumericFieldDefaultProperties.fromMap),
+    EmbodimentManifestEntry('font-size',
+        FontSizeNumericFieldEmbodiment.fromArgs, CommonProperties.fromMap),
+    EmbodimentManifestEntry('color', ColorNumericFieldEmbodiment.fromArgs,
+        NumericFieldColorProperties.fromMap)
   ]);
 }
 
 class DefaultNumericFieldEmbodiment extends StatelessWidget {
-  DefaultNumericFieldEmbodiment.fromArgs(this.args, {super.key})
-      : numfield = args.primitive as pg.NumericField,
-        props = NumericFieldDefaultProperties.fromMap(
-            args.primitive.embodimentProperties);
+  const DefaultNumericFieldEmbodiment.fromArgs(this.args, {super.key});
 
   final EmbodimentArgs args;
-  final pg.NumericField numfield;
-  final NumericFieldDefaultProperties props;
 
   @override
   Widget build(BuildContext context) {
+    var numfield = args.primitive as pg.NumericField;
+    var props = args.properties as NumericFieldDefaultProperties;
+
     late NegativeDisplayFormat displayNegativeFormat;
     switch (props.displayNegativeFormat) {
       case DisplayNegativeFormat.absolute:
@@ -56,18 +56,14 @@ class DefaultNumericFieldEmbodiment extends StatelessWidget {
           numfield.numericEntry = value;
         });
 
-    return encloseWithPBMSAF(content, props, args, horizontalUnbounded: true);
+    return encloseWithPBMSAF(content, args, horizontalUnbounded: true);
   }
 }
 
 class FontSizeNumericFieldEmbodiment extends StatelessWidget {
-  FontSizeNumericFieldEmbodiment.fromArgs(this.args, {super.key})
-      : numfield = args.primitive as pg.NumericField,
-        props = CommonProperties.fromMap(args.primitive.embodimentProperties);
+  const FontSizeNumericFieldEmbodiment.fromArgs(this.args, {super.key});
 
   final EmbodimentArgs args;
-  final pg.NumericField numfield;
-  final CommonProperties props;
 
   static const _fontChoices = [
     '8',
@@ -95,6 +91,9 @@ class FontSizeNumericFieldEmbodiment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var numfield = args.primitive as pg.NumericField;
+    var props = args.properties as CommonProperties;
+
     var content = NumericField(
       initialValue: numfield.numericEntry,
       onSubmitted: (value) {
@@ -107,22 +106,20 @@ class FontSizeNumericFieldEmbodiment extends StatelessWidget {
       popupChooserIcon: const Icon(Icons.numbers),
     );
 
-    return encloseWithPBMSAF(content, props, args, horizontalUnbounded: true);
+    return encloseWithPBMSAF(content, args, horizontalUnbounded: true);
   }
 }
 
 class ColorNumericFieldEmbodiment extends StatelessWidget {
-  ColorNumericFieldEmbodiment.fromArgs(this.args, {super.key})
-      : numfield = args.primitive as pg.NumericField,
-        props = NumericFieldColorProperties.fromMap(
-            args.primitive.embodimentProperties);
+  const ColorNumericFieldEmbodiment.fromArgs(this.args, {super.key});
 
   final EmbodimentArgs args;
-  final pg.NumericField numfield;
-  final NumericFieldColorProperties props;
 
   @override
   Widget build(BuildContext context) {
+    var numfield = args.primitive as pg.NumericField;
+    var props = args.properties as NumericFieldColorProperties;
+
     var content = ColorField(
         initialValue: numfield.numericEntry,
         allowEmptyValue: props.allowEmptyValue,
@@ -130,6 +127,6 @@ class ColorNumericFieldEmbodiment extends StatelessWidget {
           numfield.numericEntry = value;
         });
 
-    return encloseWithPBMSAF(content, props, args, horizontalUnbounded: true);
+    return encloseWithPBMSAF(content, args, horizontalUnbounded: true);
   }
 }

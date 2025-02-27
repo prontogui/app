@@ -548,6 +548,13 @@ mixin TextDefaultPropertyAccess on Properties {
       _propertyMap, FontWeight.normal, PropertyName.fontWeight);
 }
 
+class NothingProperties extends Properties {
+  NothingProperties.fromMap(Map<String, dynamic>? embodimentMap) {
+    _propertyMap = null;
+    return;
+  }
+}
+
 class CommonProperties extends Properties with CommonPropertyAccess {
   CommonProperties.fromMap(Map<String, dynamic>? embodimentMap) {
     if (embodimentMap == null || embodimentMap.isEmpty) {

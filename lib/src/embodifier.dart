@@ -41,7 +41,7 @@ class Embodifier implements PrimitiveModelWatcher {
 
   /// Tests whether a frame is a view-type frame.
   bool isView(Frame frame) {
-    var embodiment = EmbodimentProperty.getFromMap(frame.embodimentProperties);
+    var embodiment = EmbodimentProperty.getFromMap(frame.embodimentMap);
 
     return ["full-view", "dialog-view"].contains(embodiment);
   }

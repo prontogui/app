@@ -13,21 +13,21 @@ import 'properties.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('Table', [
-    EmbodimentManifestEntry('default', TableEmbodiment.fromArgs),
+    EmbodimentManifestEntry(
+        'default', TableEmbodiment.fromArgs, CommonProperties.fromMap),
   ]);
 }
 
 class TableEmbodiment extends StatelessWidget {
-  TableEmbodiment.fromArgs(this.args, {super.key})
-      : table = args.primitive as pg.Table,
-        props = CommonProperties.fromMap(args.primitive.embodimentProperties);
+  const TableEmbodiment.fromArgs(this.args, {super.key});
 
   final EmbodimentArgs args;
-  final pg.Table table;
-  final CommonProperties props;
 
   @override
   Widget build(BuildContext context) {
+    var table = args.primitive as pg.Table;
+    var props = args.properties as CommonProperties;
+
     // Is status for this primitive set to Hidden?
     if (table.status == 2) {
       return const SizedBox();
@@ -72,8 +72,7 @@ class TableEmbodiment extends StatelessWidget {
 
       for (var cell in row) {
         // TODO:  utilize the template row cells when calling .buildPrimitive
-        var cellEmbodiment =
-            embodifier.buildPrimitive(context, EmbodimentArgs(cell));
+        var cellEmbodiment = embodifier.buildPrimitive(context, cell);
         cellsD.add(DataCell(cellEmbodiment));
       }
 
@@ -90,7 +89,7 @@ class TableEmbodiment extends StatelessWidget {
         columns: columnsD,
         source: ds,
         key: Key(headerFingerprint));
-    return encloseWithPBMSAF(content, props, args);
+    return encloseWithPBMSAF(content, args);
   }
 }
 

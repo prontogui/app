@@ -103,9 +103,6 @@ class _ListDefaultEmbodimentState extends State<ListDefaultEmbodiment> {
     // Grab the embodifier for other functions in the class to use.
     embodifier ??= InheritedEmbodifier.of(context);
 
-    // Get the properties of the model item, if any.
-    modelProperties = widget.list.modelItem?.embodimentProperties;
-
     var props = widget.args.properties as ListDefaultProperties;
 
     var scrollDirection = props.horizontal ? Axis.horizontal : Axis.vertical;

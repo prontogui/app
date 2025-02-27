@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:app/src/embodiment/properties.dart';
 import 'package:dartlib/dartlib.dart' as pg;
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -10,7 +11,8 @@ import 'embodiment_args.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('Timer', [
-    EmbodimentManifestEntry('default', TimerEmbodiment.fromArgs),
+    EmbodimentManifestEntry(
+        'default', TimerEmbodiment.fromArgs, NothingProperties.fromMap),
   ]);
 }
 

@@ -11,21 +11,17 @@ import 'properties.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('Command', [
-    EmbodimentManifestEntry(
-        'default', ElevatedButtonCommandEmbodiment.fromArgs),
-    EmbodimentManifestEntry(
-        'outlined-button', OutlinedButtonCommandEmbodiment.fromArgs),
+    EmbodimentManifestEntry('default', ElevatedButtonCommandEmbodiment.fromArgs,
+        CommonProperties.fromMap),
+    EmbodimentManifestEntry('outlined-button',
+        OutlinedButtonCommandEmbodiment.fromArgs, CommonProperties.fromMap),
   ]);
 }
 
 class ElevatedButtonCommandEmbodiment extends StatelessWidget {
-  ElevatedButtonCommandEmbodiment.fromArgs(this.args, {super.key})
-      : command = args.primitive as pg.Command,
-        props = CommonProperties.fromMap(args.primitive.embodimentProperties);
+  const ElevatedButtonCommandEmbodiment.fromArgs(this.args, {super.key});
 
   final EmbodimentArgs args;
-  final pg.Command command;
-  final CommonProperties props;
 
   Widget _buildAsHidden(BuildContext context) {
     return const SizedBox.shrink();
@@ -33,6 +29,8 @@ class ElevatedButtonCommandEmbodiment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var command = args.primitive as pg.Command;
+
     // Is the command hidden?
     if (command.status == 2) {
       return _buildAsHidden(context);
@@ -43,18 +41,14 @@ class ElevatedButtonCommandEmbodiment extends StatelessWidget {
       child: Text(command.label),
     );
 
-    return encloseWithPBMSAF(content, props, args);
+    return encloseWithPBMSAF(content, args);
   }
 }
 
 class OutlinedButtonCommandEmbodiment extends StatelessWidget {
-  OutlinedButtonCommandEmbodiment.fromArgs(this.args, {super.key})
-      : command = args.primitive as pg.Command,
-        props = CommonProperties.fromMap(args.primitive.embodimentProperties);
+  const OutlinedButtonCommandEmbodiment.fromArgs(this.args, {super.key});
 
   final EmbodimentArgs args;
-  final pg.Command command;
-  final CommonProperties props;
 
   Widget _buildAsHidden(BuildContext context) {
     return const SizedBox.shrink();
@@ -62,6 +56,8 @@ class OutlinedButtonCommandEmbodiment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var command = args.primitive as pg.Command;
+
     // Is the command hidden?
     if (command.status == 2) {
       return _buildAsHidden(context);
@@ -72,6 +68,6 @@ class OutlinedButtonCommandEmbodiment extends StatelessWidget {
       child: Text(command.label),
     );
 
-    return encloseWithPBMSAF(content, props, args);
+    return encloseWithPBMSAF(content, args);
   }
 }

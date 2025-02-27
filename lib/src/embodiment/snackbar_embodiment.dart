@@ -11,8 +11,8 @@ import 'properties.dart';
 class SnackBarEmbodiment extends StatefulWidget {
   SnackBarEmbodiment.fromArgs(this.args, {super.key})
       : frame = args.primitive as pg.Frame,
-        props = FrameSnackbarProperties.fromMap(
-            args.primitive.embodimentProperties);
+        props = args.properties as FrameSnackbarProperties;
+
   final EmbodimentArgs args;
   final pg.Frame frame;
   final FrameSnackbarProperties props;
@@ -76,11 +76,7 @@ class _SnackBarEmbodimentState extends State<SnackBarEmbodiment> {
               'Internal error: second item in SnackBar can only be a Command.'));
     }
 
-    var textEmbodiment =
-        _embodifier.buildPrimitive(context, EmbodimentArgs(textPrimitive));
-
-    //var textP = textPrimitive as pg.Text;
-    //print("Building snackbar:  ${textP.content}");
+    var textEmbodiment = _embodifier.buildPrimitive(context, textPrimitive);
 
     Duration duration = widget.props.snackbarDuration != null
         ? Duration(

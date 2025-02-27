@@ -6,7 +6,6 @@ import 'package:dartlib/dartlib.dart' as pg;
 import 'package:flutter/material.dart';
 import 'embodifier.dart';
 import 'inherited_primitive_model.dart';
-import 'embodiment/embodiment_args.dart';
 import 'embodiment/properties.dart';
 
 /// The top-level coordinator is responsible for tracking the top-level primitives,
@@ -203,7 +202,8 @@ class _TopLevelCoordinatorState extends State<TopLevelCoordinator>
             arguments: RouteArgs(index: index, frame: frame, isFullView: true)),
         builder: (BuildContext context) => embodifier.buildPrimitive(
               context,
-              EmbodimentArgs(primitive, parentIsTopView: true),
+              primitive,
+              parentIsTopView: true,
             ));
   }
 
@@ -219,8 +219,8 @@ class _TopLevelCoordinatorState extends State<TopLevelCoordinator>
                 RouteArgs(index: index, frame: frame, isFullView: false)),
         builder: (BuildContext context) {
           return Dialog(
-              child: embodifier.buildPrimitive(
-                  context, EmbodimentArgs(primitive, parentIsTopView: true)));
+              child: embodifier.buildPrimitive(context, primitive,
+                  parentIsTopView: true));
         }).whenComplete(() {
       // Update the model to reflect that dialog was dismissed by the user
       frame.showing = false;
@@ -266,8 +266,7 @@ class _TopLevelCoordinatorState extends State<TopLevelCoordinator>
       if (primitives[i] is pg.Frame) {
         var frame = primitives[i] as pg.Frame;
 
-        var embodiment =
-            EmbodimentProperty.getFromMap(frame.embodimentProperties);
+        var embodiment = EmbodimentProperty.getFromMap(frame.embodimentMap);
 
         switch (embodiment) {
           case "full-view":

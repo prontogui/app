@@ -11,7 +11,8 @@ import 'properties.dart' as p;
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('Text', [
-    EmbodimentManifestEntry('default', TextEmbodiment.fromArgs),
+    EmbodimentManifestEntry(
+        'default', TextEmbodiment.fromArgs, p.TextDefaultProperties.fromMap),
   ]);
 }
 
@@ -25,16 +26,11 @@ E2? _convertEnum<E1 extends Enum, E2 extends Enum>(E1 from, List<E2> toEnums) {
 }
 
 class TextEmbodiment extends StatelessWidget {
-  TextEmbodiment.fromArgs(this.args, {super.key})
-      : text = args.primitive as pg.Text,
-        props = p.TextDefaultProperties.fromMap(
-            args.primitive.embodimentProperties);
+  const TextEmbodiment.fromArgs(this.args, {super.key});
 
   final EmbodimentArgs args;
-  final pg.Text text;
-  final p.TextDefaultProperties props;
 
-  TextStyle _buildTextStyle() {
+  TextStyle _buildTextStyle(p.TextDefaultProperties props) {
     late FontWeight fontWeight;
     switch (props.fontWeight) {
       case p.FontWeight.normal:
@@ -86,11 +82,14 @@ class TextEmbodiment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var text = args.primitive as pg.Text;
+    var props = args.properties as p.TextDefaultProperties;
+
     var content = Text(
       text.content,
-      style: _buildTextStyle(),
+      style: _buildTextStyle(props),
     );
 
-    return encloseWithPBMSAF(content, props, args);
+    return encloseWithPBMSAF(content, args);
   }
 }

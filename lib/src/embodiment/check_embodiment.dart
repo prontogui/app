@@ -12,18 +12,17 @@ import 'properties.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('Check', [
-    EmbodimentManifestEntry('default', CheckEmbodiment.fromArgs),
+    EmbodimentManifestEntry(
+        'default', CheckEmbodiment.fromArgs, CommonProperties.fromMap),
   ]);
 }
 
 class CheckEmbodiment extends StatefulWidget {
   CheckEmbodiment.fromArgs(this.args, {super.key})
-      : check = args.primitive as pg.Check,
-        props = CommonProperties.fromMap(args.primitive.embodimentProperties);
+      : check = args.primitive as pg.Check;
 
   final EmbodimentArgs args;
   final pg.Check check;
-  final CommonPropertyAccess props;
 
   @override
   State<CheckEmbodiment> createState() {
@@ -82,7 +81,7 @@ class _CheckEmbodimentState extends State<CheckEmbodiment> {
       content = cb;
     }
 
-    return encloseWithPBMSAF(content, widget.props, widget.args,
+    return encloseWithPBMSAF(content, widget.args,
         verticalUnbounded: verticalUnbounded);
   }
 }

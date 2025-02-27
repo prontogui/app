@@ -12,14 +12,15 @@ import 'properties.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('Tristate', [
-    EmbodimentManifestEntry('default', TristateEmbodiment.fromArgs),
+    EmbodimentManifestEntry(
+        'default', TristateEmbodiment.fromArgs, CommonProperties.fromMap),
   ]);
 }
 
 class TristateEmbodiment extends StatefulWidget {
   TristateEmbodiment.fromArgs(this.args, {super.key})
       : tristate = args.primitive as pg.Tristate,
-        props = CommonProperties.fromMap(args.primitive.embodimentProperties);
+        props = args.properties as CommonProperties;
 
   final EmbodimentArgs args;
   final pg.Tristate tristate;
@@ -75,7 +76,7 @@ class _TristateEmbodimentState extends State<TristateEmbodiment> {
       verticalUnbounded = true;
     }
 
-    return encloseWithPBMSAF(content, widget.props, widget.args,
+    return encloseWithPBMSAF(content, widget.args,
         verticalUnbounded: verticalUnbounded);
   }
 }
