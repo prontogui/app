@@ -72,33 +72,43 @@ class GroupDefaultEmbodiment extends StatelessWidget {
   }
 }
 
-Widget? _embodifySingleItem(
-    BuildContext context, Embodifier embodifier, pg.Primitive item) {
+Widget? _embodifySingleItem(BuildContext context, Embodifier embodifier,
+    pg.Primitive item, pg.Primitive? modelItem) {
   // Only certain primitives are supported
   if (item is! pg.Text &&
       item is! pg.Command &&
       item is! pg.Check &&
       item is! pg.Choice &&
       item is! pg.TextField &&
-      item is! pg.NumericField) {
+      item is! pg.NumericField &&
+      item is! pg.Nothing &&
+      item is! pg.Icon) {
     // TODO:  show something better for error case.  Perhaps log an error also.
     return const SizedBox(
       child: Text("?"),
     );
   }
 
-  return embodifier.buildPrimitive(context, item);
+  return embodifier.buildPrimitive(context, item, modelPrimitive: modelItem);
 }
 
 Widget? _embodifyGroupItem(BuildContext context, Embodifier embodifier,
-    pg.Group group, int itemIndex) {
+    pg.Group group, pg.Group? modelGroup, int itemIndex) {
   if (itemIndex >= group.groupItems.length) {
     return null;
   }
 
+  pg.Primitive? modelItem;
+  if (modelGroup != null) {
+    var modelItems = modelGroup.groupItems;
+    if (itemIndex < modelItems.length) {
+      modelItem = modelItems[itemIndex];
+    }
+  }
+
   var groupItem = group.groupItems[itemIndex];
 
-  return _embodifySingleItem(context, embodifier, groupItem);
+  return _embodifySingleItem(context, embodifier, groupItem, modelItem);
 }
 
 class GroupTileEmbodiment extends StatelessWidget {
@@ -109,6 +119,14 @@ class GroupTileEmbodiment extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var group = args.primitive as pg.Group;
+
+    var modelPrimitive = args.modelPrimitive;
+
+    pg.Group? modelGroup;
+    if (modelPrimitive != null && modelPrimitive is pg.Group) {
+      modelGroup = modelPrimitive;
+    }
+
     var embodifier = InheritedEmbodifier.of(context);
 
     // Is group hidden?
@@ -116,10 +134,12 @@ class GroupTileEmbodiment extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    var leading = _embodifyGroupItem(context, embodifier, group, 0);
-    var title = _embodifyGroupItem(context, embodifier, group, 1);
-    var subtitle = _embodifyGroupItem(context, embodifier, group, 2);
-    var trailing = _embodifyGroupItem(context, embodifier, group, 3);
+    var leading = _embodifyGroupItem(context, embodifier, group, modelGroup, 0);
+    var title = _embodifyGroupItem(context, embodifier, group, modelGroup, 1);
+    var subtitle =
+        _embodifyGroupItem(context, embodifier, group, modelGroup, 2);
+    var trailing =
+        _embodifyGroupItem(context, embodifier, group, modelGroup, 3);
     var selected = false;
     void Function()? handleTap;
 
@@ -161,15 +181,24 @@ class GroupCardEmbodiment extends StatelessWidget {
     var group = args.primitive as pg.Group;
     var embodifier = InheritedEmbodifier.of(context);
 
+    var modelPrimitive = args.modelPrimitive;
+
+    pg.Group? modelGroup;
+    if (modelPrimitive != null && modelPrimitive is pg.Group) {
+      modelGroup = modelPrimitive;
+    }
+
     // Is group hidden?
     if (!group.visible) {
       return const SizedBox.shrink();
     }
 
-    var leading = _embodifyGroupItem(context, embodifier, group, 0);
-    var title = _embodifyGroupItem(context, embodifier, group, 1);
-    var subtitle = _embodifyGroupItem(context, embodifier, group, 2);
-    var trailing = _embodifyGroupItem(context, embodifier, group, 3);
+    var leading = _embodifyGroupItem(context, embodifier, group, modelGroup, 0);
+    var title = _embodifyGroupItem(context, embodifier, group, modelGroup, 1);
+    var subtitle =
+        _embodifyGroupItem(context, embodifier, group, modelGroup, 2);
+    var trailing =
+        _embodifyGroupItem(context, embodifier, group, modelGroup, 3);
     var selected = false;
     void Function()? handleTap;
 

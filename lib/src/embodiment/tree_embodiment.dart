@@ -32,8 +32,11 @@ class TreeDefaultEmbodiment extends StatelessWidget {
     return itn;
   }
 
-  Widget embodifySingleItem(
-      BuildContext context, Embodifier embodifier, pg.Primitive item) {
+  Widget embodifySingleItem(BuildContext context, Embodifier embodifier,
+      pg.Primitive? item, pg.Primitive? modelItem) {
+    if (item == null) {
+      return SizedBox.shrink();
+    }
     // Only certain primitives are supported
     if (item is! pg.Text && item is! pg.Frame && item is! pg.Group) {
       // TODO:  show something better for error case.  Perhaps log an error also.
@@ -42,54 +45,29 @@ class TreeDefaultEmbodiment extends StatelessWidget {
       );
     }
 
-    return embodifier.buildPrimitive(context, item);
+    return embodifier.buildPrimitive(context, item, modelPrimitive: modelItem);
   }
 
   @override
   Widget build(BuildContext context) {
     var embodifier = InheritedEmbodifier.of(context);
     var tree = args.primitive as pg.Tree;
-    //var props = args.properties as TreeDefaultProperties;
+    var modelItem = tree.modelItem;
 
     var content = TreeView.indexed(
         indentation: Indentation(style: IndentStyle.roundJoint),
         onTreeReady: (controller) =>
             controller.expandAllChildren(controller.tree, recursive: true),
         tree: convertTree(tree.root, null),
-        builder: (context, node) {
+        builder: (context, itn) {
           // build your node item here
           // return any widget that you need
-          var primitive = node.data as pg.Primitive;
-          return embodifySingleItem(context, embodifier, primitive);
-/*
-          return Card.outlined(
-            child: ListTile(
-              title: Text("Item ${node.level}- ${pgNode.describeType}"),
-              subtitle: Text('Level ${node.level}'),
-            ),
-          );
-          */
+          var node = itn.data as pg.Node;
+
+          return embodifySingleItem(
+              context, embodifier, node.nodeItem, modelItem);
         });
 
     return encloseWithPBMSAF(content, args, verticalUnbounded: true);
   }
 }
-
-/*
-  Widget embodifySingleItem(BuildContext context, Embodifier embodifier,
-      pg.Primitive item, String parentWidgetType) {
-    // Only certain primitives are supported
-    if (item is! pg.Text &&
-        item is! pg.Command &&
-        item is! pg.Check &&
-        item is! pg.Choice &&
-        item is! pg.NumericField) {
-      // TODO:  show something better for error case.  Perhaps log an error also.
-      return const SizedBox(
-        child: Text('?'),
-      );
-    }
-
-    return embodifier.buildPrimitive(context, EmbodimentArgs(item));
-  }
-*/

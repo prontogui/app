@@ -135,7 +135,7 @@ Widget encloseWithPBMSAF(Widget content, EmbodimentArgs args,
   bool horizontalSized = false;
   bool verticalSized = false;
 
-  var props = args.properties as CommonProperties;
+  var props = args.properties as CommonPropertyAccess;
 
   // Are any common properties set, or can we skip PBMSA altogether?
   if (props.areCommonPropsSet) {

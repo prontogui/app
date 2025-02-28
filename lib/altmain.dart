@@ -26,31 +26,72 @@ void altmain1(List<String> args) async {
   // Create the model that holds the primitives to be displayed.
   final model = dl.PrimitiveModel();
 
-/*
-  final n1 = dl.Node(subNodes: [
-    dl.Node(subNodes: [dl.Node(subNodes: [])]),
-    dl.Node(subNodes: [])
-  ]);
-  final tree = dl.Tree(root: n1, embodiment: 'width: 300');
-*/
-
+  final gm = dl.Group(groupItems: [
+    dl.Icon(iconID: 'hiking'),
+    dl.Text(embodiment: 'fontSize:20'),
+    dl.Text(embodiment: 'borderAll:2'),
+  ], embodiment: 'card');
   final g1 = dl.Group(groupItems: [
+    dl.Icon(iconID: 'hiking'),
+    dl.Text(content: 'Apple'),
+    dl.Text(content: '1000'),
+  ]);
+  final g2 = dl.Group(groupItems: [
+    dl.Icon(iconID: 'hiking'),
+    dl.Text(content: 'Banana'),
+    dl.Text(content: '2000'),
+  ]);
+  final g3 = dl.Group(groupItems: [
+    dl.Icon(iconID: 'hiking'),
+    dl.Text(content: 'Cucumber'),
+    dl.Text(content: '3000'),
+  ]);
+
+  final n1 = dl.Node(subNodes: [
+    dl.Node(nodeItem: g1, subNodes: [dl.Node(nodeItem: g2)]),
+    dl.Node(nodeItem: g3)
+  ]);
+  final tree = dl.Tree(root: n1, modelItem: gm, embodiment: 'width: 300');
+  model.topPrimitives = [tree];
+
+/*
+  final gm = dl.Group(groupItems: [
+    dl.Nothing(),
+    dl.Text(embodiment: 'fontSize:20'),
+    dl.Text(embodiment: 'borderAll:2'),
+  ], embodiment: 'card');
+  final g1 = dl.Group(groupItems: [
+    dl.Nothing(),
     dl.Text(content: 'Apple'),
     dl.Text(content: '1000'),
   ], embodiment: 'tile');
   final g2 = dl.Group(groupItems: [
+    dl.Nothing(),
     dl.Text(content: 'Banana'),
     dl.Text(content: '2000'),
   ], embodiment: 'card');
   final g3 = dl.Group(groupItems: [
+    dl.Nothing(),
     dl.Text(content: 'Cucumber'),
     dl.Text(content: '3000'),
   ], embodiment: 'card');
-  final modelItem = dl.Group(groupItems: [dl.Text(), dl.Text()]);
 
-  final l = dl.ListP(listItems: [g1, g2, g3], modelItem: modelItem);
+  final l = dl.ListP(listItems: [g1, g2, g3], modelItem: gm);
 
   model.topPrimitives = [l]; // [innerFrame];
+*/
+
+/*
+  final t =
+      dl.Text(content: "Hello, World!", embodiment: 'fontSize:30, borderAll:3');
+
+  final l = dl.ListP(listItems: [
+    dl.Text(content: "Apple", embodiment: 'fontSize:10'),
+    dl.Text(content: "Banana"),
+    dl.Text(content: "Orange"),
+  ], modelItem: dl.Text(embodiment: 'fontSize:30, borderAll:3'));
+  model.topPrimitives = [l];
+*/
 
 /*
 
