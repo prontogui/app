@@ -4,17 +4,17 @@ import 'properties.dart';
 /// Information for specialized callbacks when needed.  This is used in cases
 /// like List embodiments that show Group items.
 class EmbodimentCallbacks {
-  const EmbodimentCallbacks(this.id, {this.isSelected, this.onSelection});
+  const EmbodimentCallbacks(this.indices, {this.isSelected, this.onSelection});
 
-  /// The ID to use for callbacks.
-  final int id;
+  /// The indices to use for callbacks.
+  final List<int> indices;
 
   /// A callback to obtain whether this embodiment is selected in a List or other
   /// container-like primitive
-  final bool Function(int id)? isSelected;
+  final bool Function(List<int> indices)? isSelected;
 
   /// A callback when the embodiment is selected (e.g., tapped).
-  final void Function(int id)? onSelection;
+  final void Function(List<int> indices)? onSelection;
 }
 
 class EmbodimentArgs {

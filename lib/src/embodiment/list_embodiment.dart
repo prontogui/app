@@ -61,6 +61,7 @@ class _ListDefaultEmbodimentState extends State<ListDefaultEmbodiment> {
 
     late Widget content;
     if (_singleItemTypes.contains(item.describeType)) {
+      // Use a ListTile for selection support
       content = ListTile(
         title: embodifier!.buildPrimitive(context, item,
             modelPrimitive: widget.list.modelItem),
@@ -72,15 +73,15 @@ class _ListDefaultEmbodimentState extends State<ListDefaultEmbodiment> {
         },
       );
     } else if (item is pg.Group) {
-      bool isSelected(int id) {
-        return widget.list.selection == id;
+      bool isSelected(List<int> indices) {
+        return widget.list.selection == indices[0];
       }
 
-      void onSelection(int id) {
-        setCurrentSelected(id);
+      void onSelection(List<int> indices) {
+        setCurrentSelected(indices[0]);
       }
 
-      var callbacks = EmbodimentCallbacks(index,
+      var callbacks = EmbodimentCallbacks(List<int>.unmodifiable([index]),
           isSelected: isSelected, onSelection: onSelection);
 
       content = embodifier!.buildPrimitive(

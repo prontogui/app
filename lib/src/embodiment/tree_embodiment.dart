@@ -14,26 +14,81 @@ EmbodimentPackageManifest getManifest() {
   ]);
 }
 
-class TreeDefaultEmbodiment extends StatelessWidget {
-  const TreeDefaultEmbodiment.fromArgs(this.args, {super.key});
+class TreeDefaultEmbodiment extends StatefulWidget {
+  TreeDefaultEmbodiment.fromArgs(this.args, {super.key})
+      : tree = args.primitive as pg.Tree;
 
   final EmbodimentArgs args;
+  final pg.Tree tree;
 
-  // Recursive function to convert a tree of pg.Node to a tree of IndexedTreeNode.
-  IndexedTreeNode<pg.Node> convertTree(pg.Node node, IndexedNode? parent) {
-    var itn = IndexedTreeNode<pg.Node>(parent: parent);
-    itn.data = node;
-    for (var child in node.subNodes) {
-      if (child is pg.Node) {
-        var childItn = convertTree(child, itn);
-        itn.add(childItn);
-      }
+  @override
+  State<TreeDefaultEmbodiment> createState() => _TreeDefaultEmbodimentState();
+}
+
+bool _listEquals(List<int> list1, List<int> list2) {
+  if (list1.length != list2.length) {
+    return false;
+  }
+  for (int i = 0; i < list1.length; i++) {
+    if (list1[i] != list2[i]) {
+      return false;
     }
+  }
+  return true;
+}
+
+// Function to convert a tree of pg.Node to a tree of IndexedTreeNode.
+IndexedTreeNode<pg.Node> _convertTree(pg.Node node, IndexedNode? parent) {
+  // Internal recursive function for converting the tree
+  IndexedTreeNode<pg.Node> recurseConvertTree(
+      pg.Node node, IndexedNode? parent, List<int> path) {
+    var itn = IndexedTreeNode<pg.Node>(parent: parent);
+
+    // Save path (from root) to this subnode
+    node.appData = List<int>.unmodifiable(path);
+    itn.data = node;
+
+    if (node.subNodes.isNotEmpty) {
+      // Push another index to represent subnode
+      path.add(0);
+
+      // Recurse through each sub node
+      int index = 0;
+      for (var child in node.subNodes) {
+        if (child is pg.Node) {
+          // Update path for this sub node
+          path[path.length - 1] = index;
+          var childItn = recurseConvertTree(child, itn, path);
+          itn.add(childItn);
+        }
+        index++;
+      }
+      // Pop index for subnode
+      path.removeLast();
+    }
+
     return itn;
   }
 
-  Widget embodifySingleItem(BuildContext context, Embodifier embodifier,
-      pg.Primitive? item, pg.Primitive? modelItem) {
+  return recurseConvertTree(node, parent, []);
+}
+
+class _TreeDefaultEmbodimentState extends State<TreeDefaultEmbodiment> {
+  IndexedTreeNode<pg.Node>? indexedTree;
+
+  void setCurrentSelected(List<int> newSelected) {
+    setState(() {
+      widget.tree.selection = newSelected;
+    });
+  }
+
+  Widget embodifySingleItem(
+      BuildContext context,
+      Embodifier embodifier,
+      pg.Tree tree,
+      List<int> indices,
+      pg.Primitive? item,
+      pg.Primitive? modelItem) {
     if (item == null) {
       return SizedBox.shrink();
     }
@@ -45,29 +100,43 @@ class TreeDefaultEmbodiment extends StatelessWidget {
       );
     }
 
-    return embodifier.buildPrimitive(context, item, modelPrimitive: modelItem);
+    bool isSelected(List<int> indices) {
+      return _listEquals(widget.tree.selection, indices);
+    }
+
+    void onSelection(List<int> indices) {
+      setCurrentSelected(indices);
+    }
+
+    var callbacks = EmbodimentCallbacks(indices,
+        isSelected: isSelected, onSelection: onSelection);
+
+    return embodifier.buildPrimitive(context, item,
+        modelPrimitive: modelItem, callbacks: callbacks);
   }
 
   @override
   Widget build(BuildContext context) {
     var embodifier = InheritedEmbodifier.of(context);
-    var tree = args.primitive as pg.Tree;
-    var modelItem = tree.modelItem;
+    var modelItem = widget.tree.modelItem;
+
+    indexedTree ??= indexedTree = _convertTree(widget.tree.root, null);
 
     var content = TreeView.indexed(
         indentation: Indentation(style: IndentStyle.roundJoint),
         onTreeReady: (controller) =>
             controller.expandAllChildren(controller.tree, recursive: true),
-        tree: convertTree(tree.root, null),
+        tree: indexedTree!,
         builder: (context, itn) {
           // build your node item here
           // return any widget that you need
           var node = itn.data as pg.Node;
+          var indices = node.appData as List<int>;
 
-          return embodifySingleItem(
-              context, embodifier, node.nodeItem, modelItem);
+          return embodifySingleItem(context, embodifier, widget.tree, indices,
+              node.nodeItem, modelItem);
         });
 
-    return encloseWithPBMSAF(content, args, verticalUnbounded: true);
+    return encloseWithPBMSAF(content, widget.args, verticalUnbounded: true);
   }
 }

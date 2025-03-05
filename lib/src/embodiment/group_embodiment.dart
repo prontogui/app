@@ -149,11 +149,11 @@ class GroupTileEmbodiment extends StatelessWidget {
 
       // If List selection is available...
       if (cb.isSelected != null) {
-        selected = cb.isSelected!(cb.id);
+        selected = cb.isSelected!(cb.indices);
       }
       if (cb.onSelection != null) {
         handleTap = () {
-          cb.onSelection!(cb.id);
+          cb.onSelection!(cb.indices);
         };
       }
     }
@@ -208,11 +208,11 @@ class GroupCardEmbodiment extends StatelessWidget {
 
       // If List selection is available...
       if (cb.isSelected != null) {
-        selected = cb.isSelected!(cb.id);
+        selected = cb.isSelected!(cb.indices);
       }
       if (cb.onSelection != null) {
         handleTap = () {
-          cb.onSelection!(cb.id);
+          cb.onSelection!(cb.indices);
         };
       }
     }
