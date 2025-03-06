@@ -73,6 +73,15 @@ IndexedTreeNode<pg.Node> _convertTree(pg.Node node, IndexedNode? parent) {
   return recurseConvertTree(node, parent, []);
 }
 
+const Set<String> _allowedTypes = {
+  'Text',
+  'Frame',
+  'Group',
+  'Choice',
+  'Card',
+  'Icon'
+};
+
 class _TreeDefaultEmbodimentState extends State<TreeDefaultEmbodiment> {
   IndexedTreeNode<pg.Node>? indexedTree;
 
@@ -93,7 +102,7 @@ class _TreeDefaultEmbodimentState extends State<TreeDefaultEmbodiment> {
       return SizedBox.shrink();
     }
     // Only certain primitives are supported
-    if (item is! pg.Text && item is! pg.Frame && item is! pg.Group) {
+    if (!_allowedTypes.contains(item.describeType)) {
       // TODO:  show something better for error case.  Perhaps log an error also.
       return const SizedBox(
         child: Text('?'),

@@ -75,6 +75,7 @@ class Embodifier implements PrimitiveModelWatcher {
   Listenable? _doesNotify(Primitive primitive) {
     switch (primitive.describeType) {
       // These are the primitives that are considered notification points
+      case 'Card':
       case 'Frame':
       case 'Group':
       case 'List':
@@ -111,6 +112,11 @@ class Embodifier implements PrimitiveModelWatcher {
       {Primitive? modelPrimitive,
       bool parentIsTopView = false,
       EmbodimentCallbacks? callbacks}) {
+    // Ignore model primitive if its different primitive type
+    if (modelPrimitive != null &&
+        primitive.describeType != modelPrimitive.describeType) {
+      modelPrimitive = null;
+    }
     var args = EmbodimentArgs(primitive,
         modelPrimitive: modelPrimitive,
         parentIsTopView: parentIsTopView,

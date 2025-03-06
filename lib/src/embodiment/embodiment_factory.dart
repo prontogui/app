@@ -18,6 +18,7 @@ import 'timer_embodiment.dart' as timer;
 import 'tree_embodiment.dart' as tree;
 import 'tristate_embodiment.dart' as tristate;
 import 'numericfield_embodiment.dart' as numeric_field;
+import 'card_embodiment.dart' as card;
 import 'embodiment_manifest.dart';
 import 'embodiment_args.dart';
 import 'properties.dart';
@@ -76,6 +77,7 @@ class EmbodimentFactory {
     manifests.add(timer.getManifest());
     manifests.add(tree.getManifest());
     manifests.add(tristate.getManifest());
+    manifests.add(card.getManifest());
 
     return manifests;
   }

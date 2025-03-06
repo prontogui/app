@@ -27,6 +27,35 @@ void altmain1(List<String> args) async {
   final model = dl.PrimitiveModel();
 
   if (true) {
+    final cm = dl.Card(
+        embodiment: 'tile',
+        leadingItem: dl.Icon(iconID: 'hiking'),
+        mainItem: dl.Text(embodiment: 'fontSize:20'),
+        subItem: dl.Text(embodiment: 'borderAll:2'));
+    final cr = dl.Icon(iconID: 'tsunami', embodiment: 'paddingAll:10');
+    final c1 = dl.Card(
+      leadingItem: dl.Icon(iconID: 'hiking'),
+      mainItem: dl.Text(content: 'Apple'),
+      subItem: dl.Text(content: '1000'),
+    );
+    final c2 = dl.Card(
+      leadingItem: dl.Icon(iconID: 'hiking'),
+      mainItem: dl.Text(content: 'Banana'),
+      subItem: dl.Text(content: '2000'),
+    );
+    final c3 = dl.Card(
+      leadingItem: dl.Icon(iconID: 'hiking'),
+      mainItem: dl.Text(content: 'Cucumber'),
+      subItem: dl.Text(content: '3000'),
+      trailingItem: dl.Command(label: 'Delete'),
+    );
+
+    final n1 = dl.Node(nodeItem: cr, subNodes: [
+      dl.Node(nodeItem: c1, subNodes: [dl.Node(nodeItem: c2)]),
+      dl.Node(nodeItem: c3)
+    ]);
+
+/*
     final gm = dl.Group(groupItems: [
       dl.Icon(iconID: 'hiking'),
       dl.Text(embodiment: 'fontSize:20'),
@@ -52,7 +81,8 @@ void altmain1(List<String> args) async {
       dl.Node(nodeItem: g1, subNodes: [dl.Node(nodeItem: g2)]),
       dl.Node(nodeItem: g3)
     ]);
-    final tree = dl.Tree(root: n1, modelItem: gm, embodiment: 'width: 300');
+  */
+    final tree = dl.Tree(root: n1, modelItem: cm, embodiment: 'width: 300');
     model.topPrimitives = [tree];
   }
 
