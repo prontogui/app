@@ -25,9 +25,11 @@ enum ListStyle { card, property, normal, tabbed }
 class ListDefaultEmbodiment extends StatefulWidget {
   ListDefaultEmbodiment.fromArgs(this.args, {super.key})
       : list = args.primitive as pg.ListP,
+        props = args.properties as ListDefaultProperties,
         style = ListStyle.normal;
 
   final EmbodimentArgs args;
+  final ListDefaultProperties props;
   final pg.ListP list;
   final ListStyle style;
 
@@ -54,6 +56,9 @@ class _ListDefaultEmbodimentState extends State<ListDefaultEmbodiment> {
     'Choice',
     'TextField',
     'NumericField',
+    'Card',
+    'Group',
+    'Icon'
   };
 
   Widget? builder(BuildContext context, int index) {
@@ -61,6 +66,53 @@ class _ListDefaultEmbodimentState extends State<ListDefaultEmbodiment> {
 
     late Widget content;
     if (_singleItemTypes.contains(item.describeType)) {
+      bool isSelected(List<int> indices) {
+        return widget.list.selection == indices[0];
+      }
+
+      void onSelection(List<int> indices) {
+        setCurrentSelected(indices[0]);
+      }
+
+      var callbacks = EmbodimentCallbacks(List<int>.unmodifiable([index]),
+          isSelected: isSelected, onSelection: onSelection);
+
+      content = embodifier!.buildPrimitive(
+        context,
+        item,
+        modelPrimitive: widget.list.modelItem,
+        callbacks: callbacks,
+        horizontalUnbounded: widget.props.horizontal,
+      );
+    } else {
+      content = const SizedBox(
+        child: Text("?"),
+      );
+    }
+
+    return content;
+  }
+
+/*
+
+  Widget? builder(BuildContext context, int index) {
+    var item = widget.list.listItems[index];
+
+    late Widget content;
+    if (_singleItemTypes.contains(item.describeType)) {
+      // Problem started happending with we removed itemWidth
+
+      content = ListTile(
+        title: Text('FRAME'),
+        selected: index == widget.list.selection,
+        isThreeLine: false,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 2.0),
+        onTap: () {
+          setCurrentSelected(index);
+        },
+      );
+
+/*
       // Use a ListTile for selection support
       content = ListTile(
         title: embodifier!.buildPrimitive(context, item,
@@ -72,7 +124,11 @@ class _ListDefaultEmbodimentState extends State<ListDefaultEmbodiment> {
           setCurrentSelected(index);
         },
       );
-    } else if (item is pg.Group) {
+
+      content = SizedBox(width: 100, child: content);
+
+*/
+    } else if (item is pg.Card) {
       bool isSelected(List<int> indices) {
         return widget.list.selection == indices[0];
       }
@@ -98,23 +154,21 @@ class _ListDefaultEmbodimentState extends State<ListDefaultEmbodiment> {
 
     return content;
   }
+*/
 
   @override
   Widget build(BuildContext context) {
     // Grab the embodifier for other functions in the class to use.
     embodifier ??= InheritedEmbodifier.of(context);
 
-    var props = widget.args.properties as ListDefaultProperties;
-
-    var scrollDirection = props.horizontal ? Axis.horizontal : Axis.vertical;
+    var horizontal = widget.props.horizontal;
+    var scrollDirection = horizontal ? Axis.horizontal : Axis.vertical;
 
     Widget content = ListView.builder(
       itemCount: widget.list.listItems.length,
       itemBuilder: builder,
       scrollDirection: scrollDirection,
     );
-
-    var horizontal = props.horizontal;
 
     return encloseWithPBMSAF(content, widget.args,
         verticalUnbounded: true, horizontalUnbounded: !horizontal);

@@ -136,9 +136,11 @@ Widget encloseWithPBMSAF(Widget content, EmbodimentArgs args,
   bool verticalSized = false;
 
   var props = args.properties as CommonPropertyAccess;
+  var isSelectedFunc = args.callbacks?.isSelected;
 
-  // Are any common properties set, or can we skip PBMSA altogether?
-  if (props.areCommonPropsSet) {
+  // Are any common properties set or is there selectability? Otherwise, we can
+  // skip PBMSA altogether.
+  if (props.areCommonPropsSet || isSelectedFunc != null) {
     // Apply padding
     if (props.isPadding) {
       var (l, r, t, b) = _effectiveLRTB(props.paddingAll, props.paddingLeft,
@@ -159,38 +161,6 @@ Widget encloseWithPBMSAF(Widget content, EmbodimentArgs args,
       var borderColor = props.borderColor;
 
       border = _makeBorder(l, r, t, b, borderColor);
-
-/*
-      if (borderColor != null) {
-/*
-        BorderSide? leftBorder;
-        BorderSide? rightBorder;
-        BorderSide? topBorder;
-        BorderSide? bottomBorder;
-
-        if (l > 0.0) {
-          leftBorder = BorderSide(width: l, color: borderColor);
-        }
-        if (r > 0.0) {
-          rightBorder = BorderSide(width: r, color: borderColor);
-        }
-        if (t > 0.0) {
-          topBorder = BorderSide(width: t, color: borderColor);
-        }
-        if (b > 0.0) {
-          bottomBorder = BorderSide(width: b, color: borderColor);
-        }
-*/
-
-        border = _makeBorder(l, r, t, b, borderColor);
-      } else {
-        border = Border(
-            left: BorderSide(width: l),
-            right: BorderSide(width: r),
-            top: BorderSide(width: t),
-            bottom: BorderSide(width: b));
-      }
-*/
 
       content = Container(
           decoration: BoxDecoration(
@@ -217,6 +187,38 @@ Widget encloseWithPBMSAF(Widget content, EmbodimentArgs args,
           BoxConstraints.tightFor(width: props.width, height: props.height);
       horizontalSized = props.width != null;
       verticalSized = props.height != null;
+    }
+
+    // If selectable then enclose with a ListTile to show selection and handle taps.
+    if (isSelectedFunc != null) {
+      var indices = args.callbacks?.indices;
+      if (indices != null) {
+        var tapHandler = args.callbacks?.onSelection;
+        content = ListTile(
+          title: content,
+          selected: isSelectedFunc(args.callbacks!.indices),
+          isThreeLine: false,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 2.0),
+          onTap: () {
+            if (tapHandler != null) {
+              tapHandler(indices);
+            }
+          },
+        );
+
+        // Add sizing if unbounded and no sizing specified in corresponding direction.
+        // (Note: ListTile is unbounded in horizontal direction)
+        if (args.horizontalUnbounded && !horizontalSized) {
+          // TODO:  pick a reasonable default width
+          const double defaultWidth = 100;
+          if (sizing == null) {
+            sizing = BoxConstraints.tightFor(width: defaultWidth);
+          } else {
+            sizing = sizing.tighten(width: defaultWidth);
+          }
+          horizontalSized = true;
+        }
+      }
     }
 
     // Apply margin or sizing

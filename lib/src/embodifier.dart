@@ -111,7 +111,8 @@ class Embodifier implements PrimitiveModelWatcher {
   Widget buildPrimitive(BuildContext context, Primitive primitive,
       {Primitive? modelPrimitive,
       bool parentIsTopView = false,
-      EmbodimentCallbacks? callbacks}) {
+      EmbodimentCallbacks? callbacks,
+      bool horizontalUnbounded = false}) {
     // Ignore model primitive if its different primitive type
     if (modelPrimitive != null &&
         primitive.describeType != modelPrimitive.describeType) {
@@ -120,7 +121,8 @@ class Embodifier implements PrimitiveModelWatcher {
     var args = EmbodimentArgs(primitive,
         modelPrimitive: modelPrimitive,
         parentIsTopView: parentIsTopView,
-        callbacks: callbacks);
+        callbacks: callbacks,
+        horizontalUnbounded: horizontalUnbounded);
 
     return addNotificationPointAndCreateEmbodiment(context, primitive, args);
   }

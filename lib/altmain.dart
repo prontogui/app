@@ -26,6 +26,16 @@ void altmain1(List<String> args) async {
   // Create the model that holds the primitives to be displayed.
   final model = dl.PrimitiveModel();
 
+  //final list = dl.ListP(embodiment: 'horizontal:true, width:100, height:100, borderAll:3');
+  final list = dl.ListP(embodiment: 'horizontal:false, width:200');
+  var t1 = dl.Text(content: 'Frame 1');
+  var t2 = dl.Text(content: 'Frame 2');
+  var icon1 = dl.Icon(iconID: 'hiking');
+  var card1 = dl.Card(mainItem: dl.Text(content: 'Hi, I\'m Bob'));
+  //var c1 = dl.Card(mainItem: dl.Text(content: 'CARD'), embodiment: 'width:200');
+  list.listItems = [t1, t2, icon1, card1];
+  model.topPrimitives = [list];
+/*
   if (true) {
     final cm = dl.Card(
         embodiment: 'tile',
@@ -112,6 +122,7 @@ void altmain1(List<String> args) async {
 
     model.topPrimitives = [l]; // [innerFrame];
   }
+*/
 
 /*
   final t =
