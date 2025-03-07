@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:dartlib/dartlib.dart' as pg;
 import 'package:animated_tree_view/animated_tree_view.dart';
@@ -23,18 +24,6 @@ class TreeDefaultEmbodiment extends StatefulWidget {
 
   @override
   State<TreeDefaultEmbodiment> createState() => _TreeDefaultEmbodimentState();
-}
-
-bool _listEquals(List<int> list1, List<int> list2) {
-  if (list1.length != list2.length) {
-    return false;
-  }
-  for (int i = 0; i < list1.length; i++) {
-    if (list1[i] != list2[i]) {
-      return false;
-    }
-  }
-  return true;
 }
 
 // Function to convert a tree of pg.Node to a tree of IndexedTreeNode.
@@ -85,6 +74,26 @@ const Set<String> _allowedTypes = {
 class _TreeDefaultEmbodimentState extends State<TreeDefaultEmbodiment> {
   IndexedTreeNode<pg.Node>? indexedTree;
 
+  @override
+  void initState() {
+    super.initState();
+
+    indexedTree = _convertTree(widget.tree.root, null);
+  }
+
+  @override
+  void dispose() {
+    indexedTree!.dispose();
+    indexedTree = null;
+    super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(covariant oldWidget) {
+    indexedTree = _convertTree(widget.tree.root, null);
+    super.didUpdateWidget(oldWidget);
+  }
+
   void setCurrentSelected(List<int> newSelected) {
     setState(() {
       widget.tree.selection = newSelected;
@@ -110,7 +119,7 @@ class _TreeDefaultEmbodimentState extends State<TreeDefaultEmbodiment> {
     }
 
     bool isSelected(List<int> indices) {
-      return _listEquals(widget.tree.selection, indices);
+      return listEquals<int>(widget.tree.selection, indices);
     }
 
     void onSelection(List<int> indices) {
@@ -129,16 +138,13 @@ class _TreeDefaultEmbodimentState extends State<TreeDefaultEmbodiment> {
     var embodifier = InheritedEmbodifier.of(context);
     var modelItem = widget.tree.modelItem;
 
-    indexedTree ??= indexedTree = _convertTree(widget.tree.root, null);
-
     var content = TreeView.indexed(
         indentation: Indentation(style: IndentStyle.roundJoint),
         onTreeReady: (controller) =>
             controller.expandAllChildren(controller.tree, recursive: true),
         tree: indexedTree!,
         builder: (context, itn) {
-          // build your node item here
-          // return any widget that you need
+          // Build the node item
           var node = itn.data as pg.Node;
           var indices = node.appData as List<int>;
 

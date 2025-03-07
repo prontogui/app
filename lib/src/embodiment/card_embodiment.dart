@@ -93,6 +93,7 @@ Widget _buildTile(BuildContext context, EmbodimentArgs args) {
   );
 }
 
+// The allowed primitives for members of a card tile.
 const Set<String> _allowedTypes = {
   'Text',
   'Command',
