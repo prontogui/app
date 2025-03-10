@@ -26,7 +26,7 @@ class TableEmbodiment extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var table = args.primitive as pg.Table;
-    var props = args.properties as CommonProperties;
+    //var props = args.properties as CommonProperties;
 
     // Is status for this primitive set to Hidden?
     if (table.status == 2) {
@@ -66,14 +66,27 @@ class TableEmbodiment extends StatelessWidget {
     // Build the data rows from primitive rows
     var embodifier = InheritedEmbodifier.of(context);
     var rowsD = List<DataRow>.empty(growable: true);
+    var modelRow = table.modelRow;
 
     for (var row in table.rows) {
       var cellsD = List<DataCell>.empty(growable: true);
 
+      int col = 0;
       for (var cell in row) {
-        // TODO:  utilize the template row cells when calling .buildPrimitive
-        var cellEmbodiment = embodifier.buildPrimitive(context, cell);
+        pg.Primitive? modelPrimitive;
+
+        // Is there a corresponding model primitive for the column?
+        if (col < modelRow.length) {
+          modelPrimitive = modelRow[col];
+        }
+
+        // Build the embodiment for the cell, incorporating any model primitive properties.
+        var cellEmbodiment = embodifier.buildPrimitive(context, cell,
+            modelPrimitive: modelPrimitive);
+
         cellsD.add(DataCell(cellEmbodiment));
+
+        col++;
       }
 
       rowsD.add(DataRow(cells: cellsD));

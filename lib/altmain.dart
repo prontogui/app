@@ -14,19 +14,20 @@ import 'src/app.dart';
 import 'src/embodiment/numericfield_embodiment.dart';
 import 'src/widgets/choice_field.dart';
 
-List<dl.Primitive> makeRow(String letter, int fromNo, int toNo) {
+List<dl.Primitive> makeRow(String letter, int fromNo, int toNo,
+    {String letterEmbodiment = '', String numberEmbodiment = ''}) {
   var row = List<dl.Primitive>.empty(growable: true);
 
-  row.add(dl.Text(content: letter));
+  row.add(dl.Text(content: letter, embodiment: letterEmbodiment));
   for (int n = fromNo; n <= toNo; n++) {
-    row.add(dl.Text(content: '$n'));
+    row.add(dl.Text(content: '$n', embodiment: numberEmbodiment));
   }
   return row;
 }
 
 dl.Primitive makeBingo() {
   var modelRow = [
-    dl.Text(embodiment: 'fontSize:20'),
+    dl.Text(embodiment: 'fontSize:20, color:#FFFFFFFF'),
     dl.Text(),
     dl.Text(),
     dl.Text(),
@@ -44,11 +45,11 @@ dl.Primitive makeBingo() {
     dl.Text()
   ];
   var rows = [
-    makeRow('B', 1, 15),
-    makeRow('I', 16, 30),
-    makeRow('N', 31, 45),
-    makeRow('G', 46, 60),
-    makeRow('O', 61, 75)
+    makeRow('B', 1, 15, letterEmbodiment: 'backgroundColor:#FF0000FF'),
+    makeRow('I', 16, 30, letterEmbodiment: 'backgroundColor:#FFFF0000'),
+    makeRow('N', 31, 45, letterEmbodiment: 'backgroundColor:#FF00FF00'),
+    makeRow('G', 46, 60, letterEmbodiment: 'backgroundColor:#FFFFFF00'),
+    makeRow('O', 61, 75, letterEmbodiment: 'backgroundColor:#FFFF00FF')
   ];
   return dl.Table(modelRow: modelRow, rows: rows);
 }

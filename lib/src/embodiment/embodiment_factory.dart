@@ -23,10 +23,16 @@ import 'embodiment_manifest.dart';
 import 'embodiment_args.dart';
 import 'properties.dart';
 
+// The combined set of information cached for each primitive.  It consists of the
+// manifest information for the primitive and it's "effective" properties.  For a
+// model primitive, the effective properties are just the model primitives properties.
+// For a primitive being displayed, the effective properties are the model primitive
+// properties overriden by properties assigned to the primitive.  Later on, the
+// effective properties might include other sources like themes, etc.
 class _EmbodimentInfo {
   _EmbodimentInfo(this.manifest, this.properties);
   final EmbodimentManifestEntry manifest;
-  final dynamic properties;
+  final Properties properties;
 }
 
 /// Static class/method for creating embodiments.
@@ -122,31 +128,52 @@ class EmbodimentFactory {
     var primitive = ea.primitive;
     var modelPrimitive = ea.modelPrimitive;
 
-    late _EmbodimentInfo info;
+    // Properties of model primitive, if its being used.  These will serve as initial
+    // properties when computing the primitive's properties, which will override these.
+    Properties? modelProperties;
 
     // Using the embodiment of model primitive?
     if (modelPrimitive != null) {
       // Need to generate info and cache it?
       if (modelPrimitive.embodimentInfo == null) {
+        // Build the properties from the function provided in the manifest for the
+        // model primitive.
         var manifest = _lookupEmbodimentManifest(modelPrimitive);
-        var properties = manifest.propertyAccess(modelPrimitive.embodimentMap);
-        info = _EmbodimentInfo(manifest, properties);
-        modelPrimitive.embodimentInfo = info;
+        modelProperties = manifest.propertyAccess(modelPrimitive.embodimentMap);
+
+        // Cache the manifest and properties
+        modelPrimitive.embodimentInfo =
+            _EmbodimentInfo(manifest, modelProperties);
+
+        // Invalidate cached properties for primitive
+        primitive.embodimentInfo = null;
       } else {
-        // Get cached embodiment info
-        info = modelPrimitive.embodimentInfo as _EmbodimentInfo;
+        // Get cached properties for the model primitive
+        var cachedInfo = modelPrimitive.embodimentInfo as _EmbodimentInfo;
+        modelProperties = cachedInfo.properties;
       }
+    }
+
+    // The manifest and "effective" properties used to create the embodiment for primitive
+    late _EmbodimentInfo info;
+
+    // Need to (re)generate info and cache it?
+    if (primitive.embodimentInfo == null) {
+      // Get the manifest for the primitive
+      var manifest = _lookupEmbodimentManifest(primitive);
+
+      // Compute the "effective" properties for the primitive, based on model properties
+      // and overriding properties of the primitive itself.
+      var effectiveProperties = manifest.propertyAccess(primitive.embodimentMap,
+          initialPropertyMap: modelProperties?.propertyMap);
+
+      info = _EmbodimentInfo(manifest, effectiveProperties);
+
+      // Cache it
+      primitive.embodimentInfo = info;
     } else {
-      // Need to generate info and cache it?
-      if (primitive.embodimentInfo == null) {
-        var manifest = _lookupEmbodimentManifest(primitive);
-        var properties = manifest.propertyAccess(primitive.embodimentMap);
-        info = _EmbodimentInfo(manifest, properties);
-        primitive.embodimentInfo = info;
-      } else {
-        // Get cached embodiment info
-        info = primitive.embodimentInfo as _EmbodimentInfo;
-      }
+      // Get cached embodiment info
+      info = primitive.embodimentInfo as _EmbodimentInfo;
     }
 
     // Finish preparing the embodiment arguments
@@ -158,6 +185,7 @@ class EmbodimentFactory {
       key = UniqueKey();
     }
 
+    // Create the embodiment using the factory function coming from the manifest.
     return info.manifest.factoryFunction(ea, key: key);
   }
 }

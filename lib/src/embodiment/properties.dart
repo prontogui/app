@@ -563,7 +563,7 @@ class CommonProperties extends Properties with CommonPropertyAccess {
     if (embodimentMap == null || embodimentMap.isEmpty) {
       return;
     }
-    propertyMap = <String, dynamic>{};
+    propertyMap ??= {};
     for (var kv in embodimentMap.entries) {
       _areCommonProps = _mapCommonProperty(propertyMap!, kv.key, kv.value);
     }
@@ -577,7 +577,7 @@ class FrameDefaultProperties extends Properties
     if (embodimentMap == null || embodimentMap.isEmpty) {
       return;
     }
-    propertyMap = <String, dynamic>{};
+    propertyMap ??= {};
     for (var kv in embodimentMap.entries) {
       _areCommonProps = _mapCommonProperty(propertyMap!, kv.key, kv.value);
       _mapFrameDefaultProperty(propertyMap!, kv.key, kv.value);
@@ -592,7 +592,7 @@ class FrameSnackbarProperties extends Properties
     if (embodimentMap == null || embodimentMap.isEmpty) {
       return;
     }
-    propertyMap = <String, dynamic>{};
+    propertyMap ??= {};
     for (var kv in embodimentMap.entries) {
       _areCommonProps = _mapCommonProperty(propertyMap!, kv.key, kv.value);
       _mapFrameSnackbarProperty(propertyMap!, kv.key, kv.value);
@@ -607,7 +607,7 @@ class IconDefaultProperties extends Properties
     if (embodimentMap == null || embodimentMap.isEmpty) {
       return;
     }
-    propertyMap = <String, dynamic>{};
+    propertyMap ??= {};
     for (var kv in embodimentMap.entries) {
       _areCommonProps = _mapCommonProperty(propertyMap!, kv.key, kv.value);
       _mapIconDefaultProperty(propertyMap!, kv.key, kv.value);
@@ -622,7 +622,7 @@ class ListDefaultProperties extends Properties
     if (embodimentMap == null || embodimentMap.isEmpty) {
       return;
     }
-    propertyMap = <String, dynamic>{};
+    propertyMap ??= {};
     for (var kv in embodimentMap.entries) {
       _areCommonProps = _mapCommonProperty(propertyMap!, kv.key, kv.value);
       _mapListDefaultProperty(propertyMap!, kv.key, kv.value);
@@ -638,7 +638,7 @@ class ListTabbedProperties extends Properties
     if (embodimentMap == null || embodimentMap.isEmpty) {
       return;
     }
-    propertyMap = <String, dynamic>{};
+    propertyMap ??= {};
     for (var kv in embodimentMap.entries) {
       _areCommonProps = _mapCommonProperty(propertyMap!, kv.key, kv.value);
       _mapListTabbedProperty(propertyMap!, kv.key, kv.value);
@@ -653,7 +653,7 @@ class TreeDefaultProperties extends Properties
     if (embodimentMap == null || embodimentMap.isEmpty) {
       return;
     }
-    propertyMap = <String, dynamic>{};
+    propertyMap ??= {};
     for (var kv in embodimentMap.entries) {
       _areCommonProps = _mapCommonProperty(propertyMap!, kv.key, kv.value);
       _mapTreeDefaultProperty(propertyMap!, kv.key, kv.value);
@@ -668,7 +668,7 @@ class NumericFieldDefaultProperties extends Properties
     if (embodimentMap == null || embodimentMap.isEmpty) {
       return;
     }
-    propertyMap = <String, dynamic>{};
+    propertyMap ??= {};
     for (var kv in embodimentMap.entries) {
       _areCommonProps = _mapCommonProperty(propertyMap!, kv.key, kv.value);
       _mapNumericFieldDefaultProperty(propertyMap!, kv.key, kv.value);
@@ -683,7 +683,7 @@ class NumericFieldColorProperties extends Properties
     if (embodimentMap == null || embodimentMap.isEmpty) {
       return;
     }
-    propertyMap = <String, dynamic>{};
+    propertyMap ??= {};
     for (var kv in embodimentMap.entries) {
       _areCommonProps = _mapCommonProperty(propertyMap!, kv.key, kv.value);
       _mapNumericFieldColorProperty(propertyMap!, kv.key, kv.value);
@@ -698,7 +698,7 @@ class TextDefaultProperties extends Properties
     if (embodimentMap == null || embodimentMap.isEmpty) {
       return;
     }
-    propertyMap = <String, dynamic>{};
+    propertyMap ??= {};
     for (var kv in embodimentMap.entries) {
       _areCommonProps = _mapCommonProperty(propertyMap!, kv.key, kv.value);
       _mapTextDefaultProperty(propertyMap!, kv.key, kv.value);
