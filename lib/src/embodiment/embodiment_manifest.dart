@@ -9,7 +9,8 @@ class EmbodimentManifestEntry {
 
   final String embodiment;
   final Widget Function(EmbodimentArgs, {Key? key}) factoryFunction;
-  final Properties Function(Map<String, dynamic>) propertyAccess;
+  final Properties Function(Map<String, dynamic>? embodimentMap,
+      {Map<String, dynamic>? initialPropertyMap}) propertyAccess;
   final bool keyRequired;
 }
 

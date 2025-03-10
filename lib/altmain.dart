@@ -14,6 +14,45 @@ import 'src/app.dart';
 import 'src/embodiment/numericfield_embodiment.dart';
 import 'src/widgets/choice_field.dart';
 
+List<dl.Primitive> makeRow(String letter, int fromNo, int toNo) {
+  var row = List<dl.Primitive>.empty(growable: true);
+
+  row.add(dl.Text(content: letter));
+  for (int n = fromNo; n <= toNo; n++) {
+    row.add(dl.Text(content: '$n'));
+  }
+  return row;
+}
+
+dl.Primitive makeBingo() {
+  var modelRow = [
+    dl.Text(embodiment: 'fontSize:20'),
+    dl.Text(),
+    dl.Text(),
+    dl.Text(),
+    dl.Text(),
+    dl.Text(),
+    dl.Text(),
+    dl.Text(),
+    dl.Text(),
+    dl.Text(),
+    dl.Text(),
+    dl.Text(),
+    dl.Text(),
+    dl.Text(),
+    dl.Text(),
+    dl.Text()
+  ];
+  var rows = [
+    makeRow('B', 1, 15),
+    makeRow('I', 16, 30),
+    makeRow('N', 31, 45),
+    makeRow('G', 46, 60),
+    makeRow('O', 61, 75)
+  ];
+  return dl.Table(modelRow: modelRow, rows: rows);
+}
+
 /// The main entry point for the ProntoGUI application.  This function sets up
 /// several objects responsible for core functionality of the application and
 /// hands off operation to the App widget.
@@ -26,6 +65,8 @@ void altmain1(List<String> args) async {
   // Create the model that holds the primitives to be displayed.
   final model = dl.PrimitiveModel();
 
+  model.topPrimitives = [makeBingo()];
+/*
   //final list = dl.ListP(embodiment: 'horizontal:true, width:100, height:100, borderAll:3');
   final list = dl.ListP(embodiment: 'horizontal:false, width:200');
   var t1 = dl.Text(content: 'Frame 1');
@@ -35,6 +76,7 @@ void altmain1(List<String> args) async {
   //var c1 = dl.Card(mainItem: dl.Text(content: 'CARD'), embodiment: 'width:200');
   list.listItems = [t1, t2, icon1, card1];
   model.topPrimitives = [list];
+  */
 /*
   if (true) {
     final cm = dl.Card(

@@ -377,10 +377,15 @@ void _mapTextDefaultProperty(
 }
 
 class Properties {
-  Properties() : _areCommonProps = false;
+  Properties({Map<String, dynamic>? initialPropertyMap})
+      : _areCommonProps = false {
+    if (initialPropertyMap != null) {
+      propertyMap = Map<String, dynamic>.of(initialPropertyMap);
+    }
+  }
 
   bool _areCommonProps;
-  Map<String, dynamic>? _propertyMap;
+  Map<String, dynamic>? propertyMap;
 }
 
 mixin CommonPropertyAccess on Properties {
@@ -432,198 +437,195 @@ mixin CommonPropertyAccess on Properties {
     return _isPositioning!;
   }
 
-  double? get borderAll => _getDoubleT(_propertyMap, PropertyName.borderAll);
+  double? get borderAll => _getDoubleT(propertyMap, PropertyName.borderAll);
   double? get borderBottom =>
-      _getDoubleT(_propertyMap, PropertyName.borderBottom);
-  Color? get borderColor => _getColorT(_propertyMap, PropertyName.borderColor);
-  double? get borderLeft => _getDoubleT(_propertyMap, PropertyName.borderLeft);
-  double? get borderRight =>
-      _getDoubleT(_propertyMap, PropertyName.borderRight);
-  double? get borderTop => _getDoubleT(_propertyMap, PropertyName.borderTop);
-  double? get bottom => _getDoubleT(_propertyMap, PropertyName.bottom);
-  String? get embodiment => _getStringT(_propertyMap, PropertyName.embodiment);
-  double? get height => _getDoubleT(_propertyMap, PropertyName.height);
+      _getDoubleT(propertyMap, PropertyName.borderBottom);
+  Color? get borderColor => _getColorT(propertyMap, PropertyName.borderColor);
+  double? get borderLeft => _getDoubleT(propertyMap, PropertyName.borderLeft);
+  double? get borderRight => _getDoubleT(propertyMap, PropertyName.borderRight);
+  double? get borderTop => _getDoubleT(propertyMap, PropertyName.borderTop);
+  double? get bottom => _getDoubleT(propertyMap, PropertyName.bottom);
+  String? get embodiment => _getStringT(propertyMap, PropertyName.embodiment);
+  double? get height => _getDoubleT(propertyMap, PropertyName.height);
   HorizontalAlignment get horizontalAlignment => _getEnumT<HorizontalAlignment>(
-      _propertyMap, HorizontalAlignment.left, PropertyName.horizontalAlignment);
-  double? get left => _getDoubleT(_propertyMap, PropertyName.left);
-  double? get marginAll => _getDoubleT(_propertyMap, PropertyName.marginAll);
+      propertyMap, HorizontalAlignment.left, PropertyName.horizontalAlignment);
+  double? get left => _getDoubleT(propertyMap, PropertyName.left);
+  double? get marginAll => _getDoubleT(propertyMap, PropertyName.marginAll);
   double? get marginBottom =>
-      _getDoubleT(_propertyMap, PropertyName.marginBottom);
-  double? get marginLeft => _getDoubleT(_propertyMap, PropertyName.marginLeft);
-  double? get marginRight =>
-      _getDoubleT(_propertyMap, PropertyName.marginRight);
-  double? get marginTop => _getDoubleT(_propertyMap, PropertyName.marginTop);
-  double? get paddingAll => _getDoubleT(_propertyMap, PropertyName.paddingAll);
+      _getDoubleT(propertyMap, PropertyName.marginBottom);
+  double? get marginLeft => _getDoubleT(propertyMap, PropertyName.marginLeft);
+  double? get marginRight => _getDoubleT(propertyMap, PropertyName.marginRight);
+  double? get marginTop => _getDoubleT(propertyMap, PropertyName.marginTop);
+  double? get paddingAll => _getDoubleT(propertyMap, PropertyName.paddingAll);
   double? get paddingBottom =>
-      _getDoubleT(_propertyMap, PropertyName.paddingBottom);
-  double? get paddingLeft =>
-      _getDoubleT(_propertyMap, PropertyName.paddingLeft);
+      _getDoubleT(propertyMap, PropertyName.paddingBottom);
+  double? get paddingLeft => _getDoubleT(propertyMap, PropertyName.paddingLeft);
   double? get paddingRight =>
-      _getDoubleT(_propertyMap, PropertyName.paddingRight);
-  double? get paddingTop => _getDoubleT(_propertyMap, PropertyName.paddingTop);
-  double? get right => _getDoubleT(_propertyMap, PropertyName.right);
-  double? get top => _getDoubleT(_propertyMap, PropertyName.top);
+      _getDoubleT(propertyMap, PropertyName.paddingRight);
+  double? get paddingTop => _getDoubleT(propertyMap, PropertyName.paddingTop);
+  double? get right => _getDoubleT(propertyMap, PropertyName.right);
+  double? get top => _getDoubleT(propertyMap, PropertyName.top);
   VerticalAlignment get verticalAlignment => _getEnumT<VerticalAlignment>(
-      _propertyMap, VerticalAlignment.middle, PropertyName.verticalAlignment);
-  double? get width => _getDoubleT(_propertyMap, PropertyName.width);
+      propertyMap, VerticalAlignment.middle, PropertyName.verticalAlignment);
+  double? get width => _getDoubleT(propertyMap, PropertyName.width);
 }
 
 mixin FrameDefaultPropertyAccess on Properties {
   FlowDirection get flowDirection => _getEnumT<FlowDirection>(
-      _propertyMap, FlowDirection.topToBottom, PropertyName.flowDirection);
+      propertyMap, FlowDirection.topToBottom, PropertyName.flowDirection);
   LayoutMethod get layoutMethod => _getEnumT<LayoutMethod>(
-      _propertyMap, LayoutMethod.flow, PropertyName.layoutMethod);
+      propertyMap, LayoutMethod.flow, PropertyName.layoutMethod);
 }
 
 mixin FrameSnackbarPropertyAccess on Properties {
   SnackbarBehavior get snackbarBehavior => _getEnumT<SnackbarBehavior>(
-      _propertyMap, SnackbarBehavior.fixed, PropertyName.snackbarBehavior);
+      propertyMap, SnackbarBehavior.fixed, PropertyName.snackbarBehavior);
   double? get snackbarDuration =>
-      _getDoubleT(_propertyMap, PropertyName.snackbarDuration);
+      _getDoubleT(propertyMap, PropertyName.snackbarDuration);
   bool get snackbarShowCloseIcon =>
-      _getYesNoT(_propertyMap, PropertyName.snackbarShowCloseIcon, false);
+      _getYesNoT(propertyMap, PropertyName.snackbarShowCloseIcon, false);
 }
 
 mixin IconDefaultPropertyAccess on Properties {
-  Color? get color => _getColorT(_propertyMap, PropertyName.color);
-  double? get size => _getDoubleT(_propertyMap, PropertyName.size);
+  Color? get color => _getColorT(propertyMap, PropertyName.color);
+  double? get size => _getDoubleT(propertyMap, PropertyName.size);
 }
 
 mixin ListDefaultPropertyAccess on Properties {
   bool get horizontal =>
-      _getYesNoT(_propertyMap, PropertyName.horizontal, false);
+      _getYesNoT(propertyMap, PropertyName.horizontal, false);
 //  double? get itemHeight => _getDoubleT(_propertyMap, PropertyName.itemHeight);
 //  double? get itemWidth => _getDoubleT(_propertyMap, PropertyName.itemWidth);
 }
 
 mixin ListCardPropertyAccess on Properties {
   bool get horizontal =>
-      _getYesNoT(_propertyMap, PropertyName.horizontal, false);
+      _getYesNoT(propertyMap, PropertyName.horizontal, false);
 }
 
 mixin ListPropertyPropertyAccess on Properties {
   bool get horizontal =>
-      _getYesNoT(_propertyMap, PropertyName.horizontal, false);
+      _getYesNoT(propertyMap, PropertyName.horizontal, false);
 }
 
 mixin ListTabbedPropertyAccess on Properties {
   int get animationPeriod =>
-      _getIntT(_propertyMap, PropertyName.animationPeriod, 0);
-  double? get tabHeight => _getDoubleT(_propertyMap, PropertyName.tabHeight);
+      _getIntT(propertyMap, PropertyName.animationPeriod, 0);
+  double? get tabHeight => _getDoubleT(propertyMap, PropertyName.tabHeight);
 }
 
 mixin TreeDefaultPropertyAccess on Properties {}
 
 mixin NumericFieldDefaultPropertyAccess on Properties {
   bool get allowEmptyValue =>
-      _getYesNoT(_propertyMap, PropertyName.allowEmptyValue, false);
+      _getYesNoT(propertyMap, PropertyName.allowEmptyValue, false);
   int get displayDecimalPlaces =>
-      _getIntT(_propertyMap, PropertyName.displayDecimalPlaces, -15);
+      _getIntT(propertyMap, PropertyName.displayDecimalPlaces, -15);
   DisplayNegativeFormat get displayNegativeFormat => _getEnumT(
-      _propertyMap,
+      propertyMap,
       DisplayNegativeFormat.minusSignPrefix,
       PropertyName.displayNegativeFormat);
   bool get displayThousandths =>
-      _getYesNoT(_propertyMap, PropertyName.displayThousandths, false);
-  double? get maxValue => _getDoubleT(_propertyMap, PropertyName.maxValue);
-  double? get minValue => _getDoubleT(_propertyMap, PropertyName.minValue);
+      _getYesNoT(propertyMap, PropertyName.displayThousandths, false);
+  double? get maxValue => _getDoubleT(propertyMap, PropertyName.maxValue);
+  double? get minValue => _getDoubleT(propertyMap, PropertyName.minValue);
   List<String>? get popupChoices =>
-      _getStringArrayT(_propertyMap, PropertyName.popupChoices);
+      _getStringArrayT(propertyMap, PropertyName.popupChoices);
 }
 
 mixin NumericFieldColorPropertyAccess on Properties {
   bool get allowEmptyValue =>
-      _getYesNoT(_propertyMap, PropertyName.allowEmptyValue, false);
+      _getYesNoT(propertyMap, PropertyName.allowEmptyValue, false);
 }
 
 mixin TextDefaultPropertyAccess on Properties {
   Color? get backgroundColor =>
-      _getColorT(_propertyMap, PropertyName.backgroundColor);
-  Color? get color => _getColorT(_propertyMap, PropertyName.color);
-  String? get fontFamily => _getStringT(_propertyMap, PropertyName.fontFamily);
-  double? get fontSize => _getDoubleT(_propertyMap, PropertyName.fontSize);
+      _getColorT(propertyMap, PropertyName.backgroundColor);
+  Color? get color => _getColorT(propertyMap, PropertyName.color);
+  String? get fontFamily => _getStringT(propertyMap, PropertyName.fontFamily);
+  double? get fontSize => _getDoubleT(propertyMap, PropertyName.fontSize);
   FontStyle get fontStyle => _getEnumT<FontStyle>(
-      _propertyMap, FontStyle.normal, PropertyName.fontStyle);
+      propertyMap, FontStyle.normal, PropertyName.fontStyle);
   FontWeight get fontWeight => _getEnumT<FontWeight>(
-      _propertyMap, FontWeight.normal, PropertyName.fontWeight);
+      propertyMap, FontWeight.normal, PropertyName.fontWeight);
 }
 
 class NothingProperties extends Properties {
-  NothingProperties.fromMap(Map<String, dynamic>? embodimentMap) {
-    _propertyMap = null;
+  NothingProperties.fromMap(Map<String, dynamic>? embodimentMap,
+      {super.initialPropertyMap}) {
     return;
   }
 }
 
 class CommonProperties extends Properties with CommonPropertyAccess {
-  CommonProperties.fromMap(Map<String, dynamic>? embodimentMap) {
+  CommonProperties.fromMap(Map<String, dynamic>? embodimentMap,
+      {super.initialPropertyMap}) {
     if (embodimentMap == null || embodimentMap.isEmpty) {
-      _propertyMap = null;
       return;
     }
-    _propertyMap = <String, dynamic>{};
+    propertyMap = <String, dynamic>{};
     for (var kv in embodimentMap.entries) {
-      _areCommonProps = _mapCommonProperty(_propertyMap!, kv.key, kv.value);
+      _areCommonProps = _mapCommonProperty(propertyMap!, kv.key, kv.value);
     }
   }
 }
 
 class FrameDefaultProperties extends Properties
     with CommonPropertyAccess, FrameDefaultPropertyAccess {
-  FrameDefaultProperties.fromMap(Map<String, dynamic>? embodimentMap) {
+  FrameDefaultProperties.fromMap(Map<String, dynamic>? embodimentMap,
+      {super.initialPropertyMap}) {
     if (embodimentMap == null || embodimentMap.isEmpty) {
-      _propertyMap = null;
       return;
     }
-    _propertyMap = <String, dynamic>{};
+    propertyMap = <String, dynamic>{};
     for (var kv in embodimentMap.entries) {
-      _areCommonProps = _mapCommonProperty(_propertyMap!, kv.key, kv.value);
-      _mapFrameDefaultProperty(_propertyMap!, kv.key, kv.value);
+      _areCommonProps = _mapCommonProperty(propertyMap!, kv.key, kv.value);
+      _mapFrameDefaultProperty(propertyMap!, kv.key, kv.value);
     }
   }
 }
 
 class FrameSnackbarProperties extends Properties
     with CommonPropertyAccess, FrameSnackbarPropertyAccess {
-  FrameSnackbarProperties.fromMap(Map<String, dynamic>? embodimentMap) {
+  FrameSnackbarProperties.fromMap(Map<String, dynamic>? embodimentMap,
+      {super.initialPropertyMap}) {
     if (embodimentMap == null || embodimentMap.isEmpty) {
-      _propertyMap = null;
       return;
     }
-    _propertyMap = <String, dynamic>{};
+    propertyMap = <String, dynamic>{};
     for (var kv in embodimentMap.entries) {
-      _areCommonProps = _mapCommonProperty(_propertyMap!, kv.key, kv.value);
-      _mapFrameSnackbarProperty(_propertyMap!, kv.key, kv.value);
+      _areCommonProps = _mapCommonProperty(propertyMap!, kv.key, kv.value);
+      _mapFrameSnackbarProperty(propertyMap!, kv.key, kv.value);
     }
   }
 }
 
 class IconDefaultProperties extends Properties
     with CommonPropertyAccess, IconDefaultPropertyAccess {
-  IconDefaultProperties.fromMap(Map<String, dynamic>? embodimentMap) {
+  IconDefaultProperties.fromMap(Map<String, dynamic>? embodimentMap,
+      {super.initialPropertyMap}) {
     if (embodimentMap == null || embodimentMap.isEmpty) {
-      _propertyMap = null;
       return;
     }
-    _propertyMap = <String, dynamic>{};
+    propertyMap = <String, dynamic>{};
     for (var kv in embodimentMap.entries) {
-      _areCommonProps = _mapCommonProperty(_propertyMap!, kv.key, kv.value);
-      _mapIconDefaultProperty(_propertyMap!, kv.key, kv.value);
+      _areCommonProps = _mapCommonProperty(propertyMap!, kv.key, kv.value);
+      _mapIconDefaultProperty(propertyMap!, kv.key, kv.value);
     }
   }
 }
 
 class ListDefaultProperties extends Properties
     with CommonPropertyAccess, ListDefaultPropertyAccess {
-  ListDefaultProperties.fromMap(Map<String, dynamic>? embodimentMap) {
+  ListDefaultProperties.fromMap(Map<String, dynamic>? embodimentMap,
+      {super.initialPropertyMap}) {
     if (embodimentMap == null || embodimentMap.isEmpty) {
-      _propertyMap = null;
       return;
     }
-    _propertyMap = <String, dynamic>{};
+    propertyMap = <String, dynamic>{};
     for (var kv in embodimentMap.entries) {
-      _areCommonProps = _mapCommonProperty(_propertyMap!, kv.key, kv.value);
-      _mapListDefaultProperty(_propertyMap!, kv.key, kv.value);
+      _areCommonProps = _mapCommonProperty(propertyMap!, kv.key, kv.value);
+      _mapListDefaultProperty(propertyMap!, kv.key, kv.value);
     }
   }
 }
@@ -631,75 +633,75 @@ class ListDefaultProperties extends Properties
 // ALSO GENERATES DUPLICATES ListCardProperties, ListPropertyProperties
 class ListTabbedProperties extends Properties
     with CommonPropertyAccess, ListTabbedPropertyAccess {
-  ListTabbedProperties.fromMap(Map<String, dynamic>? embodimentMap) {
+  ListTabbedProperties.fromMap(Map<String, dynamic>? embodimentMap,
+      {super.initialPropertyMap}) {
     if (embodimentMap == null || embodimentMap.isEmpty) {
-      _propertyMap = null;
       return;
     }
-    _propertyMap = <String, dynamic>{};
+    propertyMap = <String, dynamic>{};
     for (var kv in embodimentMap.entries) {
-      _areCommonProps = _mapCommonProperty(_propertyMap!, kv.key, kv.value);
-      _mapListTabbedProperty(_propertyMap!, kv.key, kv.value);
+      _areCommonProps = _mapCommonProperty(propertyMap!, kv.key, kv.value);
+      _mapListTabbedProperty(propertyMap!, kv.key, kv.value);
     }
   }
 }
 
 class TreeDefaultProperties extends Properties
     with CommonPropertyAccess, TreeDefaultPropertyAccess {
-  TreeDefaultProperties.fromMap(Map<String, dynamic>? embodimentMap) {
+  TreeDefaultProperties.fromMap(Map<String, dynamic>? embodimentMap,
+      {super.initialPropertyMap}) {
     if (embodimentMap == null || embodimentMap.isEmpty) {
-      _propertyMap = null;
       return;
     }
-    _propertyMap = <String, dynamic>{};
+    propertyMap = <String, dynamic>{};
     for (var kv in embodimentMap.entries) {
-      _areCommonProps = _mapCommonProperty(_propertyMap!, kv.key, kv.value);
-      _mapTreeDefaultProperty(_propertyMap!, kv.key, kv.value);
+      _areCommonProps = _mapCommonProperty(propertyMap!, kv.key, kv.value);
+      _mapTreeDefaultProperty(propertyMap!, kv.key, kv.value);
     }
   }
 }
 
 class NumericFieldDefaultProperties extends Properties
     with CommonPropertyAccess, NumericFieldDefaultPropertyAccess {
-  NumericFieldDefaultProperties.fromMap(Map<String, dynamic>? embodimentMap) {
+  NumericFieldDefaultProperties.fromMap(Map<String, dynamic>? embodimentMap,
+      {super.initialPropertyMap}) {
     if (embodimentMap == null || embodimentMap.isEmpty) {
-      _propertyMap = null;
       return;
     }
-    _propertyMap = <String, dynamic>{};
+    propertyMap = <String, dynamic>{};
     for (var kv in embodimentMap.entries) {
-      _areCommonProps = _mapCommonProperty(_propertyMap!, kv.key, kv.value);
-      _mapNumericFieldDefaultProperty(_propertyMap!, kv.key, kv.value);
+      _areCommonProps = _mapCommonProperty(propertyMap!, kv.key, kv.value);
+      _mapNumericFieldDefaultProperty(propertyMap!, kv.key, kv.value);
     }
   }
 }
 
 class NumericFieldColorProperties extends Properties
     with CommonPropertyAccess, NumericFieldDefaultPropertyAccess {
-  NumericFieldColorProperties.fromMap(Map<String, dynamic>? embodimentMap) {
+  NumericFieldColorProperties.fromMap(Map<String, dynamic>? embodimentMap,
+      {super.initialPropertyMap}) {
     if (embodimentMap == null || embodimentMap.isEmpty) {
-      _propertyMap = null;
       return;
     }
-    _propertyMap = <String, dynamic>{};
+    propertyMap = <String, dynamic>{};
     for (var kv in embodimentMap.entries) {
-      _areCommonProps = _mapCommonProperty(_propertyMap!, kv.key, kv.value);
-      _mapNumericFieldColorProperty(_propertyMap!, kv.key, kv.value);
+      _areCommonProps = _mapCommonProperty(propertyMap!, kv.key, kv.value);
+      _mapNumericFieldColorProperty(propertyMap!, kv.key, kv.value);
     }
   }
 }
 
 class TextDefaultProperties extends Properties
     with CommonPropertyAccess, TextDefaultPropertyAccess {
-  TextDefaultProperties.fromMap(Map<String, dynamic>? embodimentMap) {
+  TextDefaultProperties.fromMap(Map<String, dynamic>? embodimentMap,
+      {super.initialPropertyMap}) {
     if (embodimentMap == null || embodimentMap.isEmpty) {
-      _propertyMap = null;
       return;
     }
-    _propertyMap = <String, dynamic>{};
+    propertyMap = <String, dynamic>{};
     for (var kv in embodimentMap.entries) {
-      _areCommonProps = _mapCommonProperty(_propertyMap!, kv.key, kv.value);
-      _mapTextDefaultProperty(_propertyMap!, kv.key, kv.value);
+      _areCommonProps = _mapCommonProperty(propertyMap!, kv.key, kv.value);
+      _mapTextDefaultProperty(propertyMap!, kv.key, kv.value);
     }
   }
 }
