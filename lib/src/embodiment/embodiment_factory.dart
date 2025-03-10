@@ -165,7 +165,7 @@ class EmbodimentFactory {
       // Compute the "effective" properties for the primitive, based on model properties
       // and overriding properties of the primitive itself.
       var effectiveProperties = manifest.propertyAccess(primitive.embodimentMap,
-          initialPropertyMap: modelProperties?.propertyMap);
+          initialProperties: modelProperties);
 
       info = _EmbodimentInfo(manifest, effectiveProperties);
 

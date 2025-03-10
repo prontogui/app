@@ -140,17 +140,65 @@ Widget encloseWithPBMSAF(Widget content, EmbodimentArgs args,
 
   // Are any common properties set or is there selectability? Otherwise, we can
   // skip PBMSA altogether.
-  if (props.areCommonPropsSet || isSelectedFunc != null) {
+  if (props.areCommonProps || isSelectedFunc != null) {
+    Color? backgroundColor = props.backgroundColor;
+
     // Apply padding
     if (props.isPadding) {
       var (l, r, t, b) = _effectiveLRTB(props.paddingAll, props.paddingLeft,
           props.paddingRight, props.paddingTop, props.paddingBottom);
 
+      var padding = EdgeInsets.only(left: l, right: r, top: t, bottom: b);
+
       content = Padding(
-        padding: EdgeInsets.only(left: l, right: r, top: t, bottom: b),
+        padding: padding,
         child: content,
       );
     }
+
+    // If using a background color then enclose in ColoredBox
+    if (backgroundColor != null) {
+      content = ColoredBox(
+        color: backgroundColor,
+        child: content,
+      );
+    }
+/*
+
+    // Apply padding
+    if (props.isPadding) {
+      var (l, r, t, b) = _effectiveLRTB(props.paddingAll, props.paddingLeft,
+          props.paddingRight, props.paddingTop, props.paddingBottom);
+
+      var padding = EdgeInsets.only(left: l, right: r, top: t, bottom: b);
+
+      // If using a background color then enclose content with a Container that shows
+      // the color and incorporates padding at the same time.
+      if (backgroundColor != null) {
+        // NOTE:  THIS DOESN'T APPEAR THE SAME AS PADDING
+        content = Container(
+          padding: padding,
+          color: backgroundColor,
+          constraints: BoxConstraints.expand(),
+          child: content,
+        );
+      } else {
+        content = Padding(
+          padding: padding,
+          child: content,
+        );
+      }
+    } else {
+      // If using a background color then enclose in ColoredBox
+      if (backgroundColor != null) {
+        content = ColoredBox(
+          color: backgroundColor,
+          child: content,
+        );
+      }
+    }
+
+*/
 
     // Apply border
     if (props.isBorder) {
@@ -167,7 +215,7 @@ Widget encloseWithPBMSAF(Widget content, EmbodimentArgs args,
               // This can be used to set a background color
               //          color: props.backgroundColor,
               border: border),
-          padding: EdgeInsets.only(left: l, right: r, top: t, bottom: b),
+          //  padding: EdgeInsets.only(left: l, right: r, top: t, bottom: b),
           child: content);
     }
 

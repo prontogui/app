@@ -71,7 +71,7 @@ class TextEmbodiment extends StatelessWidget {
     var fontStyle =
         _convertEnum<p.FontStyle, FontStyle>(props.fontStyle, FontStyle.values);
     return TextStyle(
-      backgroundColor: props.backgroundColor,
+      //backgroundColor: props.backgroundColor,
       color: props.color,
       fontSize: props.fontSize,
       fontFamily: props.fontFamily,
@@ -88,6 +88,7 @@ class TextEmbodiment extends StatelessWidget {
     var content = Text(
       text.content,
       style: _buildTextStyle(props),
+      textAlign: TextAlign.center,
     );
 
     return encloseWithPBMSAF(content, args);

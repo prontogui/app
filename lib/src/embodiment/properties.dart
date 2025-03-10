@@ -211,6 +211,8 @@ Set<String> _namesofLayoutMethod = {'flow', 'positioned'};
 bool _mapCommonProperty(
     Map<String, dynamic> propertyMap, String name, dynamic value) {
   switch (name) {
+    case PropertyName.backgroundColor:
+      propertyMap[name] = getColorProp(value);
     case PropertyName.borderAll:
       propertyMap[name] = getNumericProp(value, 0);
     case PropertyName.borderBottom:
@@ -359,8 +361,6 @@ void _mapNumericFieldColorProperty(
 void _mapTextDefaultProperty(
     Map<String, dynamic> propertyMap, String name, dynamic value) {
   switch (name) {
-    case PropertyName.backgroundColor:
-      propertyMap[name] = getColorProp(value);
     case PropertyName.color:
       propertyMap[name] = getColorProp(value);
     case PropertyName.fontFamily:
@@ -377,14 +377,17 @@ void _mapTextDefaultProperty(
 }
 
 class Properties {
-  Properties({Map<String, dynamic>? initialPropertyMap})
-      : _areCommonProps = false {
-    if (initialPropertyMap != null) {
-      propertyMap = Map<String, dynamic>.of(initialPropertyMap);
+  Properties({Properties? initialProperties}) : areCommonProps = false {
+    if (initialProperties != null) {
+      var initialPropertyMap = initialProperties.propertyMap;
+      if (initialPropertyMap != null) {
+        propertyMap = Map<String, dynamic>.of(initialPropertyMap);
+        areCommonProps = initialProperties.areCommonProps;
+      }
     }
   }
 
-  bool _areCommonProps;
+  bool areCommonProps;
   Map<String, dynamic>? propertyMap;
 }
 
@@ -394,8 +397,6 @@ mixin CommonPropertyAccess on Properties {
   bool? _isMargin;
   bool? _isSizing;
   bool? _isPositioning;
-
-  bool get areCommonPropsSet => _areCommonProps;
 
   bool get isPadding {
     _isPadding ??= (paddingAll != null ||
@@ -437,6 +438,8 @@ mixin CommonPropertyAccess on Properties {
     return _isPositioning!;
   }
 
+  Color? get backgroundColor =>
+      _getColorT(propertyMap, PropertyName.backgroundColor);
   double? get borderAll => _getDoubleT(propertyMap, PropertyName.borderAll);
   double? get borderBottom =>
       _getDoubleT(propertyMap, PropertyName.borderBottom);
@@ -539,8 +542,6 @@ mixin NumericFieldColorPropertyAccess on Properties {
 }
 
 mixin TextDefaultPropertyAccess on Properties {
-  Color? get backgroundColor =>
-      _getColorT(propertyMap, PropertyName.backgroundColor);
   Color? get color => _getColorT(propertyMap, PropertyName.color);
   String? get fontFamily => _getStringT(propertyMap, PropertyName.fontFamily);
   double? get fontSize => _getDoubleT(propertyMap, PropertyName.fontSize);
@@ -552,20 +553,20 @@ mixin TextDefaultPropertyAccess on Properties {
 
 class NothingProperties extends Properties {
   NothingProperties.fromMap(Map<String, dynamic>? embodimentMap,
-      {super.initialPropertyMap}) {
+      {super.initialProperties}) {
     return;
   }
 }
 
 class CommonProperties extends Properties with CommonPropertyAccess {
   CommonProperties.fromMap(Map<String, dynamic>? embodimentMap,
-      {super.initialPropertyMap}) {
+      {super.initialProperties}) {
     if (embodimentMap == null || embodimentMap.isEmpty) {
       return;
     }
     propertyMap ??= {};
     for (var kv in embodimentMap.entries) {
-      _areCommonProps = _mapCommonProperty(propertyMap!, kv.key, kv.value);
+      areCommonProps |= _mapCommonProperty(propertyMap!, kv.key, kv.value);
     }
   }
 }
@@ -573,13 +574,13 @@ class CommonProperties extends Properties with CommonPropertyAccess {
 class FrameDefaultProperties extends Properties
     with CommonPropertyAccess, FrameDefaultPropertyAccess {
   FrameDefaultProperties.fromMap(Map<String, dynamic>? embodimentMap,
-      {super.initialPropertyMap}) {
+      {super.initialProperties}) {
     if (embodimentMap == null || embodimentMap.isEmpty) {
       return;
     }
     propertyMap ??= {};
     for (var kv in embodimentMap.entries) {
-      _areCommonProps = _mapCommonProperty(propertyMap!, kv.key, kv.value);
+      areCommonProps |= _mapCommonProperty(propertyMap!, kv.key, kv.value);
       _mapFrameDefaultProperty(propertyMap!, kv.key, kv.value);
     }
   }
@@ -588,13 +589,13 @@ class FrameDefaultProperties extends Properties
 class FrameSnackbarProperties extends Properties
     with CommonPropertyAccess, FrameSnackbarPropertyAccess {
   FrameSnackbarProperties.fromMap(Map<String, dynamic>? embodimentMap,
-      {super.initialPropertyMap}) {
+      {super.initialProperties}) {
     if (embodimentMap == null || embodimentMap.isEmpty) {
       return;
     }
     propertyMap ??= {};
     for (var kv in embodimentMap.entries) {
-      _areCommonProps = _mapCommonProperty(propertyMap!, kv.key, kv.value);
+      areCommonProps |= _mapCommonProperty(propertyMap!, kv.key, kv.value);
       _mapFrameSnackbarProperty(propertyMap!, kv.key, kv.value);
     }
   }
@@ -603,13 +604,13 @@ class FrameSnackbarProperties extends Properties
 class IconDefaultProperties extends Properties
     with CommonPropertyAccess, IconDefaultPropertyAccess {
   IconDefaultProperties.fromMap(Map<String, dynamic>? embodimentMap,
-      {super.initialPropertyMap}) {
+      {super.initialProperties}) {
     if (embodimentMap == null || embodimentMap.isEmpty) {
       return;
     }
     propertyMap ??= {};
     for (var kv in embodimentMap.entries) {
-      _areCommonProps = _mapCommonProperty(propertyMap!, kv.key, kv.value);
+      areCommonProps |= _mapCommonProperty(propertyMap!, kv.key, kv.value);
       _mapIconDefaultProperty(propertyMap!, kv.key, kv.value);
     }
   }
@@ -618,13 +619,13 @@ class IconDefaultProperties extends Properties
 class ListDefaultProperties extends Properties
     with CommonPropertyAccess, ListDefaultPropertyAccess {
   ListDefaultProperties.fromMap(Map<String, dynamic>? embodimentMap,
-      {super.initialPropertyMap}) {
+      {super.initialProperties}) {
     if (embodimentMap == null || embodimentMap.isEmpty) {
       return;
     }
     propertyMap ??= {};
     for (var kv in embodimentMap.entries) {
-      _areCommonProps = _mapCommonProperty(propertyMap!, kv.key, kv.value);
+      areCommonProps |= _mapCommonProperty(propertyMap!, kv.key, kv.value);
       _mapListDefaultProperty(propertyMap!, kv.key, kv.value);
     }
   }
@@ -634,13 +635,13 @@ class ListDefaultProperties extends Properties
 class ListTabbedProperties extends Properties
     with CommonPropertyAccess, ListTabbedPropertyAccess {
   ListTabbedProperties.fromMap(Map<String, dynamic>? embodimentMap,
-      {super.initialPropertyMap}) {
+      {super.initialProperties}) {
     if (embodimentMap == null || embodimentMap.isEmpty) {
       return;
     }
     propertyMap ??= {};
     for (var kv in embodimentMap.entries) {
-      _areCommonProps = _mapCommonProperty(propertyMap!, kv.key, kv.value);
+      areCommonProps |= _mapCommonProperty(propertyMap!, kv.key, kv.value);
       _mapListTabbedProperty(propertyMap!, kv.key, kv.value);
     }
   }
@@ -649,13 +650,13 @@ class ListTabbedProperties extends Properties
 class TreeDefaultProperties extends Properties
     with CommonPropertyAccess, TreeDefaultPropertyAccess {
   TreeDefaultProperties.fromMap(Map<String, dynamic>? embodimentMap,
-      {super.initialPropertyMap}) {
+      {super.initialProperties}) {
     if (embodimentMap == null || embodimentMap.isEmpty) {
       return;
     }
     propertyMap ??= {};
     for (var kv in embodimentMap.entries) {
-      _areCommonProps = _mapCommonProperty(propertyMap!, kv.key, kv.value);
+      areCommonProps |= _mapCommonProperty(propertyMap!, kv.key, kv.value);
       _mapTreeDefaultProperty(propertyMap!, kv.key, kv.value);
     }
   }
@@ -664,13 +665,13 @@ class TreeDefaultProperties extends Properties
 class NumericFieldDefaultProperties extends Properties
     with CommonPropertyAccess, NumericFieldDefaultPropertyAccess {
   NumericFieldDefaultProperties.fromMap(Map<String, dynamic>? embodimentMap,
-      {super.initialPropertyMap}) {
+      {super.initialProperties}) {
     if (embodimentMap == null || embodimentMap.isEmpty) {
       return;
     }
     propertyMap ??= {};
     for (var kv in embodimentMap.entries) {
-      _areCommonProps = _mapCommonProperty(propertyMap!, kv.key, kv.value);
+      areCommonProps |= _mapCommonProperty(propertyMap!, kv.key, kv.value);
       _mapNumericFieldDefaultProperty(propertyMap!, kv.key, kv.value);
     }
   }
@@ -679,13 +680,13 @@ class NumericFieldDefaultProperties extends Properties
 class NumericFieldColorProperties extends Properties
     with CommonPropertyAccess, NumericFieldDefaultPropertyAccess {
   NumericFieldColorProperties.fromMap(Map<String, dynamic>? embodimentMap,
-      {super.initialPropertyMap}) {
+      {super.initialProperties}) {
     if (embodimentMap == null || embodimentMap.isEmpty) {
       return;
     }
     propertyMap ??= {};
     for (var kv in embodimentMap.entries) {
-      _areCommonProps = _mapCommonProperty(propertyMap!, kv.key, kv.value);
+      areCommonProps |= _mapCommonProperty(propertyMap!, kv.key, kv.value);
       _mapNumericFieldColorProperty(propertyMap!, kv.key, kv.value);
     }
   }
@@ -694,13 +695,13 @@ class NumericFieldColorProperties extends Properties
 class TextDefaultProperties extends Properties
     with CommonPropertyAccess, TextDefaultPropertyAccess {
   TextDefaultProperties.fromMap(Map<String, dynamic>? embodimentMap,
-      {super.initialPropertyMap}) {
+      {super.initialProperties}) {
     if (embodimentMap == null || embodimentMap.isEmpty) {
       return;
     }
     propertyMap ??= {};
     for (var kv in embodimentMap.entries) {
-      _areCommonProps = _mapCommonProperty(propertyMap!, kv.key, kv.value);
+      areCommonProps |= _mapCommonProperty(propertyMap!, kv.key, kv.value);
       _mapTextDefaultProperty(propertyMap!, kv.key, kv.value);
     }
   }
