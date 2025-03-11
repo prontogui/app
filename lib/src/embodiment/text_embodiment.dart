@@ -77,6 +77,9 @@ class TextEmbodiment extends StatelessWidget {
       fontFamily: props.fontFamily,
       fontWeight: fontWeight,
       fontStyle: fontStyle,
+      height: 1.0, // needed for centering the text vertically
+      leadingDistribution: TextLeadingDistribution
+          .even, // needed for centering the text vertically
     );
   }
 

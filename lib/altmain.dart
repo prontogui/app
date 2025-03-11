@@ -27,11 +27,11 @@ List<dl.Primitive> makeRow(String letter, int fromNo, int toNo,
 
 dl.Primitive makeBingo() {
   var numEmb =
-      'color:#FF000000, fontSize:5, fontWeight:bold, borderAll:2, paddingAll:2, width:30, height:30';
+      'color:#FF000000, fontSize:23, fontWeight:bold, borderAll:2, width:40, height:40';
   var modelRow = [
     dl.Text(
         embodiment:
-            'color:#FFFFFFFF, fontSize:5, fontWeight:bold, borderAll:2, paddingAll:2, width:30, height:30'),
+            'color:#FFFFFFFF, fontSize:23, fontWeight:bold, borderAll:2, paddingAll:2, width:40, height:40'),
     dl.Text(embodiment: numEmb),
     dl.Text(embodiment: numEmb),
     dl.Text(embodiment: numEmb),

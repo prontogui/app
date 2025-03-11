@@ -25,6 +25,7 @@ class PropertyName {
   static const height = 'height';
   static const horizontal = 'horizontal';
   static const horizontalAlignment = 'horizontalAlignment';
+  static const horizontalTextAlignment = 'horizontalTextAlignment';
   static const layoutMethod = 'layoutMethod';
   static const left = 'left';
   static const marginAll = 'marginAll';
@@ -48,6 +49,7 @@ class PropertyName {
   static const tabHeight = 'tabHeight';
   static const top = 'top';
   static const verticalAlignment = 'verticalAlignment';
+  static const verticalTextAlignment = 'verticalTextAlignment';
   static const width = 'width';
 }
 
@@ -166,6 +168,10 @@ enum HorizontalAlignment { left, center, right, expand }
 Set<String> _namesofHorizontalAlignment = {'left', 'center', 'right', 'expand'};
 
 enum VerticalAlignment { top, middle, bottom, expand }
+
+enum HorizontalTextAlignment { left, center, right, justify }
+
+enum VerticalTextAlignment { top, middle, bottom }
 
 Set<String> _namesofVerticalAlignment = {'top', 'middle', 'bottom', 'expand'};
 
