@@ -143,13 +143,6 @@ Widget encloseWithPBMSAF(Widget content, EmbodimentArgs args,
   if (props.areCommonProps || isSelectedFunc != null) {
     Color? backgroundColor = props.backgroundColor;
 
-    // If Text primitive then
-    if (args.primitive.describeType == "Text") {
-      content = Center(
-        child: content,
-      );
-    }
-
     // Apply padding
     if (props.isPadding) {
       var (l, r, t, b) = _effectiveLRTB(props.paddingAll, props.paddingLeft,

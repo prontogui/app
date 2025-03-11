@@ -70,6 +70,7 @@ class TextEmbodiment extends StatelessWidget {
 
     var fontStyle =
         _convertEnum<p.FontStyle, FontStyle>(props.fontStyle, FontStyle.values);
+
     return TextStyle(
       //backgroundColor: props.backgroundColor,
       color: props.color,
@@ -88,11 +89,41 @@ class TextEmbodiment extends StatelessWidget {
     var text = args.primitive as pg.Text;
     var props = args.properties as p.TextDefaultProperties;
 
-    var content = Text(
-      text.content,
-      style: _buildTextStyle(props),
-      textAlign: TextAlign.center,
-    );
+    late TextAlign textAlign;
+    late double alignX;
+    late double alignY;
+
+    switch (props.horizontalTextAlignment) {
+      case p.HorizontalTextAlignment.left:
+        textAlign = TextAlign.left;
+        alignX = -1.0;
+      case p.HorizontalTextAlignment.center:
+        textAlign = TextAlign.center;
+        alignX = 0.0;
+      case p.HorizontalTextAlignment.right:
+        textAlign = TextAlign.right;
+        alignX = 1.0;
+      case p.HorizontalTextAlignment.justify:
+        textAlign = TextAlign.justify;
+        alignX = 0.0;
+    }
+
+    switch (props.verticalTextAlignment) {
+      case p.VerticalTextAlignment.top:
+        alignY = -1.0;
+      case p.VerticalTextAlignment.middle:
+        alignY = 0.0;
+      case p.VerticalTextAlignment.bottom:
+        alignY = 1.0;
+    }
+
+    var content = Align(
+        alignment: Alignment(alignX, alignY),
+        child: Text(
+          text.content,
+          style: _buildTextStyle(props),
+          textAlign: textAlign,
+        ));
 
     return encloseWithPBMSAF(content, args);
   }

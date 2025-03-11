@@ -171,7 +171,16 @@ enum VerticalAlignment { top, middle, bottom, expand }
 
 enum HorizontalTextAlignment { left, center, right, justify }
 
+Set<String> _namesofHorizontalTextAlignment = {
+  'left',
+  'center',
+  'right',
+  'justify'
+};
+
 enum VerticalTextAlignment { top, middle, bottom }
+
+Set<String> _namesofVerticalTextAlignment = {'top', 'middle', 'bottom'};
 
 Set<String> _namesofVerticalAlignment = {'top', 'middle', 'bottom', 'expand'};
 
@@ -211,9 +220,7 @@ enum LayoutMethod { flow, positioned }
 
 Set<String> _namesofLayoutMethod = {'flow', 'positioned'};
 
-// Note:  this class is temporary until we have codegen for this file.  Codegen
-// will generate each sub-class in here without a base class, at the expense of
-//
+// Note:  this class is temporary until we have codegen for this file.
 bool _mapCommonProperty(
     Map<String, dynamic> propertyMap, String name, dynamic value) {
   switch (name) {
@@ -379,6 +386,12 @@ void _mapTextDefaultProperty(
     case PropertyName.fontWeight:
       propertyMap[name] =
           getEnumProp<FontWeight>(value, FontWeight.values, _namesofFontWeight);
+    case PropertyName.horizontalTextAlignment:
+      propertyMap[name] = getEnumProp<HorizontalTextAlignment>(value,
+          HorizontalTextAlignment.values, _namesofHorizontalTextAlignment);
+    case PropertyName.verticalTextAlignment:
+      propertyMap[name] = getEnumProp<VerticalTextAlignment>(
+          value, VerticalTextAlignment.values, _namesofVerticalTextAlignment);
   }
 }
 
@@ -555,6 +568,10 @@ mixin TextDefaultPropertyAccess on Properties {
       propertyMap, FontStyle.normal, PropertyName.fontStyle);
   FontWeight get fontWeight => _getEnumT<FontWeight>(
       propertyMap, FontWeight.normal, PropertyName.fontWeight);
+  HorizontalTextAlignment get horizontalTextAlignment => _getEnumT(propertyMap,
+      HorizontalTextAlignment.center, PropertyName.horizontalTextAlignment);
+  VerticalTextAlignment get verticalTextAlignment => _getEnumT(propertyMap,
+      VerticalTextAlignment.middle, PropertyName.verticalTextAlignment);
 }
 
 class NothingProperties extends Properties {
