@@ -152,6 +152,7 @@ class _TreeDefaultEmbodimentState extends State<TreeDefaultEmbodiment> {
               node.nodeItem, modelItem);
         });
 
-    return encloseWithPBMSAF(content, widget.args, verticalUnbounded: true);
+    return encloseWithPBMSAF(content, widget.args,
+        verticalUnbounded: true, horizontalUnbounded: true);
   }
 }

@@ -47,7 +47,8 @@ class FrameEmbodiment extends StatelessWidget {
               context, frame.frameItems,
               horizontalUnbounded: true),
         );
-        horizontalUnbounded = true;
+        verticalUnbounded = true;
+//        horizontalUnbounded = true;
 
       case FlowDirection.topToBottom:
         content = Column(
@@ -55,7 +56,8 @@ class FrameEmbodiment extends StatelessWidget {
               context, frame.frameItems,
               verticalUnbounded: true),
         );
-        verticalUnbounded = true;
+        horizontalUnbounded = true;
+//        verticalUnbounded = true;
     }
 
     content = encloseWithPBMSAF(content, args,

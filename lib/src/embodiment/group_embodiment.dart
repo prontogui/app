@@ -63,7 +63,6 @@ class GroupDefaultEmbodiment extends StatelessWidget {
                 modelPrimitives: modelPrimitives, horizontalUnbounded: true),
       );
     }
-
     return encloseWithPBMSAF(content, args, verticalUnbounded: true);
   }
 }
