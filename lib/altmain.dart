@@ -72,7 +72,13 @@ void altmain1(List<String> args) async {
   // Create the model that holds the primitives to be displayed.
   final model = dl.PrimitiveModel();
 
-  model.topPrimitives = [makeBingo()];
+  // model.topPrimitives = [makeBingo()];
+
+  model.topPrimitives = [
+    dl.Text(content: 'Simple App'),
+    dl.Command(label: 'OK')
+  ];
+
 /*
   //final list = dl.ListP(embodiment: 'horizontal:true, width:100, height:100, borderAll:3');
   final list = dl.ListP(embodiment: 'horizontal:false, width:200');

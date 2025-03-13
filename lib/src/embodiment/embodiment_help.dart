@@ -203,12 +203,12 @@ Widget encloseWithPBMSAF(Widget content, EmbodimentArgs args,
 
     // If selectable then enclose with a ListTile to show selection and handle taps.
     if (isSelectedFunc != null) {
-      var indices = args.callbacks?.indices;
+      var indices = args.callbacks?.indexes;
       if (indices != null) {
         var tapHandler = args.callbacks?.onSelection;
         content = ListTile(
           title: content,
-          selected: isSelectedFunc(args.callbacks!.indices),
+          selected: isSelectedFunc(args.callbacks!.indexes),
           isThreeLine: false,
           contentPadding: const EdgeInsets.symmetric(horizontal: 2.0),
           onTap: () {

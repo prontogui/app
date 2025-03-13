@@ -15,6 +15,8 @@ class BackgroundView extends StatelessWidget {
   Widget build(BuildContext context) {
     var embodifier = InheritedEmbodifier.of(context);
 
+    // Rebuild if the model is fully updated OR a top primitive is updated.
+    InheritedPrimitiveModel.of(context);
     var topPrimitives = InheritedTopLevelPrimitives.of(context);
 
     List<pg.Primitive> backgroundItems = [];

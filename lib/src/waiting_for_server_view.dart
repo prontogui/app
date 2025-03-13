@@ -116,7 +116,7 @@ class WaitingForServerView extends StatelessWidget {
     return Scaffold(
         body: Center(
       child: SizedBox(
-        width: 500,
+        width: 600,
         child: Column(
           children: [
             const Spacer(),

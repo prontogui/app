@@ -74,11 +74,11 @@ Widget _buildTile(BuildContext context, EmbodimentArgs args) {
 
     // If List selection is available...
     if (cb.isSelected != null) {
-      selected = cb.isSelected!(cb.indices);
+      selected = cb.isSelected!(cb.indexes);
     }
     if (cb.onSelection != null) {
       handleTap = () {
-        cb.onSelection!(cb.indices);
+        cb.onSelection!(cb.indexes);
       };
     }
   }

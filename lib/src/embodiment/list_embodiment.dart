@@ -45,7 +45,7 @@ class _ListDefaultEmbodimentState extends State<ListDefaultEmbodiment> {
 
   void setCurrentSelected(int newSelected) {
     setState(() {
-      widget.list.selection = newSelected;
+      widget.list.selectedIndex = newSelected;
     });
   }
 
@@ -67,7 +67,7 @@ class _ListDefaultEmbodimentState extends State<ListDefaultEmbodiment> {
     late Widget content;
     if (_singleItemTypes.contains(item.describeType)) {
       bool isSelected(List<int> indices) {
-        return widget.list.selection == indices[0];
+        return widget.list.selectedIndex == indices[0];
       }
 
       void onSelection(List<int> indices) {

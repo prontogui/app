@@ -96,7 +96,7 @@ class _TreeDefaultEmbodimentState extends State<TreeDefaultEmbodiment> {
 
   void setCurrentSelected(List<int> newSelected) {
     setState(() {
-      widget.tree.selection = newSelected;
+      widget.tree.selectedPath = newSelected;
     });
   }
 
@@ -119,7 +119,7 @@ class _TreeDefaultEmbodimentState extends State<TreeDefaultEmbodiment> {
     }
 
     bool isSelected(List<int> indices) {
-      return listEquals<int>(widget.tree.selection, indices);
+      return listEquals<int>(widget.tree.selectedPath, indices);
     }
 
     void onSelection(List<int> indices) {
