@@ -74,11 +74,25 @@ void altmain1(List<String> args) async {
 
   // model.topPrimitives = [makeBingo()];
 
+  var card = dl.Card(
+    leadingItem: dl.Nothing(), //dl.Check(),
+    mainItem: dl.Text(
+        content: 'Wheel',
+        embodiment:
+            'horizontalTextAlignment:left, fontSize:20, color:#FFDD00DD'),
+    subItem: dl.Text(content: 'hub assembly'),
+    trailingItem: dl.Nothing(), // dl.Command(label: '...')
+  );
+  var card2 = dl.Card(
+    leadingItem: dl.Nothing(), //dl.Check(),
+    mainItem: dl.Text(content: 'Wheel'),
+    subItem: dl.Text(content: 'hub assembly'),
+    trailingItem: dl.Nothing(), // dl.Command(label: '...')
+  );
   model.topPrimitives = [
-    dl.Text(content: 'Simple App'),
-    dl.Command(label: 'OK')
+    dl.Frame(frameItems: [card, card2])
   ];
-
+//dl.Nothing(), //
 /*
   //final list = dl.ListP(embodiment: 'horizontal:true, width:100, height:100, borderAll:3');
   final list = dl.ListP(embodiment: 'horizontal:false, width:200');

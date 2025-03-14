@@ -46,6 +46,39 @@ class CardTileEmbodiment extends StatelessWidget {
   }
 }
 
+// The allowed primitives for the leading item.
+const Set<String> _allowedTypesForLeadingItem = {
+  'Check',
+  'Command',
+  'Icon',
+  'Nothing',
+  'Text',
+  'Tristate',
+};
+
+// The allowed primitives for the main item.
+const Set<String> _allowedTypesForMainItem = {
+  'Text',
+  'Nothing',
+};
+
+// The allowed primitives for the sub item.
+const Set<String> _allowedTypesForSubItem = {
+  'Text',
+  'Nothing',
+};
+
+// The allowed primitives for the trailing item.
+const Set<String> _allowedTypesForTrailingItem = {
+  'Check',
+  'Choice',
+  'Command',
+  'Icon',
+  'Nothing',
+  'Text',
+  'Tristate',
+};
+
 Widget _buildTile(BuildContext context, EmbodimentArgs args) {
   var card = args.primitive as pg.Card;
   var embodifier = InheritedEmbodifier.of(context);
@@ -57,14 +90,15 @@ Widget _buildTile(BuildContext context, EmbodimentArgs args) {
     modelCard = modelPrimitive;
   }
 
-  var leading = _embodifySingleItem(
-      context, embodifier, card.leadingItem, modelCard?.leadingItem);
-  var title = _embodifySingleItem(
-      context, embodifier, card.mainItem, modelCard?.mainItem);
-  var subtitle = _embodifySingleItem(
-      context, embodifier, card.subItem, modelCard?.subItem);
-  var trailing = _embodifySingleItem(
-      context, embodifier, card.trailingItem, modelCard?.trailingItem);
+  var leading = _embodifySingleItem(context, embodifier, card.leadingItem,
+      modelCard?.leadingItem, _allowedTypesForLeadingItem);
+  var title = _embodifySingleItem(context, embodifier, card.mainItem,
+      modelCard?.mainItem, _allowedTypesForMainItem,
+      defaultWidget: SizedBox.shrink());
+  var subtitle = _embodifySingleItem(context, embodifier, card.subItem,
+      modelCard?.subItem, _allowedTypesForSubItem);
+  var trailing = _embodifySingleItem(context, embodifier, card.trailingItem,
+      modelCard?.trailingItem, _allowedTypesForTrailingItem);
 
   // If callbacks are available, then handle selection state
   var selected = false;
@@ -93,30 +127,20 @@ Widget _buildTile(BuildContext context, EmbodimentArgs args) {
   );
 }
 
-// The allowed primitives for members of a card tile.
-const Set<String> _allowedTypes = {
-  'Text',
-  'Command',
-  'Check',
-  'Choice',
-  'TextField',
-  'NumericField',
-  'Nothing',
-  'Icon'
-};
-
 Widget? _embodifySingleItem(BuildContext context, Embodifier embodifier,
-    pg.Primitive? item, pg.Primitive? modelItem) {
+    pg.Primitive? item, pg.Primitive? modelItem, Set<String> allowedTypes,
+    {Widget? defaultWidget}) {
   if (item == null) {
-    return null;
+    return defaultWidget;
   }
   // Only certain primitives are supported
-  if (!_allowedTypes.contains(item.describeType)) {
+  if (!allowedTypes.contains(item.describeType)) {
     // TODO:  show something better for error case.  Perhaps log an error also.
     return const SizedBox(
       child: Text("?"),
     );
   }
 
-  return embodifier.buildPrimitive(context, item, modelPrimitive: modelItem);
+  return embodifier.buildPrimitive(context, item,
+      modelPrimitive: modelItem, noEnclosures: true);
 }

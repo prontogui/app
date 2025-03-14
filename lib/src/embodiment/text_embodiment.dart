@@ -84,11 +84,7 @@ class TextEmbodiment extends StatelessWidget {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    var text = args.primitive as pg.Text;
-    var props = args.properties as p.TextDefaultProperties;
-
+  Widget _buildFullyAlignedText(pg.Text text, p.TextDefaultProperties props) {
     late TextAlign textAlign;
     late double alignX;
     late double alignY;
@@ -97,34 +93,77 @@ class TextEmbodiment extends StatelessWidget {
       case p.HorizontalTextAlignment.left:
         textAlign = TextAlign.left;
         alignX = -1.0;
+        break;
       case p.HorizontalTextAlignment.center:
         textAlign = TextAlign.center;
         alignX = 0.0;
+        break;
       case p.HorizontalTextAlignment.right:
         textAlign = TextAlign.right;
         alignX = 1.0;
+        break;
       case p.HorizontalTextAlignment.justify:
         textAlign = TextAlign.justify;
         alignX = 0.0;
+        break;
     }
 
     switch (props.verticalTextAlignment) {
       case p.VerticalTextAlignment.top:
         alignY = -1.0;
+        break;
       case p.VerticalTextAlignment.middle:
         alignY = 0.0;
+        break;
       case p.VerticalTextAlignment.bottom:
         alignY = 1.0;
+        break;
     }
 
-    var content = Align(
-        alignment: Alignment(alignX, alignY),
-        child: Text(
-          text.content,
-          style: _buildTextStyle(props),
-          textAlign: textAlign,
-        ));
+    return Align(
+      alignment: Alignment(alignX, alignY),
+      child: Text(
+        text.content,
+        style: _buildTextStyle(props),
+        textAlign: textAlign,
+      ),
+    );
+  }
 
-    return encloseWithPBMSAF(content, args);
+  Widget _buildSimpleAlignedText(pg.Text text, p.TextDefaultProperties props) {
+    late TextAlign textAlign;
+
+    switch (props.horizontalTextAlignment) {
+      case p.HorizontalTextAlignment.left:
+        textAlign = TextAlign.left;
+        break;
+      case p.HorizontalTextAlignment.center:
+        textAlign = TextAlign.center;
+        break;
+      case p.HorizontalTextAlignment.right:
+        textAlign = TextAlign.right;
+        break;
+      case p.HorizontalTextAlignment.justify:
+        textAlign = TextAlign.justify;
+        break;
+    }
+
+    return Text(
+      text.content,
+      style: _buildTextStyle(props),
+      textAlign: textAlign,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var text = args.primitive as pg.Text;
+    var props = args.properties as p.TextDefaultProperties;
+
+    if (args.noEnclosures) {
+      return _buildSimpleAlignedText(text, props);
+    }
+
+    return encloseWithPBMSAF(_buildFullyAlignedText(text, props), args);
   }
 }

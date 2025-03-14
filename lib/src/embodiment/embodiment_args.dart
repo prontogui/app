@@ -26,6 +26,7 @@ class EmbodimentArgs {
     this.horizontalUnbounded = false,
     this.usePositioning = false,
     this.callbacks,
+    this.noEnclosures = false,
   });
 
   /// The primitive to be embodied.
@@ -53,4 +54,8 @@ class EmbodimentArgs {
 
   /// Optional callbacks for certain user interactions, e.g. selecting items in a list.
   final EmbodimentCallbacks? callbacks;
+
+  /// If true then do not enclose fundamental widget with enclosures like Align, encloseWithPBMSAF, etc.
+  /// This is sometimes needs for situations like ListTile components.
+  final bool noEnclosures;
 }
