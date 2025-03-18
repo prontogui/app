@@ -20,8 +20,8 @@ EmbodimentPackageManifest getManifest() {
         'full-view', FrameEmbodiment.fromArgs, FrameDefaultProperties.fromMap),
     EmbodimentManifestEntry('dialog-view', FrameEmbodiment.fromArgs,
         FrameDefaultProperties.fromMap),
-    EmbodimentManifestEntry(
-        'snackbar', SnackBarEmbodiment.fromArgs, FrameDefaultProperties.fromMap)
+    EmbodimentManifestEntry('snackbar', SnackBarEmbodiment.fromArgs,
+        FrameSnackbarProperties.fromMap)
   ]);
 }
 
