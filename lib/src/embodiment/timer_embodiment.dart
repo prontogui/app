@@ -1,7 +1,6 @@
 // Copyright 2024 ProntoGUI, LLC.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-
 import 'package:app/src/embodiment/properties.dart';
 import 'package:dartlib/dartlib.dart' as pg;
 import 'package:flutter/material.dart';
@@ -29,6 +28,7 @@ class TimerEmbodiment extends StatefulWidget {
 
 class _TimerEmbodimentState extends State<TimerEmbodiment> {
   Timer? timer;
+  //int _ticks = 0;
 
   void cancelTimer() {
     if (timer != null) {
@@ -51,7 +51,11 @@ class _TimerEmbodimentState extends State<TimerEmbodiment> {
     } else {
       // Fire the timer periodically
       timer = Timer.periodic(Duration(milliseconds: periodMs), (Timer _) {
+        // NO NEED TO WRAP IN setState AT THIS TIME.  MAYBE LATER IF WE
+        // RENDER THE TIMER IN SOME WAY.
+//        setState(() {
         widget.timer.fireTimer();
+//        });
       });
     }
   }
@@ -59,22 +63,18 @@ class _TimerEmbodimentState extends State<TimerEmbodiment> {
   @override
   void initState() {
     super.initState();
-    print('Timer initState called.');
     configureTimer();
   }
 
   @override
   void didUpdateWidget(TimerEmbodiment oldWidget) {
     super.didUpdateWidget(oldWidget);
-    print('Timer didUpdateWidget called.');
-
     configureTimer();
   }
 
   @override
   void dispose() {
     cancelTimer();
-    print('Timer dispose called.');
     super.dispose();
   }
 
