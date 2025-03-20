@@ -1,5 +1,5 @@
 # app
-The Flutter App that renders the GUI.
+The Flutter App that renders user interfaces built using ProntoGUI.
 
 ## How to add a new primitive
 1. Create a new .dart file in lib/primitive with a name corresponding to the name of the primitive.  Follow the example of existing primitives.
