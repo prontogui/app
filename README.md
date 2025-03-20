@@ -55,3 +55,7 @@ Failed assertion: line 952 pos 7: 'layoutConstraints.maxWidth < double.infinity'
 ```
 
 Problem resolution:  wrapped the TextField with an Expanded widget, per recommendation of the exception.
+
+---
+##### Copyright 2025 ProntoGUI, LLC.
+
