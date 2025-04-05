@@ -43,7 +43,10 @@ dependencies:
   google_fonts: ^6.2.1
   window_manager: ^0.4.3
   dartlib:
-    path: ../dartlib_natp
+    git:
+      url: https://github.com/prontogui/dartlib/
+      ref: v0.0.56
+  #  path: ../dartlib_natp
   args: ^2.6.0
   package_info_plus: ^8.2.1
   animated_tree_view: ^2.3.0
