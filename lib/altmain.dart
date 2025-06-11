@@ -28,8 +28,10 @@ void altmain1(List<String> args) async {
 
   var imgAsset = dl.Image(fromFile: '/Users/andy/Downloads/go-logo.png', id: 'gopher');
   var assets = dl.Group(groupItems: [imgAsset], status: 2);
-  var img = dl.Image(ref: 'gopher', embodiment: 'width:100, height:100');
-  var gui = dl.Frame(frameItems: [img], embodiment: 'full-view', showing: true);
+  var img1 = dl.Image(ref: 'gopher', embodiment: 'width:100, height:100');
+  var img2 = dl.Image(ref: 'gopher', embodiment: 'width:200, height:200');
+  var img3 = dl.Image(ref: 'gopher', embodiment: 'width:300, height:300');
+  var gui = dl.Frame(frameItems: [img1, img2, img3], embodiment: 'full-view', showing: true);
 
   model.topPrimitives = [gui, assets];
 
