@@ -27,7 +27,7 @@ void altmain1(List<String> args) async {
   final model = dl.PrimitiveModel();
 
   var imgAsset = dl.Image(fromFile: '/Users/andy/Downloads/go-logo.png', id: 'gopher');
-  var assets = dl.Frame(frameItems: [imgAsset]);
+  var assets = dl.Group(groupItems: [imgAsset], status: 2);
   var img = dl.Image(ref: 'gopher', embodiment: 'width:100, height:100');
   var gui = dl.Frame(frameItems: [img], embodiment: 'full-view', showing: true);
 
