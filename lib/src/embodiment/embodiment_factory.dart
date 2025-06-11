@@ -9,6 +9,7 @@ import 'group_embodiment.dart' as group;
 import 'node_embodiment.dart' as node;
 import 'nothing_embodiment.dart' as nothing;
 import 'icon_embodiment.dart' as icon;
+import 'image_embodiment.dart' as image;
 import 'importfile_embodiment.dart' as import_file;
 import 'list_embodiment.dart' as list;
 import 'table_embodiment.dart' as table;
@@ -72,6 +73,7 @@ class EmbodimentFactory {
     manifests.add(frame.getManifest());
     manifests.add(group.getManifest());
     manifests.add(icon.getManifest());
+    manifests.add(image.getManifest());
     manifests.add(import_file.getManifest());
     manifests.add(list.getManifest());
     manifests.add(node.getManifest());

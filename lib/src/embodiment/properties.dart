@@ -319,6 +319,18 @@ void _mapIconDefaultProperty(
   }
 }
 
+void _mapImageDefaultProperty(
+    Map<String, dynamic> propertyMap, String name, dynamic value) {
+      /*
+  switch (name) {
+    case PropertyName.color:
+      propertyMap[name] = getColorProp(propertyMap);
+    case PropertyName.size:
+      propertyMap[name] = getNumericProp(value, 0);
+  }
+  */
+}
+
 void _mapListDefaultProperty(
     Map<String, dynamic> propertyMap, String name, dynamic value) {
   switch (name) {
@@ -512,6 +524,16 @@ mixin IconDefaultPropertyAccess on Properties {
   Color? get color => _getColorT(propertyMap, PropertyName.color);
   double? get size => _getDoubleT(propertyMap, PropertyName.size);
 }
+/*
+mixin ImageDefaultPropertyAccess on Properties {
+  double? get width => _getDoubleT(propertyMap, PropertyName.width);
+  double? get height => _getDoubleT(propertyMap, PropertyName.height);
+  String? get imageUrl => _getStringT(propertyMap, 'imageUrl');
+  BoxFit? get fit => _getEnumT<BoxFit>(propertyMap, BoxFit.contain, 'fit');
+}
+*/
+mixin ImageDefaultPropertyAccess on Properties {
+}
 
 mixin ListDefaultPropertyAccess on Properties {
   bool get horizontal =>
@@ -635,6 +657,21 @@ class IconDefaultProperties extends Properties
     for (var kv in embodimentMap.entries) {
       areCommonProps |= _mapCommonProperty(propertyMap!, kv.key, kv.value);
       _mapIconDefaultProperty(propertyMap!, kv.key, kv.value);
+    }
+  }
+}
+
+class ImageDefaultProperties extends Properties
+    with CommonPropertyAccess, ImageDefaultPropertyAccess {
+  ImageDefaultProperties.fromMap(Map<String, dynamic>? embodimentMap,
+      {super.initialProperties}) {
+    if (embodimentMap == null || embodimentMap.isEmpty) {
+      return;
+    }
+    propertyMap ??= {};
+    for (var kv in embodimentMap.entries) {
+      areCommonProps |= _mapCommonProperty(propertyMap!, kv.key, kv.value);
+      _mapImageDefaultProperty(propertyMap!, kv.key, kv.value);
     }
   }
 }
