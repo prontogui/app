@@ -25,18 +25,18 @@ void altmain1(List<String> args) async {
 
   // Create the model that holds the primitives to be displayed.
   final model = dl.PrimitiveModel();
-/*
+
   var imgAsset = dl.Image(fromFile: '/Users/andy/Downloads/go-logo.png', id: 'gopher');
+  var assets = dl.Frame(frameItems: [imgAsset]);
   var img = dl.Image(ref: 'gopher', embodiment: 'width:100, height:100');
   var gui = dl.Frame(frameItems: [img], embodiment: 'full-view', showing: true);
-  var assets = dl.Frame(frameItems: [imgAsset]);
 
   model.topPrimitives = [gui, assets];
-*/
 
+/*
   var imgAsset = dl.Image(fromFile: '/Users/andy/Downloads/go-logo.png', id: 'gopher', embodiment: 'width:100, height:100');
   model.topPrimitives = [imgAsset];
-
+*/
 
   // Create the object responsible for embodying the model as Widgets and for
   // rebuilding the UI when the model changes.
@@ -64,7 +64,8 @@ void altmain1(List<String> args) async {
       notifier: topLevelUpdateNotifier,
       child: InheritedEmbodifier(
         embodifier: embodifier,
-        child: App.altdev1(),
+//        child: App.altdev1(),
+        child: App.local(),
       ),
     ),
   ));

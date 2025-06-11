@@ -8,7 +8,7 @@ import 'properties.dart';
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('Image', [
     EmbodimentManifestEntry('default', ImageDefaultEmbodiment.fromArgs,
-        IconDefaultProperties.fromMap),
+        ImageDefaultProperties.fromMap),
   ]);
 }
 
