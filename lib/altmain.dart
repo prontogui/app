@@ -26,6 +26,7 @@ void altmain1(List<String> args) async {
   // Create the model that holds the primitives to be displayed.
   final model = dl.PrimitiveModel();
 
+/*
   var imgAsset = dl.Image(fromFile: '/Users/andy/Downloads/go-logo.png', id: 'gopher');
   var assets = dl.Group(groupItems: [imgAsset], status: 2);
   var img1 = dl.Image(ref: 'gopher', embodiment: 'width:100, height:100');
@@ -34,11 +35,13 @@ void altmain1(List<String> args) async {
   var gui = dl.Frame(frameItems: [img1, img2, img3], embodiment: 'full-view', showing: true);
 
   model.topPrimitives = [gui, assets];
-
-/*
-  var imgAsset = dl.Image(fromFile: '/Users/andy/Downloads/go-logo.png', id: 'gopher', embodiment: 'width:100, height:100');
-  model.topPrimitives = [imgAsset];
 */
+
+
+  var imgAsset = dl.Image(fromFile: '/Users/andy/Downloads/go-logo.png', embodiment: 'width:200, height:400, imageFit:fill');
+//  var imgAsset = dl.Image(fromFile: '/Users/andy/Downloads/go-logo.png');
+  model.topPrimitives = [imgAsset];
+
 
   // Create the object responsible for embodying the model as Widgets and for
   // rebuilding the UI when the model changes.

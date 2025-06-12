@@ -20,9 +20,9 @@ class ImageDefaultEmbodiment extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var img = args.primitive as pg.Image;
-//    var props = args.properties as ImageDefaultProperties;
+    var props = args.properties as ImageDefaultProperties;
 
-    var content = Image.memory(img.image);
+    var content = Image.memory(img.image, repeat: ImageRepeat.repeat, fit: props.imageFit);
 
     return encloseWithPBMSAF(content, args);
   }

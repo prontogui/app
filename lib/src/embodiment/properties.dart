@@ -26,6 +26,7 @@ class PropertyName {
   static const horizontal = 'horizontal';
   static const horizontalAlignment = 'horizontalAlignment';
   static const horizontalTextAlignment = 'horizontalTextAlignment';
+  static const imageFit = 'imageFit';
   static const layoutMethod = 'layoutMethod';
   static const left = 'left';
   static const marginAll = 'marginAll';
@@ -220,6 +221,18 @@ enum LayoutMethod { flow, positioned }
 
 Set<String> _namesofLayoutMethod = {'flow', 'positioned'};
 
+//enum ImageFit { fill, contain, cover, fitWidth, fitHeight, none, scaleDown }
+
+Set<String> _namesofImageFit = {
+  'fill',
+  'contain',
+  'cover',
+  'fitWidth',
+  'fitHeight',
+  'none',
+  'scaleDown'
+};
+
 // Note:  this class is temporary until we have codegen for this file.
 bool _mapCommonProperty(
     Map<String, dynamic> propertyMap, String name, dynamic value) {
@@ -321,14 +334,12 @@ void _mapIconDefaultProperty(
 
 void _mapImageDefaultProperty(
     Map<String, dynamic> propertyMap, String name, dynamic value) {
-      /*
+
   switch (name) {
-    case PropertyName.color:
-      propertyMap[name] = getColorProp(propertyMap);
-    case PropertyName.size:
-      propertyMap[name] = getNumericProp(value, 0);
+    case PropertyName.imageFit:
+      propertyMap[name] = getEnumProp<BoxFit>(
+          value, BoxFit.values, _namesofImageFit);
   }
-  */
 }
 
 void _mapListDefaultProperty(
@@ -524,15 +535,9 @@ mixin IconDefaultPropertyAccess on Properties {
   Color? get color => _getColorT(propertyMap, PropertyName.color);
   double? get size => _getDoubleT(propertyMap, PropertyName.size);
 }
-/*
+
 mixin ImageDefaultPropertyAccess on Properties {
-  double? get width => _getDoubleT(propertyMap, PropertyName.width);
-  double? get height => _getDoubleT(propertyMap, PropertyName.height);
-  String? get imageUrl => _getStringT(propertyMap, 'imageUrl');
-  BoxFit? get fit => _getEnumT<BoxFit>(propertyMap, BoxFit.contain, 'fit');
-}
-*/
-mixin ImageDefaultPropertyAccess on Properties {
+  BoxFit get imageFit => _getEnumT<BoxFit>(propertyMap, BoxFit.contain, 'imageFit');
 }
 
 mixin ListDefaultPropertyAccess on Properties {
