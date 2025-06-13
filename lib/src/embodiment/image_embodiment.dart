@@ -22,7 +22,14 @@ class ImageDefaultEmbodiment extends StatelessWidget {
     var img = args.primitive as pg.Image;
     var props = args.properties as ImageDefaultProperties;
 
-    var content = Image.memory(img.image, repeat: ImageRepeat.repeat, fit: props.imageFit);
+    Widget content;
+    var imageData = img.image;
+    if (imageData.isNotEmpty) {
+      content = Image.memory(imageData, fit: props.imageFit);
+    } else {
+      content = Icon(Icons.image_not_supported,
+        color: Colors.black45);
+    }
 
     return encloseWithPBMSAF(content, args);
   }
