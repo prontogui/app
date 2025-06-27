@@ -1,58 +1,9 @@
 import 'package:app/src/embodiment/property_help.dart';
 import 'package:flutter/material.dart';
 
-class PropertyName {
-  static const allowEmptyValue = 'allowEmptyValue';
-  static const animationPeriod = 'animationPeriod';
-  static const backgroundColor = 'backgroundColor';
-  static const borderAll = 'borderAll';
-  static const borderBottom = 'borderBottom';
-  static const borderColor = 'borderColor';
-  static const borderLeft = 'borderLeft';
-  static const borderRight = 'borderRight';
-  static const borderTop = 'borderTop';
-  static const bottom = 'bottom';
-  static const color = 'color';
-  static const displayDecimalPlaces = 'displayDecimalPlaces';
-  static const displayNegativeFormat = 'displayNegativeFormat';
-  static const displayThousandths = 'displayThousandths';
-  static const embodiment = 'embodiment';
-  static const flowDirection = 'flowDirection';
-  static const fontFamily = 'fontFamily';
-  static const fontSize = 'fontSize';
-  static const fontStyle = 'fontStyle';
-  static const fontWeight = 'fontWeight';
-  static const height = 'height';
-  static const horizontal = 'horizontal';
-  static const horizontalAlignment = 'horizontalAlignment';
-  static const horizontalTextAlignment = 'horizontalTextAlignment';
-  static const imageFit = 'imageFit';
-  static const layoutMethod = 'layoutMethod';
-  static const left = 'left';
-  static const marginAll = 'marginAll';
-  static const marginBottom = 'marginBottom';
-  static const marginLeft = 'marginLeft';
-  static const marginRight = 'marginRight';
-  static const marginTop = 'marginTop';
-  static const maxValue = 'maxValue';
-  static const minValue = 'minValue';
-  static const paddingAll = 'paddingAll';
-  static const paddingBottom = 'paddingBottom';
-  static const paddingLeft = 'paddingLeft';
-  static const paddingRight = 'paddingRight';
-  static const paddingTop = 'paddingTop';
-  static const popupChoices = 'popupChoices';
-  static const right = 'right';
-  static const size = 'size';
-  static const snackbarBehavior = 'snackbarBehavior';
-  static const snackbarDuration = 'snackbarDuration';
-  static const snackbarShowCloseIcon = 'snackbarShowCloseIcon';
-  static const tabHeight = 'tabHeight';
-  static const top = 'top';
-  static const verticalAlignment = 'verticalAlignment';
-  static const verticalTextAlignment = 'verticalTextAlignment';
-  static const width = 'width';
-}
+//
+// SUPPORT FUNCTIONS SECTION
+//
 
 Color? _getColorT(Map<String, dynamic>? propertyMap, String propertyName) {
   if (propertyMap == null) {
@@ -156,8 +107,91 @@ T _getEnumT<T>(
   return cacheItem as T;
 }
 
+List<Map<String, dynamic>>? _getSettingsArrayT(
+    Map<String, dynamic>? propertyMap, String propertyName) {
+  if (propertyMap == null) {
+    // Return default
+    return null;
+  }
+  var cacheItem = propertyMap[propertyName];
+  if (cacheItem == null) {
+    // Return default
+    return null;
+  }
+  assert(cacheItem is List<Map<String, dynamic>>);
+  return cacheItem as List<Map<String, dynamic>>;
+}
+
 //
-// Enumerations section
+// PROPERTY NAMES SECTION
+//
+
+class PropertyName {
+  static const allowEmptyValue = 'allowEmptyValue';
+  static const animationPeriod = 'animationPeriod';
+  static const backgroundColor = 'backgroundColor';
+  static const borderAll = 'borderAll';
+  static const borderBottom = 'borderBottom';
+  static const borderColor = 'borderColor';
+  static const borderLeft = 'borderLeft';
+  static const borderRight = 'borderRight';
+  static const borderTop = 'borderTop';
+  static const bottom = 'bottom';
+  static const color = 'color';
+  static const columnSettings = 'columnSettings';
+  static const displayDecimalPlaces = 'displayDecimalPlaces';
+  static const displayNegativeFormat = 'displayNegativeFormat';
+  static const displayThousandths = 'displayThousandths';
+  static const embodiment = 'embodiment';
+  static const flowDirection = 'flowDirection';
+  static const fontFamily = 'fontFamily';
+  static const fontSize = 'fontSize';
+  static const fontStyle = 'fontStyle';
+  static const fontWeight = 'fontWeight';
+  static const height = 'height';
+  static const horizontal = 'horizontal';
+  static const horizontalAlignment = 'horizontalAlignment';
+  static const horizontalTextAlignment = 'horizontalTextAlignment';
+  static const imageFit = 'imageFit';
+  static const insideBorderAll = 'insideBorderAll';
+  static const insideBorderBottom = 'insideBorderBottom';
+  static const insideBorderColor = 'insideBorderColor';
+  static const insideBorderHorizontals = 'insideBorderHorizontals';
+  static const insideBorderLeft = 'insideBorderLeft';
+  static const insideBorderRight = 'insideBorderRight';
+  static const insideBorderTop = 'insideBorderTop';
+  static const insideBorderVerticals = 'insideBorderVerticals';
+  static const layoutMethod = 'layoutMethod';
+  static const left = 'left';
+  static const marginAll = 'marginAll';
+  static const marginBottom = 'marginBottom';
+  static const marginLeft = 'marginLeft';
+  static const marginRight = 'marginRight';
+  static const marginTop = 'marginTop';
+  static const maxValue = 'maxValue';
+  static const minValue = 'minValue';
+  static const paddingAll = 'paddingAll';
+  static const paddingBottom = 'paddingBottom';
+  static const paddingLeft = 'paddingLeft';
+  static const paddingRight = 'paddingRight';
+  static const paddingTop = 'paddingTop';
+  static const pagesPerRow = 'pagesPerRow';
+  static const popupChoices = 'popupChoices';
+  static const right = 'right';
+  static const size = 'size';
+  static const snackbarBehavior = 'snackbarBehavior';
+  static const snackbarDuration = 'snackbarDuration';
+  static const snackbarShowCloseIcon = 'snackbarShowCloseIcon';
+  static const tabHeight = 'tabHeight';
+  static const top = 'top';
+  static const verticalAlignment = 'verticalAlignment';
+  static const verticalTextAlignment = 'verticalTextAlignment';
+  static const width = 'width';
+}
+
+
+//
+// ENUMERATIONS SECTION
 //
 
 enum FlowDirection { leftToRight, topToBottom }
@@ -232,6 +266,43 @@ Set<String> _namesofImageFit = {
   'none',
   'scaleDown'
 };
+
+//
+// SUB-SETTINGS PROPERTIES SECTION
+//
+
+void _mapColumnSettingsProperty(
+    Map<String, dynamic> propertyMap, String name, dynamic value) {
+  switch (name) {
+    case PropertyName.width:
+      propertyMap[name] = getNumericProp(value, 0);
+    case PropertyName.verticalAlignment:
+      propertyMap[name] = getEnumProp<VerticalAlignment>(
+          value, VerticalAlignment.values, _namesofVerticalAlignment);
+  }
+}
+
+mixin ColumnSettingsPropertyAccess on Properties {
+  double? get width => _getDoubleT(propertyMap, PropertyName.width);
+}
+
+class ColumnSettingsProperties extends Properties
+    with ColumnSettingsPropertyAccess {
+  ColumnSettingsProperties.fromMap(Map<String, dynamic>? embodimentMap,
+      {super.initialProperties}) {
+    if (embodimentMap == null || embodimentMap.isEmpty) {
+      return;
+    }
+    propertyMap ??= {};
+    for (var kv in embodimentMap.entries) {
+      _mapColumnSettingsProperty(propertyMap!, kv.key, kv.value);
+    }
+  }
+}
+
+//
+// EMBODIMENT PROPERTIES SECTION
+//
 
 // Note:  this class is temporary until we have codegen for this file.
 bool _mapCommonProperty(
@@ -418,6 +489,40 @@ void _mapTextDefaultProperty(
   }
 }
 
+void _mapTableDefaultProperty(
+    Map<String, dynamic> propertyMap, String name, dynamic value) {
+  switch (name) {
+    case PropertyName.columnSettings:
+      propertyMap[name] = getMapArrayProp(value);
+    case PropertyName.insideBorderAll:
+      propertyMap[name] = getNumericProp(value, 0);
+    case PropertyName.insideBorderBottom:
+      propertyMap[name] = getNumericProp(value, 0);
+    case PropertyName.insideBorderColor:
+      propertyMap[name] = getColorProp(value);
+    case PropertyName.insideBorderHorizontals:
+      propertyMap[name] = getNumericProp(value, 0);
+    case PropertyName.insideBorderLeft:
+      propertyMap[name] = getNumericProp(value, 0);
+    case PropertyName.insideBorderRight:
+      propertyMap[name] = getNumericProp(value, 0);
+    case PropertyName.insideBorderTop:
+      propertyMap[name] = getNumericProp(value, 0);
+    case PropertyName.insideBorderVerticals:
+      propertyMap[name] = getNumericProp(value, 0);
+  }
+}
+
+void _mapTablePagedProperty(
+    Map<String, dynamic> propertyMap, String name, dynamic value) {
+  switch (name) {
+    case PropertyName.columnSettings:
+      propertyMap[name] = getMapArrayProp(value);
+    case PropertyName.pagesPerRow:
+      propertyMap[name] = getIntProp(value, 0, 1000); 
+  }
+}
+
 class Properties {
   Properties({Properties? initialProperties}) : areCommonProps = false {
     if (initialProperties != null) {
@@ -601,6 +706,71 @@ mixin TextDefaultPropertyAccess on Properties {
       VerticalTextAlignment.middle, PropertyName.verticalTextAlignment);
 }
 
+mixin TableDefaultPropertyAccess on Properties {
+
+  double? get insideBorderAll => _getDoubleT(propertyMap, PropertyName.insideBorderAll);
+  double? get insideBorderBottom =>
+      _getDoubleT(propertyMap, PropertyName.insideBorderBottom);
+  Color? get insideBorderColor => _getColorT(propertyMap, PropertyName.insideBorderColor);
+  double? get insideBorderHorizontals => _getDoubleT(propertyMap, PropertyName.insideBorderHorizontals);
+  double? get insideBorderLeft => _getDoubleT(propertyMap, PropertyName.insideBorderLeft);
+  double? get insideBorderRight => _getDoubleT(propertyMap, PropertyName.insideBorderRight);
+  double? get insideBorderTop => _getDoubleT(propertyMap, PropertyName.insideBorderTop);
+  double? get insideBorderVerticals => _getDoubleT(propertyMap, PropertyName.insideBorderVerticals);
+
+  List<ColumnSettingsPropertyAccess>? _cachedColumnSettings;
+
+  List<ColumnSettingsPropertyAccess> get columnSettings {
+    if (_cachedColumnSettings == null) {
+      var sa = _getSettingsArrayT(propertyMap, PropertyName.columnSettings);
+
+      if (sa != null) {
+        _cachedColumnSettings = List<ColumnSettingsProperties>.generate(sa.length, (int index) => ColumnSettingsProperties.fromMap(sa[index]), growable: false);
+      } else {
+        _cachedColumnSettings = List<ColumnSettingsPropertyAccess>.empty();
+      }
+    }
+
+    return _cachedColumnSettings!;
+  }
+
+  bool? _isInsideBorder;
+
+  bool get isInsideBorder {
+    _isInsideBorder ??= (insideBorderAll != null ||
+        insideBorderBottom != null ||
+        insideBorderHorizontals != null ||
+        insideBorderLeft != null ||
+        insideBorderRight != null ||
+        insideBorderTop != null ||
+        insideBorderVerticals != null
+        );
+
+    return _isInsideBorder!;
+  }
+
+}
+
+mixin TablePagedPropertyAccess on Properties {
+  List<ColumnSettingsPropertyAccess>? _cachedColumnSettings;
+
+  List<ColumnSettingsPropertyAccess> get columnSettings {
+    if (_cachedColumnSettings == null) {
+      var sa = _getSettingsArrayT(propertyMap, PropertyName.columnSettings);
+
+      if (sa != null) {
+        _cachedColumnSettings = List<ColumnSettingsProperties>.generate(sa.length, (int index) => ColumnSettingsProperties.fromMap(sa[index]), growable: false);
+      } else {
+        _cachedColumnSettings = List<ColumnSettingsPropertyAccess>.empty();
+      }
+    }
+
+    return _cachedColumnSettings!;
+  }
+
+  int get pagesPerRow => _getIntT(propertyMap, PropertyName.pagesPerRow, 5);
+}
+
 class NothingProperties extends Properties {
   NothingProperties.fromMap(Map<String, dynamic>? embodimentMap,
       {super.initialProperties}) {
@@ -768,6 +938,36 @@ class TextDefaultProperties extends Properties
     for (var kv in embodimentMap.entries) {
       areCommonProps |= _mapCommonProperty(propertyMap!, kv.key, kv.value);
       _mapTextDefaultProperty(propertyMap!, kv.key, kv.value);
+    }
+  }
+}
+
+class TableDefaultProperties extends Properties
+    with CommonPropertyAccess, TableDefaultPropertyAccess {
+  TableDefaultProperties.fromMap(Map<String, dynamic>? embodimentMap,
+      {super.initialProperties}) {
+    if (embodimentMap == null || embodimentMap.isEmpty) {
+      return;
+    }
+    propertyMap ??= {};
+    for (var kv in embodimentMap.entries) {
+      areCommonProps |= _mapCommonProperty(propertyMap!, kv.key, kv.value);
+      _mapTableDefaultProperty(propertyMap!, kv.key, kv.value);
+    }
+  }
+}
+
+class TablePagedProperties extends Properties
+    with CommonPropertyAccess, TablePagedPropertyAccess {
+  TablePagedProperties.fromMap(Map<String, dynamic>? embodimentMap,
+      {super.initialProperties}) {
+    if (embodimentMap == null || embodimentMap.isEmpty) {
+      return;
+    }
+    propertyMap ??= {};
+    for (var kv in embodimentMap.entries) {
+      areCommonProps |= _mapCommonProperty(propertyMap!, kv.key, kv.value);
+      _mapTablePagedProperty(propertyMap!, kv.key, kv.value);
     }
   }
 }

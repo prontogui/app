@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 
 String getEnumStringProp(
     dynamic value, String defaultValue, Set<String> validEnums) {
-  if (value.runtimeType != String) {
+  if (value is! String) {
     throw Exception('embodiment property value is not a string');
   }
-  var stringValue = value as String;
-  if (!validEnums.contains(stringValue)) {
+
+  if (!validEnums.contains(value)) {
     throw Exception('invalid setting for embodiment property');
   }
-  return stringValue;
+  return value;
 }
 
 T? getEnumProp<T extends Enum>(
@@ -22,14 +22,14 @@ T? getEnumProp<T extends Enum>(
 }
 
 String? getStringProp(dynamic value) {
-  if (value.runtimeType != String) {
+  if (value is! String) {
     return null;
   }
-  return value as String;
+  return value;
 }
 
 List<String>? getStringArrayProp(dynamic value) {
-  if (value.runtimeType != List) {
+  if (value is! List) {
     return null;
   }
 
@@ -40,12 +40,24 @@ List<String>? getStringArrayProp(dynamic value) {
   }
 }
 
-Color? getColorProp(dynamic value) {
-  if (value.runtimeType != String) {
+List<Map<String, dynamic>>? getMapArrayProp(dynamic value) {
+  if (value is! List || value.isEmpty || value[0] is! Map) {
     return null;
   }
 
-  var colorSpec = (value as String).toLowerCase();
+  try {
+    return List<Map<String, dynamic>>.from(value);
+  } catch (e) {
+    return null;
+  }
+}
+
+Color? getColorProp(dynamic value) {
+  if (value is! String) {
+    return null;
+  }
+
+  var colorSpec = value.toLowerCase();
 
   // Named color with optional swatch index?
 
@@ -68,15 +80,21 @@ Color? getColorProp(dynamic value) {
 double? getNumericProp(dynamic value,
     [double minValue = double.negativeInfinity,
     double maxValue = double.infinity]) {
-  if (value.runtimeType != String) {
-    return null;
-  }
+  
+  late double n;
 
-  var numericString = value as String;
-
-  var n = double.tryParse(numericString);
-  if (n == null) {
-    return null;
+  if (value is int) {
+    n = value.toDouble();
+  } else if (value is double) {
+    n = value;
+  } else if (value is String) {
+    var parsedValue = double.tryParse(value);
+    if (parsedValue == null) {
+      throw Exception('embodiment property value is invalid - cannot parse as a number');
+    }
+    n = parsedValue;
+  } else {
+    throw Exception('embodiment property value is not a number');
   }
   if (n < minValue) {
     return minValue;
@@ -88,16 +106,21 @@ double? getNumericProp(dynamic value,
 }
 
 int? getIntProp(dynamic value, int minValue, int maxValue) {
-  if (value.runtimeType != String) {
-    throw Exception('embodiment property value is not a string');
+
+  late int n;
+
+  if (value is int) {
+    n = value;
+  } else if (value is String) {
+    var parsedValue = int.tryParse(value);
+    if (parsedValue == null) {
+      throw Exception('embodiment property value is invalid - cannot parse as an integer');
+    }
+    n = parsedValue;
+  } else {
+    throw Exception('embodiment property value is not an integer');
   }
 
-  var numericString = value as String;
-
-  var n = int.tryParse(numericString);
-  if (n == null) {
-    return null;
-  }
   if (n < minValue) {
     return minValue;
   }
@@ -108,15 +131,19 @@ int? getIntProp(dynamic value, int minValue, int maxValue) {
 }
 
 bool? getBoolProp(dynamic value) {
-  if (value.runtimeType != String) {
+
+  late bool b;
+
+  if (value is bool) {
+    b = value;
+  } else if (value is String) {
+    var parsedValue = bool.tryParse(value);
+    if (parsedValue == null) {
+      throw Exception('embodiment property value is invalid - cannot parse as a boolean');
+    }
+    b = parsedValue;
+  } else {
     throw Exception('embodiment property value is not a string');
-  }
-
-  var boolString = value as String;
-
-  var b = bool.tryParse(boolString);
-  if (b == null) {
-    return null;
   }
 
   return b;

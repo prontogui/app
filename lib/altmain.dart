@@ -26,22 +26,28 @@ void altmain1(List<String> args) async {
   // Create the model that holds the primitives to be displayed.
   final model = dl.PrimitiveModel();
 
-/*
-  var imgAsset = dl.Image(fromFile: '/Users/andy/Downloads/go-logo.png', id: 'gopher');
-  var assets = dl.Group(groupItems: [imgAsset], status: 2);
-  var img1 = dl.Image(ref: 'gopher', embodiment: 'width:100, height:100');
-  var img2 = dl.Image(ref: 'gopher', embodiment: 'width:200, height:200');
-  var img3 = dl.Image(ref: 'gopher', embodiment: 'width:300, height:300');
-  var gui = dl.Frame(frameItems: [img1, img2, img3], embodiment: 'full-view', showing: true);
+  var exRow = [
+    dl.Text(embodiment: 'height:50, verticalAlignment:bottom', content: 'XXXX'),
+    dl.Text(embodiment: 'verticalAlignment:bottom, backgroundColor:#FF00FF00', content: '\$0.00'),
+    dl.Text(embodiment: 'verticalAlignment:top', content: 'In stock')];
 
-  model.topPrimitives = [gui, assets];
-*/
+  var row1 = [dl.Text(content: 'Apple'), dl.Text(content: '\$10.00'), dl.Text(content: 'In stock')];
+  var row2 = [dl.Text(content: 'Orange'), dl.Text(content: '\$5.00'), dl.Text(content: 'In stock')];
+  var row3 = [dl.Text(content: 'Banana'), dl.Text(content: '\$3.00'), dl.Text(content: 'Out of stock')];
+  var row4 = [dl.Text(content: 'Mango'), dl.Text(content: '\$10.00'), dl.Text(content: 'In stock')];
+  var row5 = [dl.Text(content: 'Pear'), dl.Text(content: '\$5.00'), dl.Text(content: 'In stock')];
+  var row6 = [dl.Text(content: 'Grape'), dl.Text(content: '\$3.00'), dl.Text(content: 'Out of stock')];
+  var row7 = [dl.Text(content: 'Raspberry'), dl.Text(content: '\$10.00'), dl.Text(content: 'In stock')];
+  var row8 = [dl.Text(content: 'Blueberry'), dl.Text(content: '\$5.00'), dl.Text(content: 'In stock')];
+  var row9 = [dl.Text(content: 'Coconut'), dl.Text(content: '\$3.00'), dl.Text(content: 'Out of stock')];
 
+  var emb = '{"insideBorderAll":2,"columnSettings":[{"width":200}, {"width":100}, {"width":75}]}';
+  //var emb = '{"insideBorderHorizontals:2,"paddingAll":5,"columnSettings":[{"width":10.50}]}';
+  //var emb = 'embodiment:paged, pagesPerRow:3';
 
-  var imgAsset = dl.Image(fromFile: '/Users/andy/Downloads/go-logo.png', embodiment: 'width:200, height:400, imageFit:fill');
-//  var imgAsset = dl.Image(fromFile: '/Users/andy/Downloads/go-logo.png');
-  model.topPrimitives = [imgAsset];
-
+  var t = dl.Table(embodiment: emb, rows: [row1, row2, row3, row4, row5, row6, row7, row8, row9], modelRow: exRow);
+  t.makeHeadings(['Fruit', 'Price', 'Stock']);
+  model.topPrimitives = [t];
 
   // Create the object responsible for embodying the model as Widgets and for
   // rebuilding the UI when the model changes.
