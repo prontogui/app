@@ -190,4 +190,13 @@ class EmbodimentFactory {
     // Create the embodiment using the factory function coming from the manifest.
     return info.manifest.factoryFunction(ea, key: key);
   }
+
+  T? getEmbodimentPropertiesFromInfo<T>(dynamic info) {
+    if (info == null) {
+      return null;
+    }
+
+    var embodimentInfo = info as _EmbodimentInfo;
+    return embodimentInfo.properties as T;
+  }
 }

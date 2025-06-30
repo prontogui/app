@@ -21,7 +21,7 @@ class Embodifier implements PrimitiveModelWatcher {
   final Map<PKey, Notifier> _pkeyToNotifier = {};
 
   // The object that creates embodiments
-  final _factory = EmbodimentFactory();
+  final factory = EmbodimentFactory();
 
   /// Notifies the builder associated with the pkey that a change has occurred.
   void notifyBuilder(PKey pkey) {
@@ -97,13 +97,13 @@ class Embodifier implements PrimitiveModelWatcher {
       return ListenableBuilder(
         listenable: notifier,
         builder: (BuildContext context, Widget? child) {
-          return _factory.createEmbodiment(args);
+          return factory.createEmbodiment(args);
         },
         child: null,
       );
     }
 
-    return _factory.createEmbodiment(args);
+    return factory.createEmbodiment(args);
   }
 
   /// Builds the particular embodiment for a primitive and injects a listenable builder

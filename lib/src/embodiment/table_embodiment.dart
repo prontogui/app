@@ -49,40 +49,42 @@ class DefaultTableEmbodiment extends StatelessWidget {
       return const SizedBox();
     }
 
-    // DO: Verify each row has same number of elements (best done while composing Table rows)
-
-    // DO: Build list of column widths using FixedColumnWidth FlexColumnWidth FractionColumnWidth IntrinsicColumnWidth MaxColumnWidth MinColumnWidth widgets
-
-    /*
-    // Build the column configurations and a "fingerprint" of the headers
-    var columnsD = List<TableCell>.empty(growable: true);
-
-    for (var heading in table.headings) {
-      columnsD.add(DataColumn(
-        label: Text(heading),
-      ));
-    }
-
-    // Add additional headings to if needed to reach total num. columns
-    for (int i = columnsD.length; i < totalNumColumns; i++) {
-      columnsD.add(const DataColumn(
-        label: Text(''),
-      ));
-    }
-*/
-
     // Build the data rows from primitive rows
     var embodifier = InheritedEmbodifier.of(context);
     var rowsD = List<TableRow>.empty(growable: true);
     var modelRow = table.modelRow;
 
+    // Builds a TableCell from a primitive and an optional model primitive.
+    TableCell buildTableCell(pg.Primitive primitive, pg.Primitive? modelPrimitive) {
+        // Build the embodiment for the cell, incorporating any model primitive properties.
+        var cellEmbodiment = embodifier.buildPrimitive(context, primitive,
+            modelPrimitive: modelPrimitive);
+
+        // promote the vertical alignment from the cellEmbodiment to the TableCell
+        TableCellVerticalAlignment? verticalAlignment;
+
+        var cellEmbodimentProperties = embodifier.factory.getEmbodimentPropertiesFromInfo<CommonPropertyAccess>(primitive.embodimentInfo);
+        if (cellEmbodimentProperties != null) {
+          var cellVerticalAlignment = cellEmbodimentProperties.verticalAlignment;
+
+          switch (cellVerticalAlignment) {
+            case VerticalAlignment.top:
+              verticalAlignment = TableCellVerticalAlignment.top;
+            case VerticalAlignment.bottom:
+              verticalAlignment = TableCellVerticalAlignment.bottom;
+            case VerticalAlignment.middle:
+              verticalAlignment = TableCellVerticalAlignment.middle;
+            case VerticalAlignment.expand:
+              verticalAlignment = TableCellVerticalAlignment.fill;
+          }
+        }
+
+        return TableCell(verticalAlignment: verticalAlignment, child: cellEmbodiment);
+    }
+
     // Insert a heading?
     if (numHeadings > 0) {
-      var headerCells = List<TableCell>.generate(numHeadings, (int col) {
-        var text = embodifier.buildPrimitive(context, table.headerRow[col]);
-        return TableCell(child: text);
-      }, growable: false);
-
+      var headerCells = List<TableCell>.generate(numHeadings, (int col) => buildTableCell(table.headerRow[col], null) , growable: false);
       rowsD.add(TableRow(children: headerCells));
     }
 
@@ -104,15 +106,7 @@ class DefaultTableEmbodiment extends StatelessWidget {
           modelPrimitive = modelRow[col];
         }
 
-        // Build the embodiment for the cell, incorporating any model primitive properties.
-        var cellEmbodiment = embodifier.buildPrimitive(context, cell,
-            modelPrimitive: modelPrimitive);
-
-        cellsD.add(TableCell(child: cellEmbodiment));
-
-        // TODO:  promote the vertical alignment from the cellEmbodiment to the TableCell. Use middle as default.
-//        cellsD.add(TableCell(verticalAlignment: TableCellVerticalAlignment.middle, child: cellEmbodiment));
-
+        cellsD.add(buildTableCell(cell, modelPrimitive));
         col++;
       }
 

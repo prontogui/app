@@ -41,11 +41,28 @@ class PagedTableEmbodiment extends StatelessWidget {
     var headerFingerprint = "";
     var columnsD = List<DataColumn>.empty(growable: true);
 
-    for (var heading in table.headings) {
+    var embodifier = InheritedEmbodifier.of(context);
+
+    for (int col = 0; col < table.headings.length; col++) {
+      var heading = table.headings[col];
       headerFingerprint = "$headerFingerprint|$heading";
 
+      TableColumnWidth? columnWidth;
+
+      if (col < props.columnSettings.length) {
+        var columnSettings = props.columnSettings[col];
+
+        var width = columnSettings.width;
+        if (width != null) {
+          columnWidth = FixedColumnWidth(width);
+        }
+      }
+
+      var headingEmbodiment = embodifier.buildPrimitive(context, table.headerRow[col]);
+
       columnsD.add(DataColumn(
-        label: Text(heading),
+        label: headingEmbodiment,
+        columnWidth: columnWidth
       ));
     }
 
@@ -57,7 +74,6 @@ class PagedTableEmbodiment extends StatelessWidget {
     }
 
     // Build the data rows from primitive rows
-    var embodifier = InheritedEmbodifier.of(context);
     var rowsD = List<DataRow>.empty(growable: true);
     var modelRow = table.modelRow;
 
