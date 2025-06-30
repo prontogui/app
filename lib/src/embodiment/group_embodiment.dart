@@ -53,6 +53,7 @@ class GroupDefaultEmbodiment extends StatelessWidget {
       }
 
       content = Row(
+        mainAxisSize: MainAxisSize.min,
         children:
             // This is very elegant but we'll see how it performs.  Documentation says
             // stuff in .of method should work in O(1) time with a "small constant".

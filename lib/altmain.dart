@@ -42,12 +42,22 @@ void altmain1(List<String> args) async {
   var row9 = [dl.Text(content: 'Coconut'), dl.Text(content: '\$3.00'), dl.Text(content: 'Out of stock')];
 
   //var emb = '{"insideBorderAll":2,"columnSettings":[{"width":200}, {"width":100}, {"width":75}]}';
-  var emb = '{"embodiment":"paged","columnSettings":[{"width":300},{"width":200},{"width":100}]}';
+//  var emb = '{"embodiment":"paged","backgroundColor":"#40000000","columnSettings":[{"width":300},{"width":200},{"width":120}]}';
+  var emb = '{"backgroundColor":"#40000000","columnSettings":[{"width":300},{"width":200},{"width":120}]}';
 
   var t = dl.Table(embodiment: emb, rows: [row1, row2, row3, row4, row5, row6, row7, row8, row9], modelRow: exRow);
-  t.makeHeadings(['Fruit', 'Price', 'Stock']);
-  t.headerRow[0].embodiment = 'height:75, verticalAlignment:bottom, horizontalAlignment:right, backgroundColor:#FFFFFF00';
+  //t.makeHeadings(['Fruit', 'Price', 'Stock']);
+  //t.headerRow[0].embodiment = 'height:75, verticalTextAlignment:bottom, horizontalTextAlignment:right, marginAll:2, backgroundColor:#FFFFFF00';
+  var h1 = dl.Group(groupItems: [dl.Text(content: 'Fruit'), dl.Icon(iconID: 'group', embodiment: 'size:18, marginLeft:5')], embodiment: 'horizontalAlignment:right');
+  var h2 = dl.Group(groupItems: [dl.Text(content: 'Price'), dl.Icon(iconID: 'lock_open', embodiment: 'size:18, marginLeft:5')]);
+  var h3 = dl.Group(groupItems: [dl.Text(content: 'Stock'), dl.Icon(iconID: 'stacked_bar_chart', embodiment: 'size:18, marginLeft:5')]);
+  t.headerRow = [h1, h2, h3];
+
+  var g1 = dl.Group(groupItems: [dl.Text(content: 'Fruit'), dl.Text(content: 'Fruit')], embodiment: 'horizontalAlignment:center');
+  var l1 = dl.Frame(frameItems:[g1]);
+
   model.topPrimitives = [t];
+//  model.topPrimitives = [l1];
 
   // Create the object responsible for embodying the model as Widgets and for
   // rebuilding the UI when the model changes.

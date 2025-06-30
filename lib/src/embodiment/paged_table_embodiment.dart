@@ -61,8 +61,9 @@ class PagedTableEmbodiment extends StatelessWidget {
       var headingEmbodiment = embodifier.buildPrimitive(context, table.headerRow[col]);
 
       columnsD.add(DataColumn(
-        label: headingEmbodiment,
-        columnWidth: columnWidth
+        label: Expanded(child: headingEmbodiment,),
+        columnWidth: columnWidth,
+//        headingRowAlignment: MainAxisAlignment.center
       ));
     }
 
