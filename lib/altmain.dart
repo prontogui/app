@@ -26,6 +26,12 @@ void altmain1(List<String> args) async {
   // Create the model that holds the primitives to be displayed.
   final model = dl.PrimitiveModel();
 
+  var txt1 = dl.Text(content: 'A', embodiment: 'width:9,height:16,backgroundColor: #FFFF0000,borderAll:1');
+  var txt2 = dl.Text(content: 'A', embodiment: 'width:9,height:16,borderAll:1');
+  var t = dl.Table(rows: [[txt1, txt2]]);
+  model.topPrimitives = [t];
+
+/*
   var exRow = [
     dl.Text(embodiment: 'height:50, verticalAlignment:bottom', content: 'XXXX'),
     dl.Text(embodiment: 'verticalAlignment:bottom, backgroundColor:#FF00FF00, verticalAlignment:expand', content: '\$0.00'),
@@ -57,6 +63,9 @@ void altmain1(List<String> args) async {
   var l1 = dl.Frame(frameItems:[g1]);
 
   model.topPrimitives = [t];
+
+*/
+
 //  model.topPrimitives = [l1];
 
   // Create the object responsible for embodying the model as Widgets and for

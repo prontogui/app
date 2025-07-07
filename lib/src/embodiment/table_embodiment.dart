@@ -163,7 +163,7 @@ class DefaultTableEmbodiment extends StatelessWidget {
       columnWidths[col] = columnWidth;
     }
 
-    var content = Table(children: rowsD, border: border, columnWidths: columnWidths,);
+    var content = Table(children: rowsD, border: border, columnWidths: columnWidths);
 
     return encloseWithPBMSAF(content, args);
   }
