@@ -43,12 +43,12 @@ dependencies:
   google_fonts: ^6.2.1
   window_manager: ^0.4.3
   dartlib:
-  #  git:
-  #    url: https://github.com/prontogui/dartlib/
-  #    ref: v0.0.61
+    git:
+      url: https://github.com/prontogui/dartlib/
+      ref: v0.0.61
   
   # For development, use a local copy of dartlib library
-    path: ../dartlib_devs
+  #  path: ../dartlib_devs
   args: ^2.6.0
   package_info_plus: ^8.2.1
   animated_tree_view: ^2.3.0
