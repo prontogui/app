@@ -111,7 +111,7 @@ class PagedTableEmbodiment extends StatelessWidget {
     // dynamic nature of building user interfaces. For now, we'll use the fingerprint of the header
     // titles to form a key.
     var content = PaginatedDataTable(
-        rowsPerPage: props.pagesPerRow,
+        rowsPerPage: props.rowsPerPage,
         columns: columnsD,
         source: ds,
         key: Key(headerFingerprint));

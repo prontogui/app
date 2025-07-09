@@ -175,9 +175,9 @@ class PropertyName {
   static const paddingLeft = 'paddingLeft';
   static const paddingRight = 'paddingRight';
   static const paddingTop = 'paddingTop';
-  static const pagesPerRow = 'pagesPerRow';
   static const popupChoices = 'popupChoices';
   static const right = 'right';
+  static const rowsPerPage = 'rowsPerPage';
   static const size = 'size';
   static const snackbarBehavior = 'snackbarBehavior';
   static const snackbarDuration = 'snackbarDuration';
@@ -518,7 +518,7 @@ void _mapTablePagedProperty(
   switch (name) {
     case PropertyName.columnSettings:
       propertyMap[name] = getMapArrayProp(value);
-    case PropertyName.pagesPerRow:
+    case PropertyName.rowsPerPage:
       propertyMap[name] = getIntProp(value, 0, 1000); 
   }
 }
@@ -768,7 +768,7 @@ mixin TablePagedPropertyAccess on Properties {
     return _cachedColumnSettings!;
   }
 
-  int get pagesPerRow => _getIntT(propertyMap, PropertyName.pagesPerRow, 5);
+  int get rowsPerPage => _getIntT(propertyMap, PropertyName.rowsPerPage, 5);
 }
 
 class NothingProperties extends Properties {

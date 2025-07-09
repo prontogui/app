@@ -45,7 +45,7 @@ dependencies:
   dartlib:
     git:
       url: https://github.com/prontogui/dartlib/
-      ref: v0.0.61
+      ref: v0.0.62
   
   # For development, use a local copy of dartlib library
   #  path: ../dartlib_devs
