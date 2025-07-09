@@ -26,10 +26,9 @@ void altmain1(List<String> args) async {
   // Create the model that holds the primitives to be displayed.
   final model = dl.PrimitiveModel();
 
-  var txt1 = dl.Text(content: 'A', embodiment: 'width:9,height:16,backgroundColor: #FFFF0000,borderAll:1');
-  var txt2 = dl.Text(content: 'A', embodiment: 'width:9,height:16,borderAll:1');
-  var t = dl.Table(rows: [[txt1, txt2]]);
-  model.topPrimitives = [t];
+  var nf = dl.NumericField(numericEntry: '0.0', embodiment: 'marginAll:5');
+  var tf = dl.TextField(textEntry: "Mary", embodiment: 'marginAll:5,borderAll:1,maxLength:30');
+  model.topPrimitives = [nf, tf];
 
 /*
   var exRow = [

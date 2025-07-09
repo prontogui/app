@@ -168,7 +168,11 @@ class PropertyName {
   static const marginLeft = 'marginLeft';
   static const marginRight = 'marginRight';
   static const marginTop = 'marginTop';
+  static const maxDisplayLines = 'maxDisplayLines';
   static const maxValue = 'maxValue';
+  static const maxLength = 'maxLength';
+  static const maxLines = 'maxLines';
+  static const minDisplayLines = 'minDisplayLines';
   static const minValue = 'minValue';
   static const paddingAll = 'paddingAll';
   static const paddingBottom = 'paddingBottom';
@@ -489,6 +493,20 @@ void _mapTextDefaultProperty(
   }
 }
 
+void _mapTextFieldDefaultProperty(
+    Map<String, dynamic> propertyMap, String name, dynamic value) {
+  switch (name) {
+    case PropertyName.maxDisplayLines:
+      propertyMap[name] = getIntProp(value, 1, 1000);
+    case PropertyName.maxLength:
+      propertyMap[name] = getIntProp(value, 0, 1000000);
+    case PropertyName.maxLines:
+      propertyMap[name] = getIntProp(value, 0, 1000000);
+    case PropertyName.minDisplayLines:
+      propertyMap[name] = getIntProp(value, 1, 1000);
+  }
+}
+
 void _mapTableDefaultProperty(
     Map<String, dynamic> propertyMap, String name, dynamic value) {
   switch (name) {
@@ -704,6 +722,17 @@ mixin TextDefaultPropertyAccess on Properties {
       HorizontalTextAlignment.center, PropertyName.horizontalTextAlignment);
   VerticalTextAlignment get verticalTextAlignment => _getEnumT(propertyMap,
       VerticalTextAlignment.middle, PropertyName.verticalTextAlignment);
+}
+
+mixin TextFieldDefaultPropertyAccess on Properties {
+  int get maxDisplayLines =>
+      _getIntT(propertyMap, PropertyName.maxDisplayLines, 1);
+  int get maxLength =>
+      _getIntT(propertyMap, PropertyName.maxLength, 65535);
+  int get maxLines =>
+      _getIntT(propertyMap, PropertyName.maxLines, 1000);
+  int get minDisplayLines =>
+      _getIntT(propertyMap, PropertyName.minDisplayLines, 1);
 }
 
 mixin TableDefaultPropertyAccess on Properties {
@@ -938,6 +967,21 @@ class TextDefaultProperties extends Properties
     for (var kv in embodimentMap.entries) {
       areCommonProps |= _mapCommonProperty(propertyMap!, kv.key, kv.value);
       _mapTextDefaultProperty(propertyMap!, kv.key, kv.value);
+    }
+  }
+}
+
+class TextFieldDefaultProperties extends Properties
+    with CommonPropertyAccess, TextFieldDefaultPropertyAccess {
+  TextFieldDefaultProperties.fromMap(Map<String, dynamic>? embodimentMap,
+      {super.initialProperties}) {
+    if (embodimentMap == null || embodimentMap.isEmpty) {
+      return;
+    }
+    propertyMap ??= {};
+    for (var kv in embodimentMap.entries) {
+      areCommonProps |= _mapCommonProperty(propertyMap!, kv.key, kv.value);
+      _mapTextFieldDefaultProperty(propertyMap!, kv.key, kv.value);
     }
   }
 }
