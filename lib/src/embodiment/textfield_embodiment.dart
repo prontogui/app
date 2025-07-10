@@ -30,10 +30,13 @@ class TextFieldEmbodiment extends StatelessWidget {
   Widget build(BuildContext context) {
 
     var content = TextEntryField(
-      initialValue: textfield.textEntry,
+      initialText: textfield.textEntry,
       minDisplayLines: props.minDisplayLines,
       maxDisplayLines: props.maxDisplayLines,
       maxLength: props.maxLength,
+      maxLines: props.maxLines,
+      hideText: props.hideText,
+      hidingCharacter: props.hidingCharacter,
       onSubmitted: (text) {
         textfield.textEntry = text;
       },

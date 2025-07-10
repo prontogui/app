@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:app/src/embodiment/choice_embodiment.dart';
 import 'package:app/src/embodiment/text_embodiment.dart';
 import 'package:app/src/widgets/numeric_field.dart';
+import 'package:app/src/widgets/text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:dartlib/dartlib.dart' as dl;
 import 'src/inherited_primitive_model.dart';
@@ -109,6 +110,7 @@ void altmain2(List<String> args) async {
   dl.logger.i('Welcome to ProntoGUI version ?.?.?');
   dl.logger.i('Running alternate-main 2 program for development purposes.');
 
+/*
   var p = NumericField(
       initialValue: '0.012345678',
       displayDecimalPlaces: 15,
@@ -118,6 +120,19 @@ void altmain2(List<String> args) async {
       //maxValue: 100,
       popupChoices: const ['1.0', '2.0', '3.14159'],
       onSubmitted: (value) => print('submitted:  $value'));
+*/
+
+  var p = TextEntryField(
+    initialText: '',
+    maxLength: 30,
+    maxLines: 1,
+    //minDisplayLines: 1,
+    maxDisplayLines: 1,
+    hideText: false,
+    hidingCharacter: '%',
+    //inputPattern: r"^\([0-9][0-9][0-9]\)",
+    //popupChoices: ['ABC', 'DEF', 'XYZ'],
+    onSubmitted:  (value) => print('submitted:  $value'));
 
   // Run the app and start rendering the UI.
   runApp(

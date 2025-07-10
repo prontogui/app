@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'popup.dart';
 
+// The default character to use when hiding input.
+const String _defaultHidingCharacter = '*';
+
 /// A widget that provides a text input field.
 ///
 /// The `TextEntryField` widget allows users to input text and has
 /// several configurable options to govern how text is displayed and entered.
 ///
-/// This widget accepts [initialValue] which is a string representation of the
+/// This widget accepts [initialText] which is a string representation of the
 /// text to edit.  When the user is finished editing, the new value is submitted back
 /// via the provided handler [onSubmitted].
 ///
@@ -23,7 +26,7 @@ class TextEntryField extends StatefulWidget {
   const TextEntryField(
       {super.key,
       required this.onSubmitted,
-      this.initialValue,
+      this.initialText,
       this.popupChoices,
       this.popupChooserIcon,
       this.maxLength,
@@ -31,18 +34,22 @@ class TextEntryField extends StatefulWidget {
       this.minDisplayLines,
       this.maxDisplayLines,
       this.inputPattern,
+      this.hideText = false,
+      this.hidingCharacter,
       });
 
   /// Handler for new values submitted after entering them.
   final void Function(String value) onSubmitted;
 
-  /// The initial value (optional).
-  final String? initialValue;
+  /// The initial text to display. If not provided then the field will be empty of text.
+  final String? initialText;
 
   /// The maximum number of characters allowed (including whitespace).
   final int? maxLength;
 
-  /// The maximum number of lines allowed.
+  /// The maximum number of lines allowed. This is optional. For performance reasons,
+  /// especially when entering large amounts of text, this should be set to null
+  /// if there's no need limit the number of lines.
   final int? maxLines;
 
   /// The minimum number of lines to display.
@@ -51,7 +58,13 @@ class TextEntryField extends StatefulWidget {
   /// The maximum number of lines to display.
   final int? maxDisplayLines;
 
-  /// Pattern that the text must follow.
+  /// Pattern that the text must follow. This should be a regular expression that can
+  /// be used with RegExp. For performance reasons, this should be set to null when there's
+  /// no need to constrain the text input. Be advised that using an inputPattern with large
+  /// amounts of text could be pathologically slow, so use this feature with caution and
+  /// use the maxLength and maxLines to constrain the text size if feasible.
+  /// 
+  /// Refer to Flutter docs for more details on performance: https://api.flutter.dev/flutter/dart-core/RegExp-class.html
   final String? inputPattern;
 
   /// Entries to show in the popup chooser (optional).  If this is null then
@@ -62,6 +75,12 @@ class TextEntryField extends StatefulWidget {
   /// to an ellipses.
   final Icon? popupChooserIcon;
 
+  // Hide the text displayed and entered into the field. This is useful for sensitive information like passwords.
+  final bool hideText;
+
+  /// The character to use when hiding text with [hideText] turned on. This defaults to the asterisk * character.
+  final String? hidingCharacter;
+
   @override
   State<TextEntryField> createState() => _TextEntryFieldState();
 }
@@ -70,7 +89,8 @@ class TextEntryField extends StatefulWidget {
 class _TextEntryFieldState extends State<TextEntryField> {
   late TextEditingController _controller;
   late FocusNode _focusNode;
-  RegExp? _allowedInputPattern;
+  RegExp? _allowedInputRegex;
+  String? _allowedInputRegexSource;
   late TextInputFormatter _inputFmt;
   int _selectedItem = -1;
 
@@ -82,46 +102,51 @@ class _TextEntryFieldState extends State<TextEntryField> {
 
   // The last value submitted back via onSubmitted handler.  Null means that no
   // value has been submitted yet.
-  String? _submittedValue;
+  String? _submittedText;
 
-  // Builds a regex for the allowed input pattern, taking into consideration
-  // any constraints. If no patterm is specified then return null.
-  RegExp? buildAllowedInputPattern() {
-     var pattern = widget.inputPattern;
+  // Builds a regex for the allowed input pattern.
+  void buildAllowedInputPattern() {
+    var pattern = widget.inputPattern;
     if (pattern != null) {
-      return RegExp(pattern);
+      // Has pattern changed since last time we built a regex?
+      if (_allowedInputRegexSource != null && pattern == _allowedInputRegexSource) {
+        return;
+      }
+      _allowedInputRegexSource = pattern;
+      _allowedInputRegex = RegExp(pattern);
+      return;
     }
-    return null;
+    _allowedInputRegex = null;
+    _allowedInputRegexSource = null;
   }
   
   /// Prepares the initial text (if provided to widget) to display while making
   /// sure it meets any constraints.  If no initialValue was provided then it defaults
   /// to empty text.
-  String prepareInitialValue() {
+  String prepareInitialText() {
     // Use the initial value?
-    var value = widget.initialValue;
+    var text = widget.initialText;
 
-    if (value != null) {
-      // TODO: check against length constraints....
-      return checkAgainstConstraints(value).$2;
+    if (text != null) {
+      return checkAgainstConstraints(text).$2;
     }
 
     return '';
   }
 
-  /// The numeric value (string) to use for editing.
-  String get editingValue {
-    if (_submittedValue != null) {
-      return _submittedValue!;
+  /// The string to use for editing text (not editing).
+  String get editingText {
+    if (_submittedText != null) {
+      return _submittedText!;
     }
-    return prepareInitialValue();
+    return prepareInitialText();
   }
 
-  /// The numeric value (string) to use for displaying.
-  String get displayValue {
-    // For now, simply return the editing value. In the future, we might present the entered text
+  /// The string to use for displaying text (not editing).
+  String get displayText {
+    // For now, simply return the editing text. In the future, we might present the entered text
     // differently when not editing, as governed by widget settings.
-    return editingValue;
+    return editingText;
   }
 
   /// Focus change handler for the text entry field.
@@ -134,18 +159,18 @@ class _TextEntryFieldState extends State<TextEntryField> {
 
     // If getting focus...
     if (_hasFocus) {
-      // Show the edited value and select everything
+      // Show the edited text and select everything
       // TODO: add an 'autoSelect' setting to govern this behavior. Are there other possibilities
       // like select before first character or after last character?
-      _controller.text = editingValue;
+      _controller.text = editingText;
       _controller.selection =
           TextSelection(baseOffset: 0, extentOffset: _controller.text.length);
     } else {
       // Store the edited value
-      submitValue(_controller.text);
+      submitText(_controller.text);
 
       // Show the display value and remove selection
-      _controller.text = displayValue;
+      _controller.text = displayText;
       _controller.selection =
           const TextSelection(baseOffset: -1, extentOffset: -1);
     }
@@ -155,12 +180,14 @@ class _TextEntryFieldState extends State<TextEntryField> {
   /// then it returns [text]. If [text] exceeds a limit then it clipped accordingly.
   (bool, String) checkAgainstConstraints(String text) {
 
+    var constrained = false;
     var maxLength = widget.maxLength;
     var maxLines = widget.maxLines;
 
     // Exceed max length (if specified)?
     if (maxLength != null && text.length > maxLength) {
-      return (true, text.substring(0, maxLength));
+      constrained = true;
+      text = text.substring(0, maxLength);
     }
 
     // Exceeds max lines (if specified)?
@@ -168,40 +195,48 @@ class _TextEntryFieldState extends State<TextEntryField> {
       
       var allLines = text.split('\n');
       if (allLines.length > maxLines) {
+        constrained = true;
         allLines.removeLast();
-        return (true, allLines.join('\n'));
+        text = allLines.join('\n');
       }
     }
 
-    // Was not constrained - return the original value.
-    return (false, text);
+    var pattern = _allowedInputRegex;
+
+    if (pattern != null && !pattern.hasMatch(text)) {
+      constrained = true;
+      // Policy for now: return empty string if no regex match.
+      text = '';
+    }
+
+    return (constrained, text);
   }
 
-  /// Submits a value back to the handler provided to this widget.
+  /// Submits the edited text back to the handler provided to this widget.
   ///
-  /// [value] must be a valid numeric string (as defined by allowed input pattern)
-  /// or it can be empty.
-  void submitValue(String value) {
+  /// [text] must be a valid text string (as defined by constraints)
+  /// or it can be empty. If the text hasn't changed from the last time
+  /// it was submitted then no callback is made.
+  void submitText(String text) {
 
-    var submitValue = checkAgainstConstraints(value).$2;
+    var submitValue = checkAgainstConstraints(text).$2;
 
     // Do nothing if text hasn't changed
-    if (_submittedValue != null && submitValue == _submittedValue) {
+    if (_submittedText != null && submitValue == _submittedText) {
       return;
     }
-    _submittedValue = submitValue;
+    _submittedText = submitValue;
     widget.onSubmitted(submitValue);
   }
 
-  /// Updates the edited value in the text field with the current selection in
-  /// the popup choices.
+  /// Updates the edited text in the field with the current selection in the popup choices.
   void updateField() {
     if (_selectedItem == -1) {
       return;
     }
-    var value = widget.popupChoices![_selectedItem];
-    setState(() => _controller.text = value);
-    submitValue(value);
+    var text = widget.popupChoices![_selectedItem];
+    setState(() => _controller.text = text);
+    submitText(text);
   }
 
   // Standard overrides
@@ -210,31 +245,26 @@ class _TextEntryFieldState extends State<TextEntryField> {
   void initState() {
     super.initState();
 
-    _allowedInputPattern = buildAllowedInputPattern();
+    buildAllowedInputPattern();
 
     _inputFmt = TextInputFormatter.withFunction(
       (TextEditingValue oldValue, TextEditingValue newValue) {
-        var pattern = _allowedInputPattern;
-
-        if (pattern != null && !pattern.hasMatch(newValue.text)) {
-          return oldValue;
-        }
-
         if (checkAgainstConstraints(newValue.text).$1) {
           return oldValue;
         }
-
         return newValue;
       },
     );
 
-    _controller = TextEditingController(text: displayValue);
+    _controller = TextEditingController(text: displayText);
     _focusNode = FocusNode();
     _focusNode.addListener(onFocusChange);
   }
 
   @override
   void dispose() {
+    _allowedInputRegex = null;
+    _allowedInputRegexSource = null;
     _controller.dispose();
     _focusNode.removeListener(onFocusChange);
     _focusNode.dispose();
@@ -243,10 +273,10 @@ class _TextEntryFieldState extends State<TextEntryField> {
 
   @override
   void didUpdateWidget(covariant oldWidget) {
-    _allowedInputPattern = buildAllowedInputPattern();
+    buildAllowedInputPattern();
     _hasFocus = false;
-    _controller.text = prepareInitialValue();
-    _submittedValue = null;
+    _controller.text = prepareInitialText();
+    _submittedText = null;
     _popupChoicesWidgets = null;
     super.didUpdateWidget(oldWidget);
   }
@@ -269,22 +299,54 @@ class _TextEntryFieldState extends State<TextEntryField> {
     return _popupChoicesWidgets!;
   }
 
+
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
 
+    Widget buildTextField(OverlayPortalController? controller) {
+    
+      late InputDecoration decoration;
+
+      if (controller == null) {
+        decoration = InputDecoration(
+          border: _hasFocus ? const OutlineInputBorder() : null,
+        );
+      } else {
+        decoration = InputDecoration(
+          border: const OutlineInputBorder(),
+          suffixIcon: widget.popupChoices != null
+              ? IconButton(
+                  icon: chooserIcon,
+                  onPressed: controller.show,
+                )
+              : null,
+        );
+      }
+
+      decoration.applyDefaults(theme.inputDecorationTheme);
+
+      var hc = widget.hidingCharacter;
+
+      return TextField(
+        controller: _controller,
+        decoration: decoration,
+        onSubmitted: (value) => submitText(value),
+        focusNode: _focusNode,
+        inputFormatters: [_inputFmt],
+        minLines: widget.minDisplayLines,
+        maxLines: widget.maxDisplayLines,
+        obscureText: widget.hideText,
+        obscuringCharacter: hc != null && hc.isNotEmpty ? hc[0] : _defaultHidingCharacter,
+        );
+    }
+
     if (widget.popupChoices == null) {
+
       return Container(
           color: theme.colorScheme.surfaceContainer,
-          child: TextField(
-            controller: _controller,
-            decoration: InputDecoration(
-              border: _hasFocus ? const OutlineInputBorder() : null,
-            ),
-            onSubmitted: (value) => submitValue(value),
-            focusNode: _focusNode,
-            inputFormatters: [_inputFmt],
-          ));
+          child: buildTextField(null));
+
     } else {
       var selectedColor =
           Colors.grey; // = theme.colorScheme.surfaceContainerLow;
@@ -294,22 +356,7 @@ class _TextEntryFieldState extends State<TextEntryField> {
           flip: true,
           child: (context, controller) => Container(
                 color: theme.colorScheme.surfaceContainer,
-                child: TextField(
-                  controller: _controller,
-                  decoration: InputDecoration(
-                    border: const OutlineInputBorder(),
-                    suffixIcon: widget.popupChoices != null
-                        ? IconButton(
-                            icon: chooserIcon,
-                            onPressed: controller.show,
-                          )
-                        : null,
-                  ).applyDefaults(theme.inputDecorationTheme),
-                  onSubmitted: (value) => submitValue(value),
-                  focusNode: _focusNode,
-                  style: theme.textTheme.bodyLarge,
-                  inputFormatters: [_inputFmt],
-                ),
+                child: buildTextField(controller),
               ),
           follower: (context, controller) => PopupFollower(
               onDismiss: () {

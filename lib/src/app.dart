@@ -89,7 +89,8 @@ class App extends StatelessWidget {
           child: Container(
               color: Colors.blueGrey,
               child: Center(
-                  child: SizedBox(width: 400, height: 50, child: devWidget))));
+//                  child: SizedBox(width: 400, height: 50, child: devWidget))));
+                  child: SizedBox(width: 400, child: devWidget))));
     }
 
     return MaterialApp(

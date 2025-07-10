@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 // SUPPORT FUNCTIONS SECTION
 //
 
-Color? _getColorT(Map<String, dynamic>? propertyMap, String propertyName) {
+Color? _getColorTN(Map<String, dynamic>? propertyMap, String propertyName) {
   if (propertyMap == null) {
     // Return default
     return null;
@@ -19,7 +19,7 @@ Color? _getColorT(Map<String, dynamic>? propertyMap, String propertyName) {
   return cacheItem as Color;
 }
 
-double? _getDoubleT(Map<String, dynamic>? propertyMap, String propertyName) {
+double? _getDoubleTN(Map<String, dynamic>? propertyMap, String propertyName) {
   if (propertyMap == null) {
     // Return default
     return null;
@@ -50,20 +50,32 @@ bool _getYesNoT(
 
 int _getIntT(
     Map<String, dynamic>? propertyMap, String propertyName, int defaultValue) {
-  if (propertyMap == null) {
+  
+  var value = _getIntTN(propertyMap, propertyName);
+
+  if (value == null) {
     // Return default
     return defaultValue;
+  }
+  return value;
+}
+
+int? _getIntTN(
+    Map<String, dynamic>? propertyMap, String propertyName) {
+  if (propertyMap == null) {
+    // Return default
+    return null;
   }
   var cacheItem = propertyMap[propertyName];
   if (cacheItem == null) {
     // Return default
-    return defaultValue;
+    return null;
   }
   assert(cacheItem is int);
   return cacheItem as int;
 }
 
-String? _getStringT(Map<String, dynamic>? propertyMap, String propertyName) {
+String? _getStringTN(Map<String, dynamic>? propertyMap, String propertyName) {
   if (propertyMap == null) {
     // Return default
     return null;
@@ -77,7 +89,7 @@ String? _getStringT(Map<String, dynamic>? propertyMap, String propertyName) {
   return cacheItem as String;
 }
 
-List<String>? _getStringArrayT(
+List<String>? _getStringArrayTN(
     Map<String, dynamic>? propertyMap, String propertyName) {
   if (propertyMap == null) {
     // Return default
@@ -107,7 +119,7 @@ T _getEnumT<T>(
   return cacheItem as T;
 }
 
-List<Map<String, dynamic>>? _getSettingsArrayT(
+List<Map<String, dynamic>>? _getSettingsArrayTN(
     Map<String, dynamic>? propertyMap, String propertyName) {
   if (propertyMap == null) {
     // Return default
@@ -149,6 +161,8 @@ class PropertyName {
   static const fontStyle = 'fontStyle';
   static const fontWeight = 'fontWeight';
   static const height = 'height';
+  static const hideText = 'hideText';
+  static const hidingCharacter = 'hidingCharacter';
   static const horizontal = 'horizontal';
   static const horizontalAlignment = 'horizontalAlignment';
   static const horizontalTextAlignment = 'horizontalTextAlignment';
@@ -287,7 +301,7 @@ void _mapColumnSettingsProperty(
 }
 
 mixin ColumnSettingsPropertyAccess on Properties {
-  double? get width => _getDoubleT(propertyMap, PropertyName.width);
+  double? get width => _getDoubleTN(propertyMap, PropertyName.width);
 }
 
 class ColumnSettingsProperties extends Properties
@@ -496,6 +510,10 @@ void _mapTextDefaultProperty(
 void _mapTextFieldDefaultProperty(
     Map<String, dynamic> propertyMap, String name, dynamic value) {
   switch (name) {
+    case PropertyName.hideText:
+      propertyMap[name] = getBoolProp(value);
+    case PropertyName.hidingCharacter:
+      propertyMap[name] = getStringProp(value);
     case PropertyName.maxDisplayLines:
       propertyMap[name] = getIntProp(value, 1, 1000);
     case PropertyName.maxLength:
@@ -604,38 +622,38 @@ mixin CommonPropertyAccess on Properties {
   }
 
   Color? get backgroundColor =>
-      _getColorT(propertyMap, PropertyName.backgroundColor);
-  double? get borderAll => _getDoubleT(propertyMap, PropertyName.borderAll);
+      _getColorTN(propertyMap, PropertyName.backgroundColor);
+  double? get borderAll => _getDoubleTN(propertyMap, PropertyName.borderAll);
   double? get borderBottom =>
-      _getDoubleT(propertyMap, PropertyName.borderBottom);
-  Color? get borderColor => _getColorT(propertyMap, PropertyName.borderColor);
-  double? get borderLeft => _getDoubleT(propertyMap, PropertyName.borderLeft);
-  double? get borderRight => _getDoubleT(propertyMap, PropertyName.borderRight);
-  double? get borderTop => _getDoubleT(propertyMap, PropertyName.borderTop);
-  double? get bottom => _getDoubleT(propertyMap, PropertyName.bottom);
-  String? get embodiment => _getStringT(propertyMap, PropertyName.embodiment);
-  double? get height => _getDoubleT(propertyMap, PropertyName.height);
+      _getDoubleTN(propertyMap, PropertyName.borderBottom);
+  Color? get borderColor => _getColorTN(propertyMap, PropertyName.borderColor);
+  double? get borderLeft => _getDoubleTN(propertyMap, PropertyName.borderLeft);
+  double? get borderRight => _getDoubleTN(propertyMap, PropertyName.borderRight);
+  double? get borderTop => _getDoubleTN(propertyMap, PropertyName.borderTop);
+  double? get bottom => _getDoubleTN(propertyMap, PropertyName.bottom);
+  String? get embodiment => _getStringTN(propertyMap, PropertyName.embodiment);
+  double? get height => _getDoubleTN(propertyMap, PropertyName.height);
   HorizontalAlignment get horizontalAlignment => _getEnumT<HorizontalAlignment>(
       propertyMap, HorizontalAlignment.left, PropertyName.horizontalAlignment);
-  double? get left => _getDoubleT(propertyMap, PropertyName.left);
-  double? get marginAll => _getDoubleT(propertyMap, PropertyName.marginAll);
+  double? get left => _getDoubleTN(propertyMap, PropertyName.left);
+  double? get marginAll => _getDoubleTN(propertyMap, PropertyName.marginAll);
   double? get marginBottom =>
-      _getDoubleT(propertyMap, PropertyName.marginBottom);
-  double? get marginLeft => _getDoubleT(propertyMap, PropertyName.marginLeft);
-  double? get marginRight => _getDoubleT(propertyMap, PropertyName.marginRight);
-  double? get marginTop => _getDoubleT(propertyMap, PropertyName.marginTop);
-  double? get paddingAll => _getDoubleT(propertyMap, PropertyName.paddingAll);
+      _getDoubleTN(propertyMap, PropertyName.marginBottom);
+  double? get marginLeft => _getDoubleTN(propertyMap, PropertyName.marginLeft);
+  double? get marginRight => _getDoubleTN(propertyMap, PropertyName.marginRight);
+  double? get marginTop => _getDoubleTN(propertyMap, PropertyName.marginTop);
+  double? get paddingAll => _getDoubleTN(propertyMap, PropertyName.paddingAll);
   double? get paddingBottom =>
-      _getDoubleT(propertyMap, PropertyName.paddingBottom);
-  double? get paddingLeft => _getDoubleT(propertyMap, PropertyName.paddingLeft);
+      _getDoubleTN(propertyMap, PropertyName.paddingBottom);
+  double? get paddingLeft => _getDoubleTN(propertyMap, PropertyName.paddingLeft);
   double? get paddingRight =>
-      _getDoubleT(propertyMap, PropertyName.paddingRight);
-  double? get paddingTop => _getDoubleT(propertyMap, PropertyName.paddingTop);
-  double? get right => _getDoubleT(propertyMap, PropertyName.right);
-  double? get top => _getDoubleT(propertyMap, PropertyName.top);
+      _getDoubleTN(propertyMap, PropertyName.paddingRight);
+  double? get paddingTop => _getDoubleTN(propertyMap, PropertyName.paddingTop);
+  double? get right => _getDoubleTN(propertyMap, PropertyName.right);
+  double? get top => _getDoubleTN(propertyMap, PropertyName.top);
   VerticalAlignment get verticalAlignment => _getEnumT<VerticalAlignment>(
       propertyMap, VerticalAlignment.middle, PropertyName.verticalAlignment);
-  double? get width => _getDoubleT(propertyMap, PropertyName.width);
+  double? get width => _getDoubleTN(propertyMap, PropertyName.width);
 }
 
 mixin FrameDefaultPropertyAccess on Properties {
@@ -649,14 +667,14 @@ mixin FrameSnackbarPropertyAccess on Properties {
   SnackbarBehavior get snackbarBehavior => _getEnumT<SnackbarBehavior>(
       propertyMap, SnackbarBehavior.fixed, PropertyName.snackbarBehavior);
   double? get snackbarDuration =>
-      _getDoubleT(propertyMap, PropertyName.snackbarDuration);
+      _getDoubleTN(propertyMap, PropertyName.snackbarDuration);
   bool get snackbarShowCloseIcon =>
       _getYesNoT(propertyMap, PropertyName.snackbarShowCloseIcon, false);
 }
 
 mixin IconDefaultPropertyAccess on Properties {
-  Color? get color => _getColorT(propertyMap, PropertyName.color);
-  double? get size => _getDoubleT(propertyMap, PropertyName.size);
+  Color? get color => _getColorTN(propertyMap, PropertyName.color);
+  double? get size => _getDoubleTN(propertyMap, PropertyName.size);
 }
 
 mixin ImageDefaultPropertyAccess on Properties {
@@ -683,7 +701,7 @@ mixin ListPropertyPropertyAccess on Properties {
 mixin ListTabbedPropertyAccess on Properties {
   int get animationPeriod =>
       _getIntT(propertyMap, PropertyName.animationPeriod, 0);
-  double? get tabHeight => _getDoubleT(propertyMap, PropertyName.tabHeight);
+  double? get tabHeight => _getDoubleTN(propertyMap, PropertyName.tabHeight);
 }
 
 mixin TreeDefaultPropertyAccess on Properties {}
@@ -699,10 +717,10 @@ mixin NumericFieldDefaultPropertyAccess on Properties {
       PropertyName.displayNegativeFormat);
   bool get displayThousandths =>
       _getYesNoT(propertyMap, PropertyName.displayThousandths, false);
-  double? get maxValue => _getDoubleT(propertyMap, PropertyName.maxValue);
-  double? get minValue => _getDoubleT(propertyMap, PropertyName.minValue);
+  double? get maxValue => _getDoubleTN(propertyMap, PropertyName.maxValue);
+  double? get minValue => _getDoubleTN(propertyMap, PropertyName.minValue);
   List<String>? get popupChoices =>
-      _getStringArrayT(propertyMap, PropertyName.popupChoices);
+      _getStringArrayTN(propertyMap, PropertyName.popupChoices);
 }
 
 mixin NumericFieldColorPropertyAccess on Properties {
@@ -711,9 +729,9 @@ mixin NumericFieldColorPropertyAccess on Properties {
 }
 
 mixin TextDefaultPropertyAccess on Properties {
-  Color? get color => _getColorT(propertyMap, PropertyName.color);
-  String? get fontFamily => _getStringT(propertyMap, PropertyName.fontFamily);
-  double? get fontSize => _getDoubleT(propertyMap, PropertyName.fontSize);
+  Color? get color => _getColorTN(propertyMap, PropertyName.color);
+  String? get fontFamily => _getStringTN(propertyMap, PropertyName.fontFamily);
+  double? get fontSize => _getDoubleTN(propertyMap, PropertyName.fontSize);
   FontStyle get fontStyle => _getEnumT<FontStyle>(
       propertyMap, FontStyle.normal, PropertyName.fontStyle);
   FontWeight get fontWeight => _getEnumT<FontWeight>(
@@ -725,33 +743,37 @@ mixin TextDefaultPropertyAccess on Properties {
 }
 
 mixin TextFieldDefaultPropertyAccess on Properties {
-  int get maxDisplayLines =>
-      _getIntT(propertyMap, PropertyName.maxDisplayLines, 1);
-  int get maxLength =>
-      _getIntT(propertyMap, PropertyName.maxLength, 65535);
-  int get maxLines =>
-      _getIntT(propertyMap, PropertyName.maxLines, 1000);
-  int get minDisplayLines =>
-      _getIntT(propertyMap, PropertyName.minDisplayLines, 1);
+  int? get maxDisplayLines =>
+      _getIntTN(propertyMap, PropertyName.maxDisplayLines);
+  int? get maxLength =>
+      _getIntTN(propertyMap, PropertyName.maxLength);
+  int? get maxLines =>
+      _getIntTN(propertyMap, PropertyName.maxLines);
+  int? get minDisplayLines =>
+      _getIntTN(propertyMap, PropertyName.minDisplayLines);
+  bool get hideText =>
+      _getYesNoT(propertyMap, PropertyName.hideText, false);
+  String? get hidingCharacter =>
+      _getStringTN(propertyMap, PropertyName.hidingCharacter);
 }
 
 mixin TableDefaultPropertyAccess on Properties {
 
-  double? get insideBorderAll => _getDoubleT(propertyMap, PropertyName.insideBorderAll);
+  double? get insideBorderAll => _getDoubleTN(propertyMap, PropertyName.insideBorderAll);
   double? get insideBorderBottom =>
-      _getDoubleT(propertyMap, PropertyName.insideBorderBottom);
-  Color? get insideBorderColor => _getColorT(propertyMap, PropertyName.insideBorderColor);
-  double? get insideBorderHorizontals => _getDoubleT(propertyMap, PropertyName.insideBorderHorizontals);
-  double? get insideBorderLeft => _getDoubleT(propertyMap, PropertyName.insideBorderLeft);
-  double? get insideBorderRight => _getDoubleT(propertyMap, PropertyName.insideBorderRight);
-  double? get insideBorderTop => _getDoubleT(propertyMap, PropertyName.insideBorderTop);
-  double? get insideBorderVerticals => _getDoubleT(propertyMap, PropertyName.insideBorderVerticals);
+      _getDoubleTN(propertyMap, PropertyName.insideBorderBottom);
+  Color? get insideBorderColor => _getColorTN(propertyMap, PropertyName.insideBorderColor);
+  double? get insideBorderHorizontals => _getDoubleTN(propertyMap, PropertyName.insideBorderHorizontals);
+  double? get insideBorderLeft => _getDoubleTN(propertyMap, PropertyName.insideBorderLeft);
+  double? get insideBorderRight => _getDoubleTN(propertyMap, PropertyName.insideBorderRight);
+  double? get insideBorderTop => _getDoubleTN(propertyMap, PropertyName.insideBorderTop);
+  double? get insideBorderVerticals => _getDoubleTN(propertyMap, PropertyName.insideBorderVerticals);
 
   List<ColumnSettingsPropertyAccess>? _cachedColumnSettings;
 
   List<ColumnSettingsPropertyAccess> get columnSettings {
     if (_cachedColumnSettings == null) {
-      var sa = _getSettingsArrayT(propertyMap, PropertyName.columnSettings);
+      var sa = _getSettingsArrayTN(propertyMap, PropertyName.columnSettings);
 
       if (sa != null) {
         _cachedColumnSettings = List<ColumnSettingsProperties>.generate(sa.length, (int index) => ColumnSettingsProperties.fromMap(sa[index]), growable: false);
@@ -785,7 +807,7 @@ mixin TablePagedPropertyAccess on Properties {
 
   List<ColumnSettingsPropertyAccess> get columnSettings {
     if (_cachedColumnSettings == null) {
-      var sa = _getSettingsArrayT(propertyMap, PropertyName.columnSettings);
+      var sa = _getSettingsArrayTN(propertyMap, PropertyName.columnSettings);
 
       if (sa != null) {
         _cachedColumnSettings = List<ColumnSettingsProperties>.generate(sa.length, (int index) => ColumnSettingsProperties.fromMap(sa[index]), growable: false);
