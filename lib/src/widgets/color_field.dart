@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_color_picker_plus/flutter_color_picker_plus.dart';
 import 'popup.dart';
+import 'widget_common.dart';
 
 /// An entry field for specifying a color value and for choosing a value using
 /// a popup picker.
@@ -23,6 +24,7 @@ class ColorField extends StatefulWidget {
     required this.onSubmitted,
     this.initialValue,
     this.allowEmptyValue = false,
+    this.focusSelection = FocusSelection.all,
   });
 
   /// Handler for new color values submitted after entering or picking a color.
@@ -33,6 +35,9 @@ class ColorField extends StatefulWidget {
 
   /// Allows the value to be empty (no specific value).
   final bool allowEmptyValue;
+
+  /// This specifies how the content in the entry field should be selected upon receiving focus.
+  final FocusSelection focusSelection;
 
   @override
   State<ColorField> createState() {
@@ -164,8 +169,18 @@ class _ColorFieldState extends State<ColorField> {
   void onFocusChange() {
     _hasFocus = _focusNode.hasPrimaryFocus;
     if (_hasFocus) {
-      _controller.selection =
-          TextSelection(baseOffset: 0, extentOffset: _controller.text.length);
+
+      // Show the edited text and make appropriate selection
+      switch (widget.focusSelection) {
+        case FocusSelection.begin:
+          _controller.selection = TextSelection.fromPosition(TextPosition(offset:0));
+        case FocusSelection.end:
+          _controller.selection = TextSelection.fromPosition(TextPosition(offset:_controller.text.length));
+        case FocusSelection.all:
+          _controller.selection =
+              TextSelection(baseOffset: 0, extentOffset: _controller.text.length);
+      }
+
     } else {
       var currentValue = currentColorValue;
       storeColorValue(currentValue);
@@ -196,30 +211,48 @@ class _ColorFieldState extends State<ColorField> {
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
 
-    return Popup(
-        followerAnchor: Alignment.topCenter,
-        flip: true,
-        child: (context, controller) => Container(
-            color: theme.colorScheme.surfaceContainer,
-            child: TextField(
+    Widget buildTextField(OverlayPortalController? controller) {
+    
+      late InputDecoration decoration;
+
+      if (controller == null) {
+        decoration = InputDecoration(
+          border: _hasFocus ? const OutlineInputBorder() : null,
+        );
+      } else {
+        decoration = InputDecoration(
+          border: const OutlineInputBorder(),
+          prefixIcon: isCurrentColorValid
+              ? const Icon(Icons.rectangle)
+              : const Icon(Icons.format_color_reset),
+          prefixIconColor:
+              isCurrentColorValid ? currentColor : Colors.black,
+          suffixIcon: IconButton(
+            icon: const Icon(Icons.palette),
+            onPressed: controller.show,
+        ));
+      }
+
+      decoration.applyDefaults(theme.inputDecorationTheme);
+
+      var tf = TextField(
               controller: _controller,
-              decoration: InputDecoration(
-                border: const OutlineInputBorder(),
-                prefixIcon: isCurrentColorValid
-                    ? const Icon(Icons.rectangle)
-                    : const Icon(Icons.format_color_reset),
-                prefixIconColor:
-                    isCurrentColorValid ? currentColor : Colors.black,
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.palette),
-                  onPressed: controller.show,
-                ),
-              ).applyDefaults(theme.inputDecorationTheme),
+              decoration: decoration,
               onSubmitted: (value) => storeColorValue(currentColorValue),
               inputFormatters: [_inputFmt],
               focusNode: _focusNode,
               style: theme.textTheme.bodyLarge, // Same used for DropdownMenu
-            )),
+            );
+
+      return Container(
+          color: theme.colorScheme.surfaceContainer,
+          child: tf);
+    }
+
+    return Popup(
+        followerAnchor: Alignment.topCenter,
+        flip: true,
+        child: (context, controller) => buildTextField(controller),
         follower: (context, controller) => PopupFollower(
             onDismiss: () {
               controller.hide();

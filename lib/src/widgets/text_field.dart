@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'popup.dart';
+import 'widget_common.dart';
 
 // The default character to use when hiding input.
 const String _defaultHidingCharacter = '*';
@@ -36,6 +37,7 @@ class TextEntryField extends StatefulWidget {
       this.inputPattern,
       this.hideText = false,
       this.hidingCharacter,
+      this.focusSelection = FocusSelection.end,
       });
 
   /// Handler for new values submitted after entering them.
@@ -80,6 +82,9 @@ class TextEntryField extends StatefulWidget {
 
   /// The character to use when hiding text with [hideText] turned on. This defaults to the asterisk * character.
   final String? hidingCharacter;
+
+  /// This specifies how the content in the entry field should be selected upon receiving focus.
+  final FocusSelection focusSelection;
 
   @override
   State<TextEntryField> createState() => _TextEntryFieldState();
@@ -159,12 +164,18 @@ class _TextEntryFieldState extends State<TextEntryField> {
 
     // If getting focus...
     if (_hasFocus) {
-      // Show the edited text and select everything
-      // TODO: add an 'autoSelect' setting to govern this behavior. Are there other possibilities
-      // like select before first character or after last character?
+      // Show the edited text and make appropriate selection
       _controller.text = editingText;
-      _controller.selection =
-          TextSelection(baseOffset: 0, extentOffset: _controller.text.length);
+      switch (widget.focusSelection) {
+        case FocusSelection.begin:
+          _controller.selection = TextSelection.fromPosition(TextPosition(offset:0));
+        case FocusSelection.end:
+          _controller.selection = TextSelection.fromPosition(TextPosition(offset:_controller.text.length));
+        case FocusSelection.all:
+          _controller.selection =
+              TextSelection(baseOffset: 0, extentOffset: _controller.text.length);
+      }
+
     } else {
       // Store the edited value
       submitText(_controller.text);
@@ -299,7 +310,6 @@ class _TextEntryFieldState extends State<TextEntryField> {
     return _popupChoicesWidgets!;
   }
 
-
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
@@ -328,7 +338,7 @@ class _TextEntryFieldState extends State<TextEntryField> {
 
       var hc = widget.hidingCharacter;
 
-      return TextField(
+      var tf = TextField(
         controller: _controller,
         decoration: decoration,
         onSubmitted: (value) => submitText(value),
@@ -339,14 +349,14 @@ class _TextEntryFieldState extends State<TextEntryField> {
         obscureText: widget.hideText,
         obscuringCharacter: hc != null && hc.isNotEmpty ? hc[0] : _defaultHidingCharacter,
         );
-    }
-
-    if (widget.popupChoices == null) {
 
       return Container(
           color: theme.colorScheme.surfaceContainer,
-          child: buildTextField(null));
+          child: tf);
+    }
 
+    if (widget.popupChoices == null) {
+      return buildTextField(null);
     } else {
       var selectedColor =
           Colors.grey; // = theme.colorScheme.surfaceContainerLow;
@@ -354,10 +364,7 @@ class _TextEntryFieldState extends State<TextEntryField> {
       return Popup(
           followerAnchor: Alignment.topCenter,
           flip: true,
-          child: (context, controller) => Container(
-                color: theme.colorScheme.surfaceContainer,
-                child: buildTextField(controller),
-              ),
+          child: (context, controller) => buildTextField(controller),
           follower: (context, controller) => PopupFollower(
               onDismiss: () {
                 controller.hide();

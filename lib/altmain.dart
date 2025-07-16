@@ -7,6 +7,7 @@ import 'package:app/src/embodiment/choice_embodiment.dart';
 import 'package:app/src/embodiment/text_embodiment.dart';
 import 'package:app/src/widgets/numeric_field.dart';
 import 'package:app/src/widgets/text_field.dart';
+import 'package:app/src/widgets/widget_common.dart';
 import 'package:flutter/material.dart';
 import 'package:dartlib/dartlib.dart' as dl;
 import 'src/inherited_primitive_model.dart';
@@ -14,6 +15,7 @@ import 'src/embodifier.dart';
 import 'src/app.dart';
 import 'src/embodiment/numericfield_embodiment.dart';
 import 'src/widgets/choice_field.dart';
+import 'src/widgets/color_field.dart';
 
 /// The main entry point for the ProntoGUI application.  This function sets up
 /// several objects responsible for core functionality of the application and
@@ -110,6 +112,7 @@ void altmain2(List<String> args) async {
   dl.logger.i('Welcome to ProntoGUI version ?.?.?');
   dl.logger.i('Running alternate-main 2 program for development purposes.');
 
+
 /*
   var p = NumericField(
       initialValue: '0.012345678',
@@ -119,8 +122,25 @@ void altmain2(List<String> args) async {
       //minValue: 10,
       //maxValue: 100,
       popupChoices: const ['1.0', '2.0', '3.14159'],
+      focusSelection: FocusSelection.end,
       onSubmitted: (value) => print('submitted:  $value'));
 */
+
+/*
+var p = ColorField(
+    focusSelection: FocusSelection.all,
+    onSubmitted: (value) => {},
+);
+/  */
+/*
+  var p = ChoiceField(
+    choices: ['Apple', 'Orange', 'Banana'],
+    focusSelection: FocusSelection.end,
+    onSubmitted: (value) =>{},
+  );
+*/
+
+
 
   var p = TextEntryField(
     initialText: '',
@@ -129,10 +149,12 @@ void altmain2(List<String> args) async {
     //minDisplayLines: 1,
     maxDisplayLines: 1,
     hideText: false,
-    hidingCharacter: '%',
+    focusSelection: FocusSelection.all,
     //inputPattern: r"^\([0-9][0-9][0-9]\)",
     //popupChoices: ['ABC', 'DEF', 'XYZ'],
-    onSubmitted:  (value) => print('submitted:  $value'));
+    onSubmitted:  (value) => print('submitted:  $value')
+    );
+
 
   // Run the app and start rendering the UI.
   runApp(

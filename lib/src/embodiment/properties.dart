@@ -156,6 +156,7 @@ class PropertyName {
   static const displayThousandths = 'displayThousandths';
   static const embodiment = 'embodiment';
   static const flowDirection = 'flowDirection';
+  static const focusSelection = 'focusSelection';
   static const fontFamily = 'fontFamily';
   static const fontSize = 'fontSize';
   static const fontStyle = 'fontStyle';
@@ -273,7 +274,7 @@ enum LayoutMethod { flow, positioned }
 
 Set<String> _namesofLayoutMethod = {'flow', 'positioned'};
 
-//enum ImageFit { fill, contain, cover, fitWidth, fitHeight, none, scaleDown }
+enum ImageFit { fill, contain, cover, fitWidth, fitHeight, none, scaleDown }
 
 Set<String> _namesofImageFit = {
   'fill',
@@ -283,6 +284,14 @@ Set<String> _namesofImageFit = {
   'fitHeight',
   'none',
   'scaleDown'
+};
+
+enum FocusSelection { begin, end, all }
+
+Set<String> _namesofFocusSelection = {
+  'begin',
+  'end',
+  'all',
 };
 
 //
@@ -426,8 +435,8 @@ void _mapImageDefaultProperty(
 
   switch (name) {
     case PropertyName.imageFit:
-      propertyMap[name] = getEnumProp<BoxFit>(
-          value, BoxFit.values, _namesofImageFit);
+      propertyMap[name] = getEnumProp<ImageFit>(
+          value, ImageFit.values, _namesofImageFit);
   }
 }
 
@@ -472,6 +481,8 @@ void _mapNumericFieldDefaultProperty(
       propertyMap[name] = getNumericProp(value);
     case PropertyName.popupChoices:
       propertyMap[name] = getStringArrayProp(value);
+    case PropertyName.focusSelection:
+      propertyMap[name] = getEnumProp<FocusSelection>(value, FocusSelection.values, _namesofFocusSelection);
   }
 }
 
@@ -480,6 +491,8 @@ void _mapNumericFieldColorProperty(
   switch (name) {
     case PropertyName.allowEmptyValue:
       propertyMap[name] = getBoolProp(value);
+    case PropertyName.focusSelection:
+      propertyMap[name] = getEnumProp<FocusSelection>(value, FocusSelection.values, _namesofFocusSelection);
   }
 }
 
@@ -522,6 +535,8 @@ void _mapTextFieldDefaultProperty(
       propertyMap[name] = getIntProp(value, 0, 1000000);
     case PropertyName.minDisplayLines:
       propertyMap[name] = getIntProp(value, 1, 1000);
+    case PropertyName.focusSelection:
+      propertyMap[name] = getEnumProp<FocusSelection>(value, FocusSelection.values, _namesofFocusSelection);
   }
 }
 
@@ -678,7 +693,7 @@ mixin IconDefaultPropertyAccess on Properties {
 }
 
 mixin ImageDefaultPropertyAccess on Properties {
-  BoxFit get imageFit => _getEnumT<BoxFit>(propertyMap, BoxFit.contain, 'imageFit');
+  ImageFit get imageFit => _getEnumT<ImageFit>(propertyMap, ImageFit.contain, 'imageFit');
 }
 
 mixin ListDefaultPropertyAccess on Properties {
@@ -721,11 +736,15 @@ mixin NumericFieldDefaultPropertyAccess on Properties {
   double? get minValue => _getDoubleTN(propertyMap, PropertyName.minValue);
   List<String>? get popupChoices =>
       _getStringArrayTN(propertyMap, PropertyName.popupChoices);
+  FocusSelection get focusSelection => _getEnumT(propertyMap,
+      FocusSelection.all, PropertyName.focusSelection);
 }
 
 mixin NumericFieldColorPropertyAccess on Properties {
   bool get allowEmptyValue =>
       _getYesNoT(propertyMap, PropertyName.allowEmptyValue, false);
+  FocusSelection get focusSelection => _getEnumT(propertyMap,
+      FocusSelection.all, PropertyName.focusSelection);
 }
 
 mixin TextDefaultPropertyAccess on Properties {
@@ -755,6 +774,8 @@ mixin TextFieldDefaultPropertyAccess on Properties {
       _getYesNoT(propertyMap, PropertyName.hideText, false);
   String? get hidingCharacter =>
       _getStringTN(propertyMap, PropertyName.hidingCharacter);
+  FocusSelection get focusSelection => _getEnumT(propertyMap,
+      FocusSelection.end, PropertyName.focusSelection);
 }
 
 mixin TableDefaultPropertyAccess on Properties {

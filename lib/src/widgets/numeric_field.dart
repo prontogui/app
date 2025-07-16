@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'popup.dart';
+import 'widget_common.dart';
 import 'dart:math';
 
 enum NegativeDisplayFormat { absolute, minusSignPrefix, parens }
@@ -66,7 +67,9 @@ class NumericField extends StatefulWidget {
       this.maxValue,
       this.popupChoices,
       this.popupChooserIcon,
-      this.allowEmptyValue = false})
+      this.allowEmptyValue = false,
+      this.focusSelection = FocusSelection.all
+      })
       : assert(minValue == null || maxValue == null || maxValue > minValue,
             'maxValue must be greater than minValue'),
         assert(
@@ -118,6 +121,9 @@ class NumericField extends StatefulWidget {
 
   /// Allows the value to be empty (no specific value).
   final bool allowEmptyValue;
+
+  /// This specifies how the content in the entry field should be selected upon receiving focus.
+  final FocusSelection focusSelection;
 
   @override
   State<NumericField> createState() => _NumericFieldState();
@@ -220,10 +226,18 @@ class _NumericFieldState extends State<NumericField> {
 
     // If getting focus...
     if (_hasFocus) {
-      // Show the edited value and select everything
+
+      // Show the edited text and make appropriate selection
       _controller.text = editingValue;
-      _controller.selection =
-          TextSelection(baseOffset: 0, extentOffset: _controller.text.length);
+      switch (widget.focusSelection) {
+        case FocusSelection.begin:
+          _controller.selection = TextSelection.fromPosition(TextPosition(offset:0));
+        case FocusSelection.end:
+          _controller.selection = TextSelection.fromPosition(TextPosition(offset:_controller.text.length));
+        case FocusSelection.all:
+          _controller.selection =
+              TextSelection(baseOffset: 0, extentOffset: _controller.text.length);
+      }
     } else {
       // Store the edited value
       submitValue(_controller.text);
@@ -368,18 +382,43 @@ class _NumericFieldState extends State<NumericField> {
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
 
-    if (widget.popupChoices == null) {
+    Widget buildTextField(OverlayPortalController? controller) {
+    
+      late InputDecoration decoration;
+
+      if (controller == null) {
+        decoration = InputDecoration(
+          border: _hasFocus ? const OutlineInputBorder() : null,
+        );
+      } else {
+        decoration = InputDecoration(
+          border: const OutlineInputBorder(),
+          suffixIcon: widget.popupChoices != null
+              ? IconButton(
+                  icon: chooserIcon,
+                  onPressed: controller.show,
+                )
+              : null,
+        );
+      }
+
+      decoration.applyDefaults(theme.inputDecorationTheme);
+
+      var tf = TextField(
+        controller: _controller,
+        decoration: decoration,
+        onSubmitted: (value) => submitValue(value),
+        focusNode: _focusNode,
+        inputFormatters: [_inputFmt],
+        );
+
       return Container(
           color: theme.colorScheme.surfaceContainer,
-          child: TextField(
-            controller: _controller,
-            decoration: InputDecoration(
-              border: _hasFocus ? const OutlineInputBorder() : null,
-            ),
-            onSubmitted: (value) => submitValue(value),
-            focusNode: _focusNode,
-            inputFormatters: [_inputFmt],
-          ));
+          child: tf);
+    }
+
+    if (widget.popupChoices == null) {
+      return buildTextField(null);
     } else {
       var selectedColor =
           Colors.grey; // = theme.colorScheme.surfaceContainerLow;
@@ -387,25 +426,7 @@ class _NumericFieldState extends State<NumericField> {
       return Popup(
           followerAnchor: Alignment.topCenter,
           flip: true,
-          child: (context, controller) => Container(
-                color: theme.colorScheme.surfaceContainer,
-                child: TextField(
-                  controller: _controller,
-                  decoration: InputDecoration(
-                    border: const OutlineInputBorder(),
-                    suffixIcon: widget.popupChoices != null
-                        ? IconButton(
-                            icon: chooserIcon,
-                            onPressed: controller.show,
-                          )
-                        : null,
-                  ).applyDefaults(theme.inputDecorationTheme),
-                  onSubmitted: (value) => submitValue(value),
-                  focusNode: _focusNode,
-                  style: theme.textTheme.bodyLarge,
-                  inputFormatters: [_inputFmt],
-                ),
-              ),
+          child: (context, controller) =>  buildTextField(controller),
           follower: (context, controller) => PopupFollower(
               onDismiss: () {
                 controller.hide();

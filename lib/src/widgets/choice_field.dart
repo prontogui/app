@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'popup.dart';
+import 'widget_common.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 
 /// Field for entering a string choice from a list of choices.  User can click a
@@ -14,7 +15,9 @@ class ChoiceField extends StatefulWidget {
       required this.choices,
       this.choiceLabels,
       this.initialValue,
-      this.popupChooserIcon});
+      this.popupChooserIcon,
+      this.focusSelection = FocusSelection.all
+      });
 
   /// Handler for new values submitted after entering them.  [value] is a valid
   /// choice from [choices] field.
@@ -34,6 +37,9 @@ class ChoiceField extends StatefulWidget {
   /// The icon to display for the popup chooser button (optional).  It defaults
   /// to an down arrow.
   final Icon? popupChooserIcon;
+
+  /// This specifies how the content in the entry field should be selected upon receiving focus.
+  final FocusSelection focusSelection;
 
   @override
   State<ChoiceField> createState() => _ChoiceFieldState();
@@ -141,10 +147,20 @@ class _ChoiceFieldState extends State<ChoiceField> {
       },
     );
 
+    // If getting focus...
     if (_hasFocus) {
-      // Select the entire contents of text field
-      _controller.selection =
-          TextSelection(baseOffset: 0, extentOffset: _controller.text.length);
+
+      // Show the edited text and make appropriate selection
+      switch (widget.focusSelection) {
+        case FocusSelection.begin:
+          _controller.selection = TextSelection.fromPosition(TextPosition(offset:0));
+        case FocusSelection.end:
+          _controller.selection = TextSelection.fromPosition(TextPosition(offset:_controller.text.length));
+        case FocusSelection.all:
+          _controller.selection =
+              TextSelection(baseOffset: 0, extentOffset: _controller.text.length);
+      }
+
     } else {
       // If user left the field with an invalid/incomplete choice then revert
       // back to last saved value.
@@ -265,30 +281,48 @@ class _ChoiceFieldState extends State<ChoiceField> {
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
 
+
+    Widget buildTextField(OverlayPortalController? controller) {
+    
+      late InputDecoration decoration;
+
+      if (controller == null) {
+        decoration = InputDecoration(
+          border: _hasFocus ? const OutlineInputBorder() : null,
+        );
+      } else {
+        decoration = InputDecoration(
+            border: const OutlineInputBorder(),
+            suffixIcon: IconButton(
+              icon: chooserIcon,
+              onPressed: controller.show,
+            ));
+      }
+
+      decoration.applyDefaults(theme.inputDecorationTheme);
+
+      var tf = TextField(
+        controller: _controller,
+        decoration: decoration,
+        onSubmitted: (value) {
+          _popupController.hide();
+          submitSelectedItem();
+        },
+        focusNode: _focusNode,
+        inputFormatters: [_inputFmt],
+        style: theme.textTheme.bodyLarge,
+      );
+
+      return Container(
+          color: theme.colorScheme.surfaceContainer,
+          child: tf);
+    }
+
     return Popup(
         followerAnchor: Alignment.topCenter,
         flip: true,
         controller: _popupController,
-        child: (context, controller) => Container(
-              color: theme.colorScheme.surfaceContainer,
-              child: TextField(
-                controller: _controller,
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
-                  suffixIcon: IconButton(
-                    icon: chooserIcon,
-                    onPressed: controller.show,
-                  ),
-                ).applyDefaults(theme.inputDecorationTheme),
-                onSubmitted: (value) {
-                  _popupController.hide();
-                  submitSelectedItem();
-                },
-                focusNode: _focusNode,
-                style: theme.textTheme.bodyLarge,
-                inputFormatters: [_inputFmt],
-              ),
-            ),
+        child: (context, controller) => buildTextField(controller),
         follower: (context, controller) => PopupFollower(
             onDismiss: () {
               controller.hide();

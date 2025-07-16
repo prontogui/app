@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:app/src/embodiment/embodiment_common.dart';
+
 import 'embodiment_help.dart';
 import 'embodiment_manifest.dart';
 import 'package:dartlib/dartlib.dart' as pg;
@@ -52,6 +54,7 @@ class DefaultNumericFieldEmbodiment extends StatelessWidget {
         maxValue: props.maxValue,
         popupChoices: props.popupChoices,
         allowEmptyValue: props.allowEmptyValue,
+        focusSelection: adaptFocusSelection(props.focusSelection),
         onSubmitted: (value) {
           numfield.numericEntry = value;
         });

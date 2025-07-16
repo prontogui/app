@@ -22,10 +22,29 @@ class ImageDefaultEmbodiment extends StatelessWidget {
     var img = args.primitive as pg.Image;
     var props = args.properties as ImageDefaultProperties;
 
+    // Convert ImageFit enum to Flutter's BoxFit enum
+    late BoxFit fit;
+    switch (props.imageFit) {
+      case ImageFit.fill:
+        fit = BoxFit.fill;
+      case ImageFit.contain:
+        fit = BoxFit.contain;
+      case ImageFit.cover:
+        fit = BoxFit.cover;
+      case ImageFit.fitWidth:
+        fit = BoxFit.fitWidth;
+      case ImageFit.fitHeight:
+        fit = BoxFit.fitHeight;
+      case ImageFit.none:
+        fit = BoxFit.none;
+       case ImageFit.scaleDown:
+        fit = BoxFit.scaleDown;
+    }
+
     Widget content;
     var imageData = img.image;
     if (imageData.isNotEmpty) {
-      content = Image.memory(imageData, fit: props.imageFit);
+      content = Image.memory(imageData, fit: fit);
     } else {
       content = Icon(Icons.image_not_supported,
         color: Colors.black45);
