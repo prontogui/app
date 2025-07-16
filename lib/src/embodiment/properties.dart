@@ -424,7 +424,7 @@ void _mapIconDefaultProperty(
     Map<String, dynamic> propertyMap, String name, dynamic value) {
   switch (name) {
     case PropertyName.color:
-      propertyMap[name] = getColorProp(propertyMap);
+      propertyMap[name] = getColorProp(value);
     case PropertyName.size:
       propertyMap[name] = getNumericProp(value, 0);
   }
