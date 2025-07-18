@@ -4,11 +4,11 @@
 
 import 'package:app/src/embodiment/embodiment_help.dart';
 import 'package:dartlib/dartlib.dart' as pg;
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'embodiment_manifest.dart';
 import 'embodiment_args.dart';
 import 'properties.dart';
+import '../embodifier.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('Check', [
@@ -45,6 +45,8 @@ class _CheckEmbodimentState extends State<CheckEmbodiment> {
 
   @override
   Widget build(BuildContext context) {
+    var embodifier = InheritedEmbodifier.of(context);
+
     var cb = Checkbox(
       value: widget.check.checked,
       onChanged: (bool? value) {
@@ -58,30 +60,54 @@ class _CheckEmbodimentState extends State<CheckEmbodiment> {
     );
 
     final label = widget.check.label;
-    bool verticalUnbounded = false;
+    final labelItem = widget.check.labelItem;
 
-    late Widget content;
-    if (label.isNotEmpty) {
-      // Use a RichText / TextSpan combo so user can click on the text to change state.
-      var textSpan = TextSpan(
-          text: label,
-          style: DefaultTextStyle.of(context).style,
-          recognizer: TapGestureRecognizer()
-            ..onTap = () {
-              nextState();
-            });
+    List<Widget> itemElements = [];
 
-      var richText = RichText(text: textSpan);
-
-      content = Row(
-        children: [cb, richText],
-      );
-      verticalUnbounded = true;
-    } else {
-      content = cb;
+    if (labelItem != null) {
+      itemElements.add( _embodifyLabelItem(context, embodifier, labelItem));
     }
 
-    return encloseWithPBMSAF(content, widget.args,
-        verticalUnbounded: verticalUnbounded);
+    if (label.isNotEmpty) {
+      itemElements.add(Text(label));
+    }
+
+    // Trivial case where just a checkbox by itself with no associated item?
+    if (itemElements.isEmpty) {
+      return encloseWithPBMSAF(itemElements[0], widget.args);
+    }
+
+    late Widget itemContent;
+
+    if (itemElements.length == 1) {
+      itemContent = GestureDetector(child: itemElements[0], onTap: () => nextState(),);
+    } else {
+      itemContent = GestureDetector(child: Row(children: itemElements,), onTap: () => nextState(),);
+    }
+
+    var content = Row(mainAxisSize: MainAxisSize.min, children: [cb, itemContent]);
+
+    return encloseWithPBMSAF(content, widget.args, verticalUnbounded: true);
   }
 }
+
+// The allowed primitives for the label item
+const Set<String> _allowedTypesForLabelItem = {
+  'Icon',
+  'Image',
+  'Text'
+};
+
+Widget _embodifyLabelItem(BuildContext context, Embodifier embodifier, pg.Primitive item) {
+
+  // Only certain primitives are supported
+  if (!_allowedTypesForLabelItem.contains(item.describeType)) {
+    // TODO:  show something better for error case.  Perhaps log an error also.
+    return const SizedBox(
+      child: Text("?"),
+    );
+  }
+
+  return embodifier.buildPrimitive(context, item);
+}
+

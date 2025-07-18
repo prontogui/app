@@ -29,9 +29,34 @@ void altmain1(List<String> args) async {
   // Create the model that holds the primitives to be displayed.
   final model = dl.PrimitiveModel();
 
-  var nf = dl.NumericField(numericEntry: '0.0', embodiment: 'marginAll:5');
-  var tf = dl.TextField(textEntry: "Mary", embodiment: 'marginAll:5,borderAll:1,maxLength:30');
-  model.topPrimitives = [nf, tf];
+
+
+// NEEDS FIXIN
+
+/*
+  var icon = dl.Icon(iconID: 'cancel');
+  // Following button appears on LH side
+//  var cmd = dl.Command(label: 'Hello world', labelItem: icon, embodiment: 'outlined-button');
+  // Following button appears centered
+  var cmd = dl.Command(label: 'Hello world', labelItem: icon);
+  model.topPrimitives = [cmd];
+
+*/
+
+
+  var icon = dl.Icon(iconID: 'cancel');
+  var img = dl.Image(fromFile: '/Users/andy/Downloads/go-logo.png', embodiment: 'width:50,height:50,borderAll:1');
+  var txt = dl.Text(content: 'H', embodiment: 'fontSize:20,fontColor:#FFFFFF00');
+//  var cmd = dl.Command(label: 'Hello world', labelItem: img, embodiment: 'outlined-button');
+  var cmd = dl.Tristate(label: 'Hello world', labelItem: txt);
+  //var cmd = dl.Command(label: 'Hello world');
+//  var cmd = dl.Command(labelItem: icon);
+  //var cmd = dl.Check(label: 'Guten Tag');
+
+  //var nf = dl.NumericField(numericEntry: '0.0', embodiment: 'marginAll:5');
+  //var tf = dl.TextField(textEntry: "Mary", embodiment: 'marginAll:5,borderAll:1,maxLength:30');
+
+  model.topPrimitives = [cmd];
 
 /*
   var exRow = [
@@ -154,7 +179,6 @@ var p = ColorField(
     //popupChoices: ['ABC', 'DEF', 'XYZ'],
     onSubmitted:  (value) => print('submitted:  $value')
     );
-
 
   // Run the app and start rendering the UI.
   runApp(

@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'embodiment_manifest.dart';
 import 'embodiment_args.dart';
 import 'properties.dart';
+import '../embodifier.dart';
 
 EmbodimentPackageManifest getManifest() {
   return EmbodimentPackageManifest('Command', [
@@ -30,15 +31,41 @@ class ElevatedButtonCommandEmbodiment extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var command = args.primitive as pg.Command;
+    var embodifier = InheritedEmbodifier.of(context);
 
     // Is the command hidden?
     if (command.status == 2) {
       return _buildAsHidden(context);
     }
 
+    final label = command.label;
+    final labelItem = command.labelItem;
+
+    List<Widget> itemElements = [];
+
+    if (labelItem != null) {
+      itemElements.add( _embodifyLabelItem(context, embodifier, labelItem));
+    }
+
+    if (label.isNotEmpty) {
+      itemElements.add(Text(label));
+    }
+
+    late Widget? innerContent;
+
+    if (itemElements.isEmpty) {
+      innerContent = null;
+    } else if (itemElements.length == 1) {
+      innerContent = itemElements[0];
+    } else {
+      // Note: for some reason, ElevatedButton expands to biggest vertical space possible when labelItem is an Image. The 
+      // following is a work-around. This behavior doesn't happen then labelItem is null, Text, or Icon.
+      innerContent = FittedBox(fit: BoxFit.fitHeight, child: Row(mainAxisSize: MainAxisSize.min, children: itemElements)) ;
+    }
+
     var content = ElevatedButton(
       onPressed: command.issueNow,
-      child: Text(command.label),
+      child: innerContent,
     );
 
     return encloseWithPBMSAF(content, args);
@@ -57,17 +84,64 @@ class OutlinedButtonCommandEmbodiment extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var command = args.primitive as pg.Command;
+    var embodifier = InheritedEmbodifier.of(context);
 
     // Is the command hidden?
     if (command.status == 2) {
       return _buildAsHidden(context);
     }
 
+
+    final label = command.label;
+    final labelItem = command.labelItem;
+
+    List<Widget> itemElements = [];
+
+    if (labelItem != null) {
+      itemElements.add( _embodifyLabelItem(context, embodifier, labelItem));
+    }
+
+    if (label.isNotEmpty) {
+      itemElements.add(Text(label));
+    }
+
+    late Widget? innerContent;
+
+    if (itemElements.isEmpty) {
+      innerContent = null;
+    } else if (itemElements.length == 1) {
+      innerContent = itemElements[0];
+    } else {
+      // Note: for some reason, ElevatedButton expands to biggest vertical space possible when labelItem is an Image. The 
+      // following is a work-around. This behavior doesn't happen then labelItem is null, Text, or Icon.
+      innerContent = FittedBox(fit: BoxFit.fitHeight, child: Row(mainAxisSize: MainAxisSize.min, children: itemElements)) ;
+    }
+
     var content = OutlinedButton(
       onPressed: command.issueNow,
-      child: Text(command.label),
+      child: innerContent,
     );
 
     return encloseWithPBMSAF(content, args);
   }
+}
+
+// The allowed primitives for the label item
+const Set<String> _allowedTypesForLabelItem = {
+  'Icon',
+  'Image',
+  'Text'
+};
+
+Widget _embodifyLabelItem(BuildContext context, Embodifier embodifier, pg.Primitive item) {
+
+  // Only certain primitives are supported
+  if (!_allowedTypesForLabelItem.contains(item.describeType)) {
+    // TODO:  show something better for error case.  Perhaps log an error also.
+    return const SizedBox(
+      child: Text("?"),
+    );
+  }
+
+  return embodifier.buildPrimitive(context, item);
 }
