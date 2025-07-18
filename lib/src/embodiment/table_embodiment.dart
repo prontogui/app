@@ -67,15 +67,19 @@ class DefaultTableEmbodiment extends StatelessWidget {
         if (cellEmbodimentProperties != null) {
           var cellVerticalAlignment = cellEmbodimentProperties.verticalAlignment;
 
-          switch (cellVerticalAlignment) {
-            case VerticalAlignment.top:
-              verticalAlignment = TableCellVerticalAlignment.top;
-            case VerticalAlignment.bottom:
-              verticalAlignment = TableCellVerticalAlignment.bottom;
-            case VerticalAlignment.middle:
-              verticalAlignment = TableCellVerticalAlignment.middle;
-            case VerticalAlignment.expand:
-              verticalAlignment = TableCellVerticalAlignment.fill;
+          if (cellVerticalAlignment != null) {
+            switch (cellVerticalAlignment) {
+              case VerticalAlignment.top:
+                verticalAlignment = TableCellVerticalAlignment.top;
+              case VerticalAlignment.bottom:
+                verticalAlignment = TableCellVerticalAlignment.bottom;
+              case VerticalAlignment.middle:
+                verticalAlignment = TableCellVerticalAlignment.middle;
+              case VerticalAlignment.expand:
+                verticalAlignment = TableCellVerticalAlignment.fill;
+            }
+          } else {
+            verticalAlignment = verticalAlignment = TableCellVerticalAlignment.middle;
           }
         }
 

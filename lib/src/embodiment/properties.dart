@@ -106,14 +106,24 @@ List<String>? _getStringArrayTN(
 
 T _getEnumT<T>(
     Map<String, dynamic>? propertyMap, T defaultValue, String propertyName) {
-  if (propertyMap == null) {
+
+  var en = _getEnumTN(propertyMap, propertyName);
+
+  if (en == null) {
     // Return default
     return defaultValue;
   }
+  return en;
+}
+
+T? _getEnumTN<T>(
+    Map<String, dynamic>? propertyMap, String propertyName) {
+  if (propertyMap == null) {
+    return null;
+  }
   var cacheItem = propertyMap[propertyName];
   if (cacheItem == null) {
-    // Return default
-    return defaultValue;
+    return null;
   }
   assert(cacheItem is T);
   return cacheItem as T;
@@ -648,8 +658,8 @@ mixin CommonPropertyAccess on Properties {
   double? get bottom => _getDoubleTN(propertyMap, PropertyName.bottom);
   String? get embodiment => _getStringTN(propertyMap, PropertyName.embodiment);
   double? get height => _getDoubleTN(propertyMap, PropertyName.height);
-  HorizontalAlignment get horizontalAlignment => _getEnumT<HorizontalAlignment>(
-      propertyMap, HorizontalAlignment.left, PropertyName.horizontalAlignment);
+  HorizontalAlignment? get horizontalAlignment => _getEnumTN<HorizontalAlignment>(
+      propertyMap, PropertyName.horizontalAlignment);
   double? get left => _getDoubleTN(propertyMap, PropertyName.left);
   double? get marginAll => _getDoubleTN(propertyMap, PropertyName.marginAll);
   double? get marginBottom =>
@@ -666,8 +676,8 @@ mixin CommonPropertyAccess on Properties {
   double? get paddingTop => _getDoubleTN(propertyMap, PropertyName.paddingTop);
   double? get right => _getDoubleTN(propertyMap, PropertyName.right);
   double? get top => _getDoubleTN(propertyMap, PropertyName.top);
-  VerticalAlignment get verticalAlignment => _getEnumT<VerticalAlignment>(
-      propertyMap, VerticalAlignment.middle, PropertyName.verticalAlignment);
+  VerticalAlignment? get verticalAlignment => _getEnumTN<VerticalAlignment>(
+      propertyMap, PropertyName.verticalAlignment);
   double? get width => _getDoubleTN(propertyMap, PropertyName.width);
 }
 

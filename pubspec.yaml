@@ -48,7 +48,7 @@ dependencies:
       ref: v0.0.63
   
   # For development, use a local copy of dartlib library
-//    path: ../dartlib
+#    path: ../dartlib
   args: ^2.6.0
   package_info_plus: ^8.2.1
   animated_tree_view: ^2.3.0

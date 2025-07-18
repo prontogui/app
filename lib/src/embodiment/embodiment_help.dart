@@ -298,27 +298,39 @@ Widget encloseWithPBMSAF(Widget content, EmbodimentArgs args,
       double alignX, alignY;
       bool expandX = false;
       bool expandY = false;
-      switch (props.horizontalAlignment) {
-        case HorizontalAlignment.left:
-          alignX = -1.0;
-        case HorizontalAlignment.center:
-          alignX = 0.0;
-        case HorizontalAlignment.right:
-          alignX = 1.0;
-        case HorizontalAlignment.expand:
-          alignX = 0.0;
-          expandX = true;
+      var halign = props.horizontalAlignment;
+      var valign = props.verticalAlignment;
+
+      if (halign != null) {
+        switch (halign) {
+          case HorizontalAlignment.left:
+            alignX = -1.0;
+          case HorizontalAlignment.center:
+            alignX = 0.0;
+          case HorizontalAlignment.right:
+            alignX = 1.0;
+          case HorizontalAlignment.expand:
+            alignX = 0.0;
+            expandX = true;
+        }
+      } else {
+        alignX = 0.0;
       }
-      switch (props.verticalAlignment) {
-        case VerticalAlignment.top:
-          alignY = -1.0;
-        case VerticalAlignment.middle:
-          alignY = 0.0;
-        case VerticalAlignment.bottom:
-          alignY = 1.0;
-        case VerticalAlignment.expand:
-          alignY = 0.0;
-          expandY = true;
+
+      if (valign != null) {
+        switch (valign) {
+          case VerticalAlignment.top:
+            alignY = -1.0;
+          case VerticalAlignment.middle:
+            alignY = 0.0;
+          case VerticalAlignment.bottom:
+            alignY = 1.0;
+          case VerticalAlignment.expand:
+            alignY = 0.0;
+            expandY = true;
+        }
+      } else {
+        alignY = 0.0;
       }
 
       if (expandX && expandY) {
